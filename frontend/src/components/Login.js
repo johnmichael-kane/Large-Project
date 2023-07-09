@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 
 function Login()
 {
-  const app_name = 'group7-largeproject-fcbd9bb42321'
+  let bp = require('./Path.js');
+/*  const app_name = 'group7-largeproject-fcbd9bb42321'
   function buildPath(route)
   {
       if (process.env.NODE_ENV === 'production') 
@@ -14,7 +15,7 @@ function Login()
           return 'http://localhost:5000/' + route;
       }
   }
-  
+ */ 
   var loginName;
   var loginPassword;
 
@@ -30,7 +31,7 @@ function Login()
       try
       {    
 //          const response = await fetch('http://localhost:5000/api/login',
-            const response = await fetch(buildPath('api/login'),
+            const response = await fetch(bp.buildPath('api/login'),
               {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
           var res = JSON.parse(await response.text());
@@ -54,8 +55,6 @@ function Login()
           return;
       }    
   };
-
-
 
     return(
       <div id="loginDiv">

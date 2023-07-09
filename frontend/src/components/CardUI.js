@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function CardUI()
 {
+    let bp = require('./Path.js');
     var card = '';
     var search = '';
 
@@ -14,20 +15,19 @@ function CardUI()
     let userId = ud.id;
     let firstName = ud.firstName;
     let lastName = ud.lastName;
-	
-    const app_name = 'group7-largeproject-fcbd9bb42321'
+
+ /*   const app_name = 'group7-largeproject-fcbd9bb42321'
     function buildPath(route)
     {
         if (process.env.NODE_ENV === 'production') 
         {
             return 'https://' + app_name +  '.herokuapp.com/' + route;
         }
-        else
-        {        
+        else  let bp = require('.Path.js');
             return 'http://localhost:5000/' + route;
         }
     }    
-
+*/
     const addCard = async event => 
     {
 	    event.preventDefault();
@@ -38,7 +38,7 @@ function CardUI()
         try
         {
 //          const response = await fetch('http://localhost:5000/api/addcard',
-            const response = await fetch(buildPath('api/addcard'),
+            const response = await fetch(bp.buildPath('api/addcard'),
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             let txt = await response.text();
@@ -70,7 +70,7 @@ function CardUI()
         try
         {
 //          const response = await fetch('http://localhost:5000/api/searchcards',
-            const response = await fetch(buildPath('api/searchcards'),
+            const response = await fetch(bp.buildPath('api/searchcards'),
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             let txt = await response.text();
@@ -95,7 +95,37 @@ function CardUI()
         }
     };
 
+    const addUserFood = async event => 
+    {
+	    event.preventDefault();
 
+        let obj = {userId:userId,food:foodName, calories: calories};
+        let js = JSON.stringify(obj);
+
+        try
+        {
+//          const response = await fetch('http://localhost:5000/api/addcard',
+            const response = await fetch(bp.buildPath('api/addUserFood'),
+            {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+
+            let txt = await response.text();
+            let res = JSON.parse(txt);
+            
+            if( res.error.length > 0 )
+            {
+                setMessage( "API Error:" + res.error );
+            }
+            else
+            {
+                setMessage('Food has been added to your meal plan');
+            }
+        }
+        catch(e)
+        {
+            setMessage(e.toString());
+        }
+
+    }
 
     return(
         <div id="cardUIDiv">

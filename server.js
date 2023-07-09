@@ -100,7 +100,7 @@ app.post('/api/register', async (req, res, next) =>
   try
   {
     const db = client.db("database");
-    const result = db.collection('Users').insertOne(newFood);
+    const result = db.collection('Users').insertOne(newUser);
     error = 'success';
   }
   catch(e)

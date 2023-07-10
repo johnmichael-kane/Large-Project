@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {useJwt} from 'react-jwt';
 
 function CardUI()
 {
@@ -16,6 +17,7 @@ function CardUI()
     let firstName = ud.firstName;
     let lastName = ud.lastName;
 
+    var storage = require('../tokenStorage.js');
  /*   const app_name = 'group7-largeproject-fcbd9bb42321'
     function buildPath(route)
     {
@@ -32,8 +34,12 @@ function CardUI()
     {
 	    event.preventDefault();
 
-        let obj = {userId:userId,card:card.value};
-        let js = JSON.stringify(obj);
+        //let obj = {userId:userId,card:card.value};
+        //let js = JSON.stringify(obj);
+
+        var tok = storage.retrieveToken();
+        var obj = {userId: userId, card: card.value, jwtToken:tok};
+        var js = JSON.stringify(obj);
 
         try
         {
@@ -51,6 +57,7 @@ function CardUI()
             else
             {
                 setMessage('Card has been added');
+                storage.storeToken(res.jwtToken);
             }
         }
         catch(e)
@@ -64,9 +71,11 @@ function CardUI()
     {
         event.preventDefault();
         		
-        let obj = {userId:userId,search:search.value};
-        let js = JSON.stringify(obj);
-
+//        let obj = {userId:userId,search:search.value};
+//        let js = JSON.stringify(obj);
+        var tok = storage.retrieveToken();
+        var obj = {userId: userId, search: search.value, jwtToken:tok};
+        var js = JSON.stringify(obj);
         try
         {
 //          const response = await fetch('http://localhost:5000/api/searchcards',
@@ -87,6 +96,7 @@ function CardUI()
             }
             setResults('Card(s) have been retrieved');
             setCardList(resultText);
+            storage.storeToken(res.jwtToken);
         }
         catch(e)
         {
@@ -94,7 +104,7 @@ function CardUI()
             setResults(e.toString());
         }
     };
-
+/*
     const addUserFood = async event => 
     {
 	    event.preventDefault();
@@ -126,6 +136,7 @@ function CardUI()
         }
 
     }
+    */
 
     return(
         <div id="cardUIDiv">

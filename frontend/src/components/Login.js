@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 function Login()
 {
   let bp = require('./Path.js');
+  var storage = require('../tokenStorage.js');
 /*  const app_name = 'group7-largeproject-fcbd9bb42321'
   function buildPath(route)
   {
@@ -42,9 +43,16 @@ function Login()
           }
           else
           {
-              var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+              // might be res.accessToken
+              storage.storeToken(res);
+              let userId = res.id;
+              let firstName = res.fn;
+              let lastName = res.ln;
+
+              var user = {firstName:res.fn,lastName:res.ln,id:res.id}
               localStorage.setItem('user_data', JSON.stringify(user));
 
+              
               setMessage('');
               window.location.href = '/cards';
           }

@@ -1,3 +1,5 @@
+const { JsonWebTokenError } = require('jsonwebtoken');
+
 require('express');
 require('mongodb');
 
@@ -111,12 +113,77 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+
+app.post('/api/searchcards', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
+
+  var error = '';
+  const token = require("./createJWT.js");
+  const { userId, search, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      console.log('token expired')
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  var _search = search.trim();
+  
+  const db = client.db("database");
+  const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
+  
+  var _ret = [];
+  for( var i=0; i<results.length; i++ )
+  {
+    _ret.push( results[i].Card );
+  }
+  console.log(jwtToken);
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  // cardList.push( card );
+
+  var ret = { results:_ret, error: error, jwtToken: refreshedToken};
+  res.status(200).json(ret);
+});
+
 app.post('/api/addcard', async (req, res, next) =>
 {
   // incoming: userId, color
   // outgoing: error
 	
-  const { userId, card } = req.body;
+  // const { userId, card } = req.body;
+  const token = require('./createJWT.js');
+  const { userId, card, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const newCard = {Card:card,UserId:userId};
   var error = '';
@@ -131,9 +198,18 @@ app.post('/api/addcard', async (req, res, next) =>
     error = e.toString();
   }
 
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
   // cardList.push( card );
 
-  var ret = { error: error };
+  var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -160,9 +236,20 @@ app.post('/api/login', async (req, res, next) =>
     fn = results[0].FirstName;
     ln = results[0].LastName;
     ret = { id:id, firstName:fn, lastName:ln, error:'loginSuccess'};
+
+    try
+    {
+      const token = require("./createJWT.js");
+      ret = token.createToken(fn, ln, id);
+    }
+    catch(e)
+    {
+      ret = {error:e.message};
+    }
   }
   else
   {
+    // Will this break the code?
      ret = { id: id, firstName: fn, lastName: ln, error: loginError}
   }
 
@@ -172,30 +259,6 @@ app.post('/api/login', async (req, res, next) =>
 
 // Similar to searchcards, needs to be updated
 app.post('/api/searchFood', async (req, res, next) => 
-{
-  // incoming: userId, search
-  // outgoing: results[], error
-
-  var error = '';
-
-  const { userId, search } = req.body;
-
-  var _search = search.trim();
-  
-  const db = client.db("database");
-  const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
-  
-  var _ret = [];
-  for( var i=0; i<results.length; i++ )
-  {
-    _ret.push( results[i].Card );
-  }
-  
-  var ret = {results:_ret, error:error};
-  res.status(200).json(ret);
-});
-
-app.post('/api/searchcards', async (req, res, next) => 
 {
   // incoming: userId, search
   // outgoing: results[], error

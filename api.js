@@ -468,4 +468,21 @@ app.post('/api/checkFoodDatabaseDuplicate', async (req, res, next) =>
   var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
+	
+function getTotalNutrition(array){
+		//start off with an array
+	var rows=array.length;
+	var calories=0;
+	var carbs=0;
+	var fats=0;
+	var protein=0;
+		
+	for(var i=0;i<rows;i++){
+	calories+=array[i].Calories * array[i].NumServings;
+	carbs+=array[i].Carbohydrates * array[i].NumServings;
+	protein+=array[i].Protein * array[i].NumServings;
+	fats+=array[i].Fats * array[i].NumServings;
+	}
+	
+	}
 }

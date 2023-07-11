@@ -316,20 +316,7 @@ app.post('/api/login', async (req, res, next) =>
   var loginError = 'loginFailure';
   var ret;
   const token = require('./createJWT.js');
-  const { login, password, jwtToken} = req.body;
-
-  try{
-    if(token.isExpired(jwtToken))
-    {
-      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
-      res.status(200).json(r);
-      return
-    }
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
+  const { login, password} = req.body;
 
   const db = client.db("database");
   const results = await db.collection('Users').find({Login:login,Password:password}).toArray();

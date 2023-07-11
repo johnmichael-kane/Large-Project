@@ -15,7 +15,7 @@ app.post('/api/addUserFood', async (req, res, next) =>
 	
   //const { userId, foodName, calories } = req.body;
   const token = require('./createJWT.js');
-  const { userId, foodName, calories, fats, carbohydrates, protein, servingSize, jwtToken} = req.body;
+  const { userId, foodName, calories, fats, carbohydrates, protein, servingSize, numServings, jwtToken} = req.body;
 
   try{
     if(token.isExpired(jwtToken))
@@ -31,7 +31,7 @@ app.post('/api/addUserFood', async (req, res, next) =>
     console.log(e.message);
   }
 
-  const newFood = {UserId:userId, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize};
+  const newFood = {UserId:userId, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
   var error = 'notAdded';
 
   try

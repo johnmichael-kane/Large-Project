@@ -176,11 +176,19 @@ const result = await db.collection('Meals').find({"UserId: userId, "Year": year,
 if(result.length<1){
 error='does not exist';
 }
-
-  var _ret = [];
+nutritionResult = getTotalNutrition(result);
+  var _name = [];
+  var _calories = [];
+  var _protein = [];
+  var _fats = [];
+  var _carbs = [];
+	
   for( var i=0; i<results.length; i++ )
   {
-    _ret.push(results[i].Card);
+    _name.push(results[i].FoodName);
+    _calories.push(results[i].Calories);
+    _protein.push(results[i].Protein);
+    _fats.push(results[i].Fats);
   }
   console.log(jwtToken);
   var refreshedToken = null;
@@ -194,7 +202,7 @@ error='does not exist';
 
   // cardList.push( card );
 
-  var ret = { results:_ret, error: error, jwtToken: refreshedToken};
+  var ret = { nameResults: _name, caloriesResults: _results, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs, Calories: calories, Fats: fats, Protein: protein, Carbs: carbs, error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -483,6 +491,6 @@ function getTotalNutrition(array){
 	protein+=array[i].Protein * array[i].NumServings;
 	fats+=array[i].Fats * array[i].NumServings;
 	}
-	
+	return {Calories: calories , Carbs: carbs, Protein : protein, Fats: fats}
 	}
 }

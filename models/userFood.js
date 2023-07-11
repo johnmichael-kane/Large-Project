@@ -12,6 +12,18 @@ const UserFoodSchema = new Schema({
   Calories: {
     type: Number
   },
+  Fats: {
+    type: Number
+  },
+  Carbohydrates: {
+  type: Number
+  },
+  Protein: {
+  type: Number
+  },
+  ServingSize: {
+  type: Number
+  },
 });
 
 module.exports = UserFood = mongoose.model('UserMealPlans', UserFoodSchema);

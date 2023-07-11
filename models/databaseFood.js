@@ -10,6 +10,18 @@ const DatabaseFoodSchema = new Schema({
   Calories: {
     type: Number
   },
+  Fats: {
+    type: Number
+  },
+  Carbohydrates: {
+  type: Number
+  },
+  Protein: {
+  type: Number
+  },
+  ServingSize: {
+  type: Number
+  },
 });
 
 module.exports = DatabaseFood = mongoose.model('Food', DatabaseFoodSchema);

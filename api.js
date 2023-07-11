@@ -116,23 +116,9 @@ app.post('/api/register', async (req, res, next) =>
   // outgoing: error
 	
   // const {email, password } = req.body;
-  const token = require('./createJWT.js');
-  const {email, password, jwtToken} = req.body;
+  const {email, password} = req.body;
 
-  try{
-    if(token.isExpired(jwtToken))
-    {
-      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
-      res.status(200).json(r);
-      return
-    }
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
-
-  const newUser = {Email: email, Password: password};
+  const newUser = {Email: email, Password: password, EmailAuth: False};
   var error = 'failure';
 
   try
@@ -146,19 +132,11 @@ app.post('/api/register', async (req, res, next) =>
     error = e.toString();
   }
 
-  var refreshedToken = null;
-  try{
-    refreshedToken = token.refresh(jwtToken);
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
 
   // userMealList.push(foodName);
   // userCaloriesList.push(calories);
 
-  var ret = { error: error, jwtToken: refreshedToken};
+  var ret = { error: error};
   res.status(200).json(ret);
 });
 

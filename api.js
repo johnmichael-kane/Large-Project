@@ -65,7 +65,7 @@ let day=date.getDate();
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
-
+	
 app.post('/api/addDatabaseFood', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
@@ -148,14 +148,15 @@ app.post('/api/register', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
-app.post('/api/getUserMealPlan', async (req, res, next) =>
+//finish this test
+app.post('/api/UserMealsDate', async (req, res, next) =>
 {
   // incoming: int userId, 
   // outgoing: error, Array of JSON objects: String foodName, int calories
 	
   // Needs filling
   const token = require('./createJWT.js');
-  const {jwtToken} = req.body;
+  const {year, month, day, jwtToken} = req.body;
   var error = 'failure';
 
   try{

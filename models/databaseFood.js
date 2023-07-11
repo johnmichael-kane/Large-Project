@@ -20,7 +20,8 @@ const DatabaseFoodSchema = new Schema({
   type: Number
   },
   ServingSize: {
-  type: Number
+  type: String
+  required: true
   }
 });
 

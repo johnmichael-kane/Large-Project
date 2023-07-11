@@ -189,6 +189,7 @@ nutritionResult = getTotalNutrition(result);
     _calories.push(results[i].Calories);
     _protein.push(results[i].Protein);
     _fats.push(results[i].Fats);
+    _carbs.push(results[i].Carbs);
   }
   console.log(jwtToken);
   var refreshedToken = null;

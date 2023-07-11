@@ -21,7 +21,7 @@ const DatabaseFoodSchema = new Schema({
   },
   ServingSize: {
   type: Number
-  },
+  }
 });
 
 module.exports = DatabaseFood = mongoose.model('Food', DatabaseFoodSchema);

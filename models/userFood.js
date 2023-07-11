@@ -23,7 +23,7 @@ const UserFoodSchema = new Schema({
   },
   ServingSize: {
   type: Number
-  },
+  }
 });
 
 module.exports = UserFood = mongoose.model('UserMealPlans', UserFoodSchema);

@@ -5,15 +5,7 @@ const UserSchema = new Schema({
   UserId: {
     type: Number
   },
-  FirstName: {
-    type: String,
-    required: true
-  },
-  LastName: {
-    type: String,
-    required: true
-  },
-  Login: {
+  Email: {
     type: String,
     required: true
   },

@@ -156,7 +156,7 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
 	
   // Needs filling
   const token = require('./createJWT.js');
-  const {year, month, day, jwtToken} = req.body;
+  const {userId, year, month, day, jwtToken} = req.body;
   var error = 'failure';
 
   try{
@@ -171,11 +171,11 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
   {
     console.log(e.message);
   }
-
+	
   try
   {
     const db = client.db("database");
-    const result = await db.collection('Meals').find(userId);
+    const result = await db.collection('UserFood').find({"UserID: userID, "Year": year, "Month": month, "Day", day});
     error = 'success';
   }
   catch(e)

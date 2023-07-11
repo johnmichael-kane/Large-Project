@@ -30,8 +30,13 @@ app.post('/api/addUserFood', async (req, res, next) =>
   {
     console.log(e.message);
   }
-
-  const newFood = {UserId:userId, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
+//set year/month/day
+const date=new Date();
+let year=date.getFullYear();
+let month=date.getMonth()+1;
+let day=date.getDate();
+	
+  const newFood = {UserId:userId, Year: year, Month: month, Day: day, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
   var error = 'notAdded';
 
   try

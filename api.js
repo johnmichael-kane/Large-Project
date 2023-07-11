@@ -308,7 +308,6 @@ app.post('/api/addcard', async (req, res, next) =>
   res.status(200).json(ret);
 });
 	
-//CHANGE THIS ONE
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: login, password
@@ -317,26 +316,22 @@ app.post('/api/login', async (req, res, next) =>
   var loginError = 'loginFailure';
   var ret;
   const token = require('./createJWT.js');
-  const { login, password} = req.body;
+  const { email, password} = req.body;
 
   const db = client.db("database");
-  const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+  const results = await db.collection('Users').find({Email:email,Password:password}).toArray();
 
   var id = -1;
-  var fn = '';
-  var ln = '';
 
   if( results.length > 0 )
   {
     id = results[0].UserId;
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-    ret = { id:id, firstName:fn, lastName:ln, error:'loginSuccess'};
+    ret = { id:id, error:'loginSuccess'};
 
     try
     {
       const token = require("./createJWT.js");
-      ret = token.createToken(fn, ln, id);
+      ret = token.createToken(id);
     }
     catch(e)
     {
@@ -346,7 +341,7 @@ app.post('/api/login', async (req, res, next) =>
   else
   {
     // Will this break the code?
-     ret = { id: id, firstName: fn, lastName: ln, error: loginError}
+     ret = { id: id, error: loginError}
   }
 
 

@@ -22,7 +22,11 @@ const UserFoodSchema = new Schema({
   type: Number
   },
   ServingSize: {
-  type: Number
+  type: String,
+  required: true
+  },
+  NumServings: {
+    type: Number
   }
 });
 

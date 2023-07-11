@@ -171,18 +171,18 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
   {
     console.log(e.message);
   }
-	
-  try
-  {
-    const db = client.db("database");
-    const result = await db.collection('UserFood').find({"UserID: userID, "Year": year, "Month": month, "Day", day});
-    error = 'success';
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
+const db = client.db("database");
+const result = await db.collection('Meals').find({"UserId: userId, "Year": year, "Month": month, "Day", day}).toArray();
+if(result.length<1){
+error='does not exist';
+}
 
+  var _ret = [];
+  for( var i=0; i<results.length; i++ )
+  {
+    _ret.push(results[i].Card);
+  }
+  console.log(jwtToken);
   var refreshedToken = null;
   try{
     refreshedToken = token.refresh(jwtToken);
@@ -192,7 +192,9 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
     console.log(e.message);
   }
 
-  var ret = { error: error, jwtToken: refreshedToken};
+  // cardList.push( card );
+
+  var ret = { results:_ret, error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 

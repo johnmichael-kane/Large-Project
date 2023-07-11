@@ -115,7 +115,7 @@ app.post('/api/register', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
 	
-  // const {login, password } = req.body;
+  // const {email, password } = req.body;
   const token = require('./createJWT.js');
   const {email, password, jwtToken} = req.body;
 
@@ -310,7 +310,7 @@ app.post('/api/addcard', async (req, res, next) =>
 	
 app.post('/api/login', async (req, res, next) => 
 {
-  // incoming: login, password
+  // incoming: email, password
   // outgoing: id, firstName, lastName, error
 	
   var loginError = 'loginFailure';
@@ -402,7 +402,7 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
 
   var error = 'dne';
   const token = require('./createJWT.js');
-  const {login, jwtToken} = req.body;
+  const {email, jwtToken} = req.body;
 
   try{
     if(token.isExpired(jwtToken))
@@ -418,7 +418,7 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
   }
 
   const db = client.db("database");
-  const results = await db.collection('Users').find({ "Login": login}).toArray();
+  const results = await db.collection('Users').find({ "Email": email}).toArray();
   if(results.length > 0)
   {
     error = 'exists';

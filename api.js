@@ -10,7 +10,23 @@ app.post('/api/addUserFood', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
 	
-  const { userId, foodName, calories } = req.body;
+  //const { userId, foodName, calories } = req.body;
+  const token = require('./createJWT.js');
+  const { userId, foodName, calories, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      console.log('token expired')
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const newFood = {UserId:userId, FoodName: foodName, Calories: calories};
   var error = 'notAdded';
@@ -26,10 +42,19 @@ app.post('/api/addUserFood', async (req, res, next) =>
     error = e.toString();
   }
 
-//  userMealList.push(foodName);
-//  userCaloriesList.push(calories);
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
-  var ret = { error: error };
+  // userMealList.push(foodName);
+  // userCaloriesList.push(calories);
+
+  var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -38,7 +63,22 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
 	
-  const {foodName, calories } = req.body;
+  // const {foodName, calories } = req.body;
+  const token = require('./createJWT.js');
+  const {foodName, calories, jwtToken} = req.body;
+  
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const newFood = {FoodName: foodName, Calories: calories};
   var error = 'failure';
@@ -53,11 +93,20 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   {
     error = e.toString();
   }
+  
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
- // userMealList.push(foodName);
- // userCaloriesList.push(calories);
+  // userMealList.push(foodName);
+  // userCaloriesList.push(calories);
 
-  var ret = { error: error };
+  var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -66,7 +115,22 @@ app.post('/api/register', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
 	
-  const {login, password } = req.body;
+  // const {login, password } = req.body;
+  const token = require('./createJWT.js');
+  const {login, password, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const newUser = {Login: login, Password: password};
   var error = 'failure';
@@ -82,10 +146,19 @@ app.post('/api/register', async (req, res, next) =>
     error = e.toString();
   }
 
- // userMealList.push(foodName);
- // userCaloriesList.push(calories);
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
-  var ret = { error: error };
+  // userMealList.push(foodName);
+  // userCaloriesList.push(calories);
+
+  var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -95,8 +168,22 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   // outgoing: error, Array of JSON objects: String foodName, int calories
 	
   // Needs filling
-  const {} = req.body;
+  const token = require('./createJWT.js');
+  const {jwtToken} = req.body;
   var error = 'failure';
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   try
   {
@@ -109,10 +196,18 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
     error = e.toString();
   }
 
-  var ret = { error: error };
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
-
 
 app.post('/api/searchcards', async (req, res, next) => 
 {
@@ -213,15 +308,28 @@ app.post('/api/addcard', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
-
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: login, password
   // outgoing: id, firstName, lastName, error
 	
- var loginError = 'loginFailure';
- var ret;
-  const { login, password } = req.body;
+  var loginError = 'loginFailure';
+  var ret;
+  const token = require('./createJWT.js');
+  const { login, password, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const db = client.db("database");
   const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
@@ -257,7 +365,6 @@ app.post('/api/login', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
-// Similar to searchcards, needs to be updated
 app.post('/api/searchFood', async (req, res, next) => 
 {
   // incoming: userId, search
@@ -265,20 +372,43 @@ app.post('/api/searchFood', async (req, res, next) =>
 
   var error = '';
 
-  const { userId, search } = req.body;
+  const token = require('./createJWT.js');
+  const { userId, search, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   var _search = search.trim();
   
   const db = client.db("database");
   const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
   
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
   var _ret = [];
   for( var i=0; i<results.length; i++ )
   {
     _ret.push( results[i].Card );
   }
   
-  var ret = {results:_ret, error:error};
+  var ret = {results:_ret, error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -288,8 +418,21 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
   // outgoing: results[], error
 
   var error = 'dne';
+  const token = require('./createJWT.js');
+  const {login, jwtToken} = req.body;
 
-  const {login} = req.body;
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const db = client.db("database");
   const results = await db.collection('Users').find({ "Login": login}).toArray();
@@ -297,8 +440,17 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
   {
     error = 'exists';
   }
+
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
   
-  var ret = {error:error};
+  var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -309,7 +461,21 @@ app.post('/api/checkFoodDatabaseDuplicate', async (req, res, next) =>
 
   var error = 'dne';
 
-  const {foodName} = req.body;
+  const token = require('./createJWT.js');
+  const {foodName, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
 
   const db = client.db("database");
   const results = await db.collection('Foods').find({ "FoodName": foodName}).toArray();
@@ -318,7 +484,16 @@ app.post('/api/checkFoodDatabaseDuplicate', async (req, res, next) =>
     error = 'exists';
   }
   
-  var ret = {error:error};
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 }

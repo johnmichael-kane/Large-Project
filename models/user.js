@@ -12,6 +12,9 @@ const UserSchema = new Schema({
   Password: {
     type: String,
     required: true
+  },
+  EmailAuth:{
+  type: Boolean
   }
 });
 module.exports = user = mongoose.model("Users", UserSchema);

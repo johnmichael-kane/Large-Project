@@ -1,3 +1,5 @@
+//add the new serving size amount from userFood
+
 const { JsonWebTokenError } = require('jsonwebtoken');
 
 require('express');

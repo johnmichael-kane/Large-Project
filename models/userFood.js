@@ -5,6 +5,15 @@ const UserFoodSchema = new Schema({
   UserId: {
     type: Number
   },
+  Year: {
+  type: Number
+  },
+  Month:{
+  type: Number
+  },
+  Day:{
+  type: Number
+  },
   FoodName: {
     type: String,
     required: true

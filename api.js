@@ -110,6 +110,10 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   {
     console.log(e.message);
   }
+
+  // userMealList.push(foodName);
+  // userCaloriesList.push(calories);
+
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
@@ -118,11 +122,10 @@ app.post('/api/register', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
   // outgoing: error
-
+	
+  // const {email, password } = req.body;
   const {email, password} = req.body;
-  //email auth is a variable that is autoset to false, it will be set to true
-  //after email authorization and users will not be able to log in until after
-  //the email auth is set
+
   const newUser = {Email: email, Password: password, EmailAuth: false};
   var error = 'failure';
 
@@ -136,11 +139,16 @@ app.post('/api/register', async (req, res, next) =>
   {
     error = e.toString();
   }
-	
+
+
+  // userMealList.push(foodName);
+  // userCaloriesList.push(calories);
+
   var ret = { error: error};
   res.status(200).json(ret);
 });
 
+//finish this test
 app.post('/api/UserMealsDate', async (req, res, next) =>
 {
   // incoming: int userId, 
@@ -214,10 +222,8 @@ app.post('/api/login', async (req, res, next) =>
 
   const db = client.db("database");
   const results = await db.collection('Users').find({Email:email,Password:password}).toArray();
-	
-  var id = -1;
 
-if( results.length > 0 )
+  if( results.length > 0 )
   {
     if(results.EmailAuth == true)
     {
@@ -292,6 +298,39 @@ app.post('/api/searchFood', async (req, res, next) =>
   
   var ret = {results:_ret, error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
+});
+
+
+app.post('/api/sendEmail', async (req, res, next) => {
+  const token = require('./createJWT.js');
+  const{email, jwtToken} = req.body;
+  let error = 'failure';
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+  error = 'success';
+
+  try{
+    sendPasswordRecovery(email);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+  ret = {Error: error}
+  res.status(200).json(ret);
+
+
 });
 
 app.post('/api/checkUserDuplicate', async (req, res, next) => 
@@ -379,28 +418,53 @@ app.post('/api/checkFoodDuplicate', async (req, res, next) =>
   res.status(200).json(ret);
 });
 	
-function getTotalNutrition(array){
-	//so an array gets sent here containing all of the variables per day
-	//it adds up the total here for total nutrition information and returns it for another function
-	var rows=array.length;
-	var calories=0;
-	var carbs=0;
-	var fats=0;
-	var protein=0;
+}
 
-	//for loop adds up all of the totals
-	for(var i=0;i<rows;i++){
-	calories+=array[i].Calories * array[i].NumServings;
-	carbs+=array[i].Carbohydrates * array[i].NumServings;
-	protein+=array[i].Protein * array[i].NumServings;
-	fats+=array[i].Fats * array[i].NumServings;
-	}
-	return {Calories: calories , Carbs: carbs, Protein : protein, Fats: fats}
-	}
+function getTotalNutrition(array){
+  //start off with an array
+var rows=array.length;
+var calories=0;
+var carbs=0;
+var fats=0;
+var protein=0;
+  
+for(var i=0;i<rows;i++){
+calories+=array[i].Calories * array[i].NumServings;
+carbs+=array[i].Carbohydrates * array[i].NumServings;
+protein+=array[i].Protein * array[i].NumServings;
+fats+=array[i].Fats * array[i].NumServings;
+}
+return {Calories: calories , Carbs: carbs, Protein : protein, Fats: fats}
+}
+
+function sendPasswordRecovery(email){
+  let nodemailer = require('nodemailer');
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'nutritionapp7@gmail.com',
+      pass: 'afzttirvjllddhre'
+    }
+  });
+  
+  var mailOptions = {
+    from: 'nutritionapp7@gmail.com',
+    to: email,
+    subject: 'Sending Email using Node.js',
+    text: 'Trying this again'
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  }); 
 }
 
 /*
-	
 app.post('/api/searchcards', async (req, res, next) => 
 {
   // incoming: userId, search
@@ -499,4 +563,4 @@ app.post('/api/addcard', async (req, res, next) =>
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
-*/
+*/	

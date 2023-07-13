@@ -172,7 +172,7 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
     console.log(e.message);
   }
 const db = client.db("database");
-const result = await db.collection('Meals').find({"UserId: userId, "Year": year, "Month": month, "Day", day}).toArray();
+const result = await db.collection('Meals').find({"UserId": userId, "Year": year, "Month": month, "Day": day}).toArray();
 if(result.length<1){
 error='does not exist';
 }

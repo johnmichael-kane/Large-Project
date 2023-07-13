@@ -7,14 +7,16 @@ import {
 } from "react-native";
 
 import { Text, View } from "../../components/Themed";
+import User from "../../API/UserModel";
 import React from "react";
+import { useNavigation } from "expo-router";
 
 export default function TabOneScreen() {
+  const navigation = useNavigation();
   const [UserName, onUserNameChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
   const Login = () => {
     //check if username and password match a valid user in the database, and if so transition to the login screen
-    alert("Button Pressed, Username: " + UserName + " Password: " + Password);
   };
   return (
     <ImageBackground

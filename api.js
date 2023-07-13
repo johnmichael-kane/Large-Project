@@ -399,39 +399,15 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
   // outgoing: results[], error
 
   var error = 'dne';
-  const token = require('./createJWT.js');
-  const {email, jwtToken} = req.body;
-
-  try{
-    if(token.isExpired(jwtToken))
-    {
-      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
-      res.status(200).json(r);
-      return
-    }
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
-
+  const {email} = req.body;
   const db = client.db("database");
   const results = await db.collection('Users').find({ "Email": email}).toArray();
   if(results.length > 0)
   {
     error = 'exists';
   }
-
-  var refreshedToken = null;
-  try{
-    refreshedToken = token.refresh(jwtToken);
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
   
-  var ret = {error:error, jwtToken: refreshedToken};
+  var ret = {error:error};
   res.status(200).json(ret);
 });
 

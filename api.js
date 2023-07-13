@@ -176,22 +176,23 @@ const result = await db.collection('Meals').find({"UserId": userId, "Year": year
 if(result.length<1){
 error='does not exist';
 }
-nutritionResult = getTotalNutrition(result);
+  nutritionResult = getTotalNutrition(result);
   var _name = [];
   var _calories = [];
   var _protein = [];
   var _fats = [];
   var _carbs = [];
 	
-  for( var i=0; i<results.length; i++ )
+  for( var i=0; i<result.length; i++ )
   {
-    _name.push(results[i].FoodName);
-    _calories.push(results[i].Calories);
-    _protein.push(results[i].Protein);
-    _fats.push(results[i].Fats);
-    _carbs.push(results[i].Carbs);
+    console.log(result[i].Foodname)
+    _name.push(result[i].FoodName);
+    _calories.push(result[i].Calories);
+    _protein.push(result[i].Protein);
+    _fats.push(result[i].Fats);
+    _carbs.push(result[i].Carbohydrates);
   }
-  console.log(jwtToken);
+
   var refreshedToken = null;
   try{
     refreshedToken = token.refresh(jwtToken);
@@ -201,9 +202,9 @@ nutritionResult = getTotalNutrition(result);
     console.log(e.message);
   }
 
-  // cardList.push( card );
-
-  var ret = { nameResults: _name, caloriesResults: _results, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs, Calories: calories, Fats: fats, Protein: protein, Carbs: carbs, error: error, jwtToken: refreshedToken};
+  var ret = { nameResults: _name, caloriesResults: _calories, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs,
+     Calories: nutritionResult.calories, Fats: nutritionResult.Fats, Protein: nutritionResult.Protein, Carbs: nutritionResult.Carbs,
+      totalCalories: nutritionResult.Calories, error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 
@@ -399,15 +400,39 @@ app.post('/api/checkUserDuplicate', async (req, res, next) =>
   // outgoing: results[], error
 
   var error = 'dne';
-  const {email} = req.body;
+  const token = require('./createJWT.js');
+  const {email, jwtToken} = req.body;
+
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
   const db = client.db("database");
   const results = await db.collection('Users').find({ "Email": email}).toArray();
   if(results.length > 0)
   {
     error = 'exists';
   }
+
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
   
-  var ret = {error:error};
+  var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 

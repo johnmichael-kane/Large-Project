@@ -7,16 +7,55 @@ import {
 } from "react-native";
 
 import { Text, View } from "../../components/Themed";
-import User from "../../API/UserModel";
+import { User, Food } from "../../API/UserModel";
 import React from "react";
 import { useNavigation } from "expo-router";
+import md5 from "../js/md5";
 
 export default function TabOneScreen() {
+  //This needs to be changed to what we use for the large project
+  const urlBase = "http://smallproject.site/LAMPAPI";
+  const extension = "php";
+
   const navigation = useNavigation();
-  const [UserName, onUserNameChange] = React.useState("");
+  const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
+
   const Login = () => {
     //check if username and password match a valid user in the database, and if so transition to the login screen
+    var hash = md5(Password);
+    let tmp = { Email: EmailAddress, Password: hash };
+    let jsonPayload = JSON.stringify(tmp);
+    let url = urlBase + "/Login." + extension;
+    let user: User;
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+    try {
+      xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          let jsonObject = JSON.parse(xhr.responseText);
+          if (jsonObject.EmailAddress === null)
+            alert("No user was found for that email and password.");
+
+          user = new User(
+            jsonObject.EmailAddress,
+            jsonObject.Password,
+            jsonObject.CalorieGoal
+          );
+        }
+        xhr.send(jsonPayload);
+      };
+    } catch (err) {
+      alert("ERROR");
+    }
+  };
+  const GetBigList = () => {
+    //Get the entire list of meals
+  };
+  const GetMealPlan = () => {
+    //Get the user's meal plan, parse the information and store it in the equivalent arrays
   };
   return (
     <ImageBackground
@@ -28,16 +67,14 @@ export default function TabOneScreen() {
       <View>
         <TextInput
           style={styles.username}
-          placeholder="Username"
-          autoComplete="username"
-          onChangeText={onUserNameChange}
+          placeholder="Email"
+          onChangeText={onEmailAddressChange}
         ></TextInput>
       </View>
       <View>
         <TextInput
           style={styles.password}
           placeholder="Password"
-          autoComplete="password"
           onChangeText={onPasswordChange}
         ></TextInput>
       </View>

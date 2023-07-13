@@ -354,7 +354,7 @@ app.post('/api/searchFood', async (req, res, next) =>
   var error = '';
 
   const token = require('./createJWT.js');
-  const { userId, search, jwtToken} = req.body;
+  const {search, jwtToken} = req.body;
 
   try{
     if(token.isExpired(jwtToken))
@@ -372,7 +372,7 @@ app.post('/api/searchFood', async (req, res, next) =>
   var _search = search.trim();
   
   const db = client.db("database");
-  const results = await db.collection('Cards').find({"Card":{$regex:_search+'.*', $options:'i'}}).toArray();
+  const results = await db.collection('Foods').find({"FoodName":{$regex:_search+'.*', $options:'i'}}).toArray();
   
   var refreshedToken = null;
   try{
@@ -386,7 +386,7 @@ app.post('/api/searchFood', async (req, res, next) =>
   var _ret = [];
   for( var i=0; i<results.length; i++ )
   {
-    _ret.push( results[i].Card );
+    _ret.push(results[i].FoodName);
   }
   
   var ret = {results:_ret, error:error, jwtToken: refreshedToken};

@@ -110,10 +110,6 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   {
     console.log(e.message);
   }
-
-  // userMealList.push(foodName);
-  // userCaloriesList.push(calories);
-
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
@@ -122,12 +118,11 @@ app.post('/api/register', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
   // outgoing: error
-	
-  // const {email, password } = req.body;
+
   const {email, password} = req.body;
-//email auth is a variable that is autoset to false, it will be set to true
-//after email authorization and users will not be able to log in until after
-//the email auth is set
+  //email auth is a variable that is autoset to false, it will be set to true
+  //after email authorization and users will not be able to log in until after
+  //the email auth is set
   const newUser = {Email: email, Password: password, EmailAuth: false};
   var error = 'failure';
 
@@ -141,16 +136,11 @@ app.post('/api/register', async (req, res, next) =>
   {
     error = e.toString();
   }
-
-
-  // userMealList.push(foodName);
-  // userCaloriesList.push(calories);
-
+	
   var ret = { error: error};
   res.status(200).json(ret);
 });
 
-//finish this test
 app.post('/api/UserMealsDate', async (req, res, next) =>
 {
   // incoming: int userId, 
@@ -227,9 +217,9 @@ app.post('/api/login', async (req, res, next) =>
 	
   var id = -1;
 
-  if( results.length > 0 )
+if( results.length > 0 )
   {
-    if(EmailAuth == true)
+    if(results.EmailAuth == true)
     {
       ret = { Email:email, error:'loginSuccess'};
 
@@ -243,10 +233,13 @@ app.post('/api/login', async (req, res, next) =>
         ret = {error:e.message};
       }
     }
+    else 
+    {
+      ret = { Email: email, error: loginError}
+    }
   }
   else
   {
-    // Will this break the code?
      ret = { Email: email, error: loginError}
   }
 

@@ -182,6 +182,7 @@ error='does not exist';
   var _protein = [];
   var _fats = [];
   var _carbs = [];
+  var _servings = [];
 	
   for( var i=0; i<result.length; i++ )
   {
@@ -190,7 +191,9 @@ error='does not exist';
     _calories.push(result[i].Calories);
     _protein.push(result[i].Protein);
     _fats.push(result[i].Fats);
-    _carbs.push(result[i].Carbohydrates);
+    _carbs.push(result[i].Carbohydrates)
+    _servings.push(result[i].NumServings)
+
   }
 
   var refreshedToken = null;
@@ -202,7 +205,7 @@ error='does not exist';
     console.log(e.message);
   }
 
-  var ret = { nameResults: _name, caloriesResults: _calories, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs,
+  var ret = { nameResults: _name, caloriesResults: _calories, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs, numServings: _servings,
      Calories: nutritionResult.calories, Fats: nutritionResult.Fats, Protein: nutritionResult.Protein, Carbs: nutritionResult.Carbs,
       totalCalories: nutritionResult.Calories, error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);

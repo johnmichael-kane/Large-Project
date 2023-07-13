@@ -385,7 +385,8 @@ app.post('/api/checkFoodDuplicate', async (req, res, next) =>
 });
 	
 function getTotalNutrition(array){
-		//start off with an array
+	//so an array gets sent here containing all of the variables per day
+	//it adds up the total here for total nutrition information and returns it for another function
 	var rows=array.length;
 	var calories=0;
 	var carbs=0;

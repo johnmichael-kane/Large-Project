@@ -15,7 +15,7 @@ app.post('/api/addUserFood', async (req, res, next) =>
 	
   //const { userId, foodName, calories } = req.body;
   const token = require('./createJWT.js');
-  const { userId, foodName, calories, fats, carbohydrates, protein, servingSize, numServings, jwtToken} = req.body;
+  const {foodName, calories, fats, carbohydrates, protein, servingSize, numServings, jwtToken} = req.body;
 
   try{
     if(token.isExpired(jwtToken))
@@ -36,7 +36,7 @@ let year=date.getFullYear();
 let month=date.getMonth()+1;
 let day=date.getDate();
 	
-  const newFood = {UserId:userId, Year: year, Month: month, Day: day, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
+  const newFood = {Email: jwtToken.Email, Year: year, Month: month, Day: day, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
   var error = 'notAdded';
 
   try
@@ -327,8 +327,8 @@ app.post('/api/login', async (req, res, next) =>
 
   if( results.length > 0 )
   {
-    id = results[0].UserId;
-    ret = { id:id, error:'loginSuccess'};
+    email = results[0].Email;
+    ret = { Email:email, error:'loginSuccess'};
 
     try
     {
@@ -343,7 +343,7 @@ app.post('/api/login', async (req, res, next) =>
   else
   {
     // Will this break the code?
-     ret = { id: id, error: loginError}
+     ret = { Email: email, error: loginError}
   }
 
 

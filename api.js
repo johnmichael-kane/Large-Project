@@ -125,7 +125,9 @@ app.post('/api/register', async (req, res, next) =>
 	
   // const {email, password } = req.body;
   const {email, password} = req.body;
-
+//email auth is a variable that is autoset to false, it will be set to true
+//after email authorization and users will not be able to log in until after
+//the email auth is set
   const newUser = {Email: email, Password: password, EmailAuth: false};
   var error = 'failure';
 
@@ -222,7 +224,7 @@ app.post('/api/login', async (req, res, next) =>
 
   const db = client.db("database");
   const results = await db.collection('Users').find({Email:email,Password:password}).toArray();
-
+	
   var id = -1;
 
   if( results.length > 0 )
@@ -392,7 +394,8 @@ function getTotalNutrition(array){
 	var carbs=0;
 	var fats=0;
 	var protein=0;
-		
+
+	//for loop adds up all of the totals
 	for(var i=0;i<rows;i++){
 	calories+=array[i].Calories * array[i].NumServings;
 	carbs+=array[i].Carbohydrates * array[i].NumServings;

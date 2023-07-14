@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 // Create Schema
 const UserFoodSchema = new Schema({
-  UserId: {
-    type: Number
+  Email: {
+    type: String
   },
   Year: {
   type: Number

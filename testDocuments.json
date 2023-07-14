@@ -1,0 +1,128 @@
+{
+  "login": "Bob",
+  "password": "Secret789",
+  "foodName": "New York Strip Steak",
+  "calories": 250,
+  "jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IlR5bGFyIiwibGFzdE5hbWUiOiJBeW5lcyIsImlhdCI6MTY4OTEwNTM0MX0.93xOYSNC2O97mHLeFiYaOxwPVgD07SxKJvcBOSDiXYU"
+}
+
+{
+  "login": "Charlie",
+  "password": "SecurePass123",
+  "foodName": "New York Strip Steak",
+  "calories": 250,
+  "jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IlR5bGFyIiwibGFzdE5hbWUiOiJBeW5lcyIsImlhdCI6MTY4OTEwNTM0MX0.93xOYSNC2O97mHLeFiYaOxwPVgD07SxKJvcBOSDiXYU"
+}
+
+{
+  "login": "David",
+  "password": "Pass1234",
+  "foodName": "New York Strip Steak",
+  "calories": 250,
+  "jwtToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IlR5bGFyIiwibGFzdE5hbWUiOiJBeW5lcyIsImlhdCI6MTY4OTEwNTM0MX0.93xOYSNC2O97mHLeFiYaOxwPVgD07SxKJvcBOSDiXYU"
+}
+
+{
+  "UserId": 1,
+  "Card": "3a2bcf28e48e9dcf0ea1a6f43f47ef81"
+}
+
+{
+  "UserId": 1,
+  "Card": "1d9c6a4b295f4c9c9e5f15c2d8de5d03"
+}
+
+{
+  "UserId": 1,
+  "Card": "a3e5f14966cfefdb22863e5cbe947b8b"
+}
+
+{
+  "FoodName": "Spinach",
+  "Calories": 23,
+  "Fats": 0.4,
+  "Carbohydrates": 3.6,
+  "Protein": 2.9,
+  "ServingSize": "1 cup"
+}
+
+{
+  "FoodName": "Chicken Breast",
+  "Calories": 120,
+  "Fats": 2.5,
+  "Carbohydrates": 0,
+  "Protein": 26,
+  "ServingSize": "100g"
+}
+
+{
+  "FoodName": "Broccoli",
+  "Calories": 55,
+  "Fats": 0.6,
+  "Carbohydrates": 11.2,
+  "Protein": 3.7,
+  "ServingSize": "1 cup"
+}
+
+{
+  "UserId": 1,
+  "Email": "john@example.com",
+  "Password": "password123",
+  "EmailAuth": true
+}
+
+{
+  "UserId": 1,
+  "Email": "jane@example.com",
+  "Password": "password456",
+  "EmailAuth": false
+}
+
+{
+  "UserId": 1,
+  "Email": "james@example.com",
+  "Password": "password789",
+  "EmailAuth": true
+}
+
+{
+  "UserId": 1,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 14,
+  "FoodName": "Oatmeal",
+  "Calories": 150,
+  "Fats": 3,
+  "Carbohydrates": 27,
+  "Protein": 5,
+  "ServingSize": "1 packet",
+  "NumServings": 1
+}
+
+{
+  "UserId": 1,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 13,
+  "FoodName": "Salmon",
+  "Calories": 280,
+  "Fats": 18,
+  "Carbohydrates": 0,
+  "Protein": 26,
+  "ServingSize": "4 oz",
+  "NumServings": 2
+}
+
+{
+  "UserId": 1,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 13,
+  "FoodName": "Avocado",
+  "Calories": 160,
+  "Fats": 14.7,
+  "Carbohydrates": 8.5,
+  "Protein": 2,
+  "ServingSize": "1 avocado",
+  "NumServings": 1
+}

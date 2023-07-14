@@ -126,3 +126,45 @@
   "ServingSize": "1 avocado",
   "NumServings": 1
 }
+
+{
+  "UserId": 789,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 9,
+  "FoodName": "Brown Rice",
+  "Calories": 215,
+  "Fats": 1.8,
+  "Carbohydrates": 45,
+  "Protein": 5,
+  "ServingSize": "1 cup cooked",
+  "NumServings": 2
+}
+
+{
+  "UserId": 456,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 9,
+  "FoodName": "Chicken Breast",
+  "Calories": 165,
+  "Fats": 3.6,
+  "Carbohydrates": 0,
+  "Protein": 31,
+  "ServingSize": "4 oz",
+  "NumServings": 1
+}
+
+{
+  "UserId": 123,
+  "Year": 2023,
+  "Month": 7,
+  "Day": 9,
+  "FoodName": "Apple",
+  "Calories": 52,
+  "Fats": 0.2,
+  "Carbohydrates": 14,
+  "Protein": 0.3,
+  "ServingSize": "1 medium apple",
+  "NumServings": 1
+}

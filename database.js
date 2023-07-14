@@ -5,6 +5,125 @@ const request = require('supertest');
 const app = require('./server');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
+//**************************************New Implementations**************************************
+describe('checkSharedWord', () => {//check if the same keyword exists in multiple database entries
+    it('Checks if multiple items exist containing the same keyword', async () => {
+        const success = { error: "exists" };
+        const searchWord = "Salad"; // Shared word to search for
+        const res = await request(app)
+            .post('/api/checkFoodDatabaseDuplicate')
+            .send({ 'foodName': searchWord });
+        const hasSharedWord = res.body.some(item => item.name.includes(searchWord));
+        expect(hasSharedWord).to.be.true;
+    });
+});
+
+describe('jwtExpired', () => { //non-arbitrary version, no input
+  it('Should check if a JWT is expired', async () => {
+    const { accessToken } = createToken('user123');
+    await new Promise(resolve => setTimeout(resolve, 3600000));
+    const isExpired = isExpired(accessToken);
+		expect(isExpired).to.be.true;
+  });
+});
+
+describe('jwtRefresh', () => {//refreshes an expired json webtoken
+  it('Should refresh an expired JWT token', async () => {
+    const { accessToken } = createToken('user123');
+    const refreshedToken = refresh(accessToken);
+    const isExpired = isExpired(refreshedToken.accessToken);expect(isExpired).to.be.false;
+  });
+});
+
+describe('jwtVerifyOriginalExpiration ', () => {//create and verify original custom expiration of a json webtoken
+  it('Should create a JWT token with a custom expiration time and should verify the original expiration', async () => {
+    const customExpiration = '30m'; 
+    const { accessToken } = createToken('user123', { expiresIn: customExpiration });
+    const isExpired = isExpired(accessToken);
+    const decodedToken = jwt.decode(accessToken);
+    const originalExpiration = decodedToken.exp * 1000; 
+    expect(isExpired).to.be.true;
+    expect(originalExpiration).to.equal(Date.now() + parseDuration(customExpiration));
+  });
+});
+
+describe('jwtDetectInvalid', () => {//create invalid webtoken and verify it as invalid
+  it('Should detect an invalid JWT token', async () => {
+    const invalidToken = 'invalid-token';
+    const isExpiredOrInvalid = isExpired(invalidToken);
+    expect(isExpiredOrInvalid).to.be.true;
+  });
+});
+
+describe('addCard', () => {//create new card
+  it('Should create a new card document', async () => {
+    const cardData = {
+      UserId: 1,
+      Card: '3a2bcf28e48e9dcf0ea1a6f43f47ef81'
+    };
+
+    const card = await Card.create(cardData);
+    expect(card).to.exist;
+    expect(card.UserId).to.equal(1);
+    expect(card.Card).to.equal('3a2bcf28e48e9dcf0ea1a6f43f47ef81');
+  });
+});
+
+describe('addFood', () => {//create new food
+  it('Should create a new database food document', async () => {
+    const foodData = {
+      FoodName: 'Chicken Breast',
+      Calories: 120,
+      Fats: 2.5,
+      Carbohydrates: 0,
+      Protein: 26,
+      ServingSize: '100g'
+    };
+
+    const food = await DatabaseFood.create(foodData);
+    expect(food).to.exist;
+    expect(food.FoodName).to.equal('Chicken Breast');
+    expect(food.Calories).to.equal(120);
+    expect(food.Fats).to.equal(2.5);
+    expect(food.Carbohydrates).to.equal(0);
+    expect(food.Protein).to.equal(26);
+    expect(food.ServingSize).to.equal('100g');
+  });
+});
+
+describe('UserFood Model', () => {//create new userFood
+  it('Should create a new user food document', async () => {
+    const userFoodData = {
+      UserId: 1,
+      Year: 2023,
+      Month: 7,
+      Day: 13,
+      FoodName: 'Salmon',
+      Calories: 280,
+      Fats: 18,
+      Carbohydrates: 0,
+      Protein: 26,
+      ServingSize: '4 oz',
+      NumServings: 2
+    };
+
+    const userFood = await UserFood.create(userFoodData);
+    expect(userFood).to.exist;
+    expect(userFood.UserId).to.equal(1);
+    expect(userFood.Year).to.equal(2023);
+    expect(userFood.Month).to.equal(7);
+    expect(userFood.Day).to.equal(13);
+    expect(userFood.FoodName).to.equal('Salmon');
+    expect(userFood.Calories).to.equal(280);
+    expect(userFood.Fats).to.equal(18);
+    expect(userFood.Carbohydrates).to.equal(0);
+    expect(userFood.Protein).to.equal(26);
+    expect(userFood.ServingSize).to.equal('4 oz');
+    expect(userFood.NumServings).to.equal(2);
+  });
+});
+//**************************************End of New Implementations**************************************
+
 //**************************************start createJWT.js import**************************************
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -174,124 +293,6 @@ describe('login', () => {
         expect(res.body).deep.equal(loginSuccess);
     })
 })
-
-describe('checkSharedWord', () => {//check if the same keyword exists in multiple database entries
-    it('Checks if multiple items exist containing the same keyword', async () => {
-        const success = { error: "exists" };
-        const searchWord = "Salad"; // Shared word to search for
-        const res = await request(app)
-            .post('/api/checkFoodDatabaseDuplicate')
-            .send({ 'foodName': searchWord });
-        const hasSharedWord = res.body.some(item => item.name.includes(searchWord));
-        expect(hasSharedWord).to.be.true;
-    });
-});
-
-describe('jwtExpired', () => { //non-arbitrary version, no input
-  it('Should check if a JWT is expired', async () => {
-    const { accessToken } = createToken('user123');
-    await new Promise(resolve => setTimeout(resolve, 3600000));
-    const isExpired = isExpired(accessToken);
-		expect(isExpired).to.be.true;
-  });
-});
-
-describe('jwtRefresh', () => {//refreshes an expired json webtoken
-  it('Should refresh an expired JWT token', async () => {
-    const { accessToken } = createToken('user123');
-    const refreshedToken = refresh(accessToken);
-    const isExpired = isExpired(refreshedToken.accessToken);expect(isExpired).to.be.false;
-  });
-});
-
-describe('jwtVerifyOriginalExpiration ', () => {//create and verify original custom expiration of a json webtoken
-  it('Should create a JWT token with a custom expiration time and should verify the original expiration', async () => {
-    const customExpiration = '30m'; 
-    const { accessToken } = createToken('user123', { expiresIn: customExpiration });
-    const isExpired = isExpired(accessToken);
-    const decodedToken = jwt.decode(accessToken);
-    const originalExpiration = decodedToken.exp * 1000; 
-    expect(isExpired).to.be.true;
-    expect(originalExpiration).to.equal(Date.now() + parseDuration(customExpiration));
-  });
-});
-
-describe('jwtDetectInvalid', () => {//create invalid webtoken and verify it as invalid
-  it('Should detect an invalid JWT token', async () => {
-    const invalidToken = 'invalid-token';
-    const isExpiredOrInvalid = isExpired(invalidToken);
-    expect(isExpiredOrInvalid).to.be.true;
-  });
-});
-
-describe('addCard', () => {//create new card
-  it('Should create a new card document', async () => {
-    const cardData = {
-      UserId: 1,
-      Card: '3a2bcf28e48e9dcf0ea1a6f43f47ef81'
-    };
-
-    const card = await Card.create(cardData);
-    expect(card).to.exist;
-    expect(card.UserId).to.equal(1);
-    expect(card.Card).to.equal('3a2bcf28e48e9dcf0ea1a6f43f47ef81');
-  });
-});
-
-describe('addFood', () => {//create new food
-  it('Should create a new database food document', async () => {
-    const foodData = {
-      FoodName: 'Chicken Breast',
-      Calories: 120,
-      Fats: 2.5,
-      Carbohydrates: 0,
-      Protein: 26,
-      ServingSize: '100g'
-    };
-
-    const food = await DatabaseFood.create(foodData);
-    expect(food).to.exist;
-    expect(food.FoodName).to.equal('Chicken Breast');
-    expect(food.Calories).to.equal(120);
-    expect(food.Fats).to.equal(2.5);
-    expect(food.Carbohydrates).to.equal(0);
-    expect(food.Protein).to.equal(26);
-    expect(food.ServingSize).to.equal('100g');
-  });
-});
-
-describe('UserFood Model', () => {//create new userFood
-  it('Should create a new user food document', async () => {
-    const userFoodData = {
-      UserId: 1,
-      Year: 2023,
-      Month: 7,
-      Day: 13,
-      FoodName: 'Salmon',
-      Calories: 280,
-      Fats: 18,
-      Carbohydrates: 0,
-      Protein: 26,
-      ServingSize: '4 oz',
-      NumServings: 2
-    };
-
-    const userFood = await UserFood.create(userFoodData);
-    expect(userFood).to.exist;
-    expect(userFood.UserId).to.equal(1);
-    expect(userFood.Year).to.equal(2023);
-    expect(userFood.Month).to.equal(7);
-    expect(userFood.Day).to.equal(13);
-    expect(userFood.FoodName).to.equal('Salmon');
-    expect(userFood.Calories).to.equal(280);
-    expect(userFood.Fats).to.equal(18);
-    expect(userFood.Carbohydrates).to.equal(0);
-    expect(userFood.Protein).to.equal(26);
-    expect(userFood.ServingSize).to.equal('4 oz');
-    expect(userFood.NumServings).to.equal(2);
-  });
-});
-
 /*
 describe('getUserMealPlan', () => {
     it('Returns a user\'s meal plan as a JSON object', () => {

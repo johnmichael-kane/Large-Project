@@ -5,7 +5,7 @@ const request = require('supertest');
 const app = require('./server');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
-//**************************************New Implementations**************************************
+//**************************************Begin New Implementations**************************************
 describe('checkSharedWord', () => {//check if the same keyword exists in multiple database entries
     it('Checks if multiple items exist containing the same keyword', async () => {
         const success = { error: "exists" };
@@ -122,7 +122,7 @@ describe('UserFood Model', () => {//create new userFood
     expect(userFood.NumServings).to.equal(2);
   });
 });
-//**************************************End of New Implementations**************************************
+//**************************************End New Implementations**************************************
 
 //**************************************start createJWT.js import**************************************
 const jwt = require("jsonwebtoken");

@@ -93,7 +93,7 @@ describe('Contains Keyword', () => {
     await connection.close();
   });
 
-  it('Should find foods containing a specific string in the FoodName field', async () => {
+  it('Should find all foods in the Foods collection that contain a specific keyword', async () => {
     const searchString = 'milk';
     const searchRegex = new RegExp(searchString, 'i');
 
@@ -115,31 +115,29 @@ describe('Contains Keyword', () => {
 
 
 describe('Refresh JWT', () => {
-  it('should refresh an expired JWT token', (done) => {
-    // Create an expired token
-    const expiration = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
+  it('should refresh an expired JWT token and decode it', (done) => {
+    const expiration = Math.floor(Date.now() / 1000) - 3600; 
     const payload = { userId: '123', exp: expiration };
-    const secretKey = 'your-secret-key'; // Replace with your own secret key
+    const secretKey = 'secret-key'; 
     const expiredToken = jwt.sign(payload, secretKey);
 console.log(' ');
     console.log('Expired Token:', expiredToken);
 
-    // Wait for the token to expire
+    
     setTimeout(() => {
-      // Refresh the token by decoding the expired token and signing a new token with an updated expiration time
+      
       const decoded = jwt.decode(expiredToken);
-      decoded.exp = Math.floor(Date.now() / 1000) + 3600; // Set a new expiration time (1 hour from now)
+      decoded.exp = Math.floor(Date.now() / 1000) + 3600; 
       const refreshedToken = jwt.sign(decoded, secretKey);
      console.log(' ');
       console.log('Refreshed Token:', refreshedToken);
 console.log(' ');
-      // Verify that the refreshed token is valid and not expired
       jwt.verify(refreshedToken, secretKey, (verifyErr, decodedToken) => {
         expect(verifyErr).to.be.null;
         console.log('Decoded Token:', decodedToken);
         done();
       });
-    }, 1000); // Wait for 1 second for the token to expire
+    }, 1000); 
   });
 });
 

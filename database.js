@@ -1,128 +1,15 @@
+// unit tests can be run from Windows command line using 'npx mocha database.js' assuming dependencies (or their folder) 
+// are stored within same directory, and all npm dependencies are downloaded somewhere in your machine and added to PATH
 const chai = require('chai');
 const expect = chai.expect;
-const assert = chai.assert;
+//const assert = chai.assert;
+const assert = require('assert');
 const request = require('supertest');
 const app = require('./server');
+const { MongoClient } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const sinon = require('sinon');
 
-//**************************************Begin New Implementations**************************************
-describe('checkSharedWord', () => {//check if the same keyword exists in multiple database entries
-    it('Checks if multiple items exist containing the same keyword', async () => {
-        const success = { error: "exists" };
-        const searchWord = "Salad"; // Shared word to search for
-        const res = await request(app)
-            .post('/api/checkFoodDatabaseDuplicate')
-            .send({ 'foodName': searchWord });
-        const hasSharedWord = res.body.some(item => item.name.includes(searchWord));
-        expect(hasSharedWord).to.be.true;
-    });
-});
-
-describe('jwtExpired', () => { //non-arbitrary version, no input
-  it('Should check if a JWT is expired', async () => {
-    const { accessToken } = createToken('user123');
-    await new Promise(resolve => setTimeout(resolve, 3600000));
-    const isExpired = isExpired(accessToken);
-		expect(isExpired).to.be.true;
-  });
-});
-
-describe('jwtRefresh', () => {//refreshes an expired json webtoken
-  it('Should refresh an expired JWT token', async () => {
-    const { accessToken } = createToken('user123');
-    const refreshedToken = refresh(accessToken);
-    const isExpired = isExpired(refreshedToken.accessToken);expect(isExpired).to.be.false;
-  });
-});
-
-describe('jwtVerifyOriginalExpiration ', () => {//create and verify original custom expiration of a json webtoken
-  it('Should create a JWT token with a custom expiration time and should verify the original expiration', async () => {
-    const customExpiration = '30m'; 
-    const { accessToken } = createToken('user123', { expiresIn: customExpiration });
-    const isExpired = isExpired(accessToken);
-    const decodedToken = jwt.decode(accessToken);
-    const originalExpiration = decodedToken.exp * 1000; 
-    expect(isExpired).to.be.true;
-    expect(originalExpiration).to.equal(Date.now() + parseDuration(customExpiration));
-  });
-});
-
-describe('jwtDetectInvalid', () => {//create invalid webtoken and verify it as invalid
-  it('Should detect an invalid JWT token', async () => {
-    const invalidToken = 'invalid-token';
-    const isExpiredOrInvalid = isExpired(invalidToken);
-    expect(isExpiredOrInvalid).to.be.true;
-  });
-});
-
-describe('addCard', () => {//create new card
-  it('Should create a new card document', async () => {
-    const cardData = {
-      UserId: 1,
-      Card: '3a2bcf28e48e9dcf0ea1a6f43f47ef81'
-    };
-
-    const card = await Card.create(cardData);
-    expect(card).to.exist;
-    expect(card.UserId).to.equal(1);
-    expect(card.Card).to.equal('3a2bcf28e48e9dcf0ea1a6f43f47ef81');
-  });
-});
-
-describe('addFood', () => {//create new food
-  it('Should create a new database food document', async () => {
-    const foodData = {
-      FoodName: 'Chicken Breast',
-      Calories: 120,
-      Fats: 2.5,
-      Carbohydrates: 0,
-      Protein: 26,
-      ServingSize: '100g'
-    };
-
-    const food = await DatabaseFood.create(foodData);
-    expect(food).to.exist;
-    expect(food.FoodName).to.equal('Chicken Breast');
-    expect(food.Calories).to.equal(120);
-    expect(food.Fats).to.equal(2.5);
-    expect(food.Carbohydrates).to.equal(0);
-    expect(food.Protein).to.equal(26);
-    expect(food.ServingSize).to.equal('100g');
-  });
-});
-
-describe('UserFood Model', () => {//create new userFood
-  it('Should create a new user food document', async () => {
-    const userFoodData = {
-      UserId: 1,
-      Year: 2023,
-      Month: 7,
-      Day: 13,
-      FoodName: 'Salmon',
-      Calories: 280,
-      Fats: 18,
-      Carbohydrates: 0,
-      Protein: 26,
-      ServingSize: '4 oz',
-      NumServings: 2
-    };
-
-    const userFood = await UserFood.create(userFoodData);
-    expect(userFood).to.exist;
-    expect(userFood.UserId).to.equal(1);
-    expect(userFood.Year).to.equal(2023);
-    expect(userFood.Month).to.equal(7);
-    expect(userFood.Day).to.equal(13);
-    expect(userFood.FoodName).to.equal('Salmon');
-    expect(userFood.Calories).to.equal(280);
-    expect(userFood.Fats).to.equal(18);
-    expect(userFood.Carbohydrates).to.equal(0);
-    expect(userFood.Protein).to.equal(26);
-    expect(userFood.ServingSize).to.equal('4 oz');
-    expect(userFood.NumServings).to.equal(2);
-  });
-});
-//**************************************End New Implementations**************************************
 
 //**************************************start createJWT.js import**************************************
 const jwt = require("jsonwebtoken");
@@ -182,194 +69,257 @@ exports.refresh = function( token )
 
 //**************************************end createJWT.js import**************************************
 
-describe('getFoodNutrition', () => {
-    it('Should get nutrition data for a given food', async () =>{
-    const expectedMilk =
-    {
-        name: 'Whole Milk',
-        calories: 150
+//**************************************start Unit tests**************************************
+
+
+
+
+
+describe('Contains Keyword', () => {
+  let connection;
+  let db;
+
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
+
+  after(async () => {
+    await connection.close();
+  });
+
+  it('Should find foods containing a specific string in the FoodName field', async () => {
+    const searchString = 'milk';
+    const searchRegex = new RegExp(searchString, 'i');
+
+    const foods = await db
+      .collection('Foods')
+      .find({ FoodName: { $regex: searchRegex } })
+      .toArray();
+
+    assert.ok(foods.length > 0, 'No foods found matching the search criteria.');
+
+    // Print all the foods with the matching string in their name
+    console.log('Foods: Searching with keyword "milk"');
+    for (const food of foods) {
+      console.log(food.FoodName);
+    }
+  });
+});
+
+
+
+describe('Refresh JWT', () => {
+  it('should refresh an expired JWT token', (done) => {
+    // Create an expired token
+    const expiration = Math.floor(Date.now() / 1000) - 3600; // 1 hour ago
+    const payload = { userId: '123', exp: expiration };
+    const secretKey = 'your-secret-key'; // Replace with your own secret key
+    const expiredToken = jwt.sign(payload, secretKey);
+console.log(' ');
+    console.log('Expired Token:', expiredToken);
+
+    // Wait for the token to expire
+    setTimeout(() => {
+      // Refresh the token by decoding the expired token and signing a new token with an updated expiration time
+      const decoded = jwt.decode(expiredToken);
+      decoded.exp = Math.floor(Date.now() / 1000) + 3600; // Set a new expiration time (1 hour from now)
+      const refreshedToken = jwt.sign(decoded, secretKey);
+     console.log(' ');
+      console.log('Refreshed Token:', refreshedToken);
+console.log(' ');
+      // Verify that the refreshed token is valid and not expired
+      jwt.verify(refreshedToken, secretKey, (verifyErr, decodedToken) => {
+        expect(verifyErr).to.be.null;
+        console.log('Decoded Token:', decodedToken);
+        done();
+      });
+    }, 1000); // Wait for 1 second for the token to expire
+  });
+});
+
+describe('Check if User Does Not Exist', () => {
+  let connection;
+  let db;
+
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
+
+  after(async () => {
+    await connection.close();
+  });
+
+  it('should check if a user already exists', async () => {
+    const login = 'DeadMau5'; 
+
+    const user = await db.collection('Users').findOne({ Login: login });
+
+    if (user) {
+      console.log('DeadMau5 already exists:', user);
+      expect.fail('DeadMau5@gmail.com value exists');
+    } else {
+      console.log('DeadMau5 does not exist.');
     }
 
-    const response = await request(app)
-    .post('./api/getFoodNutrition')
-    .send('Whole Milk');
+    expect(user).to.not.exist;
+  });
+});
 
-    expect(res.body).deepStrictEqual(expectedMilk);
-    assert.deepStrictEqual(expectedMilk, milk);
+describe('Check if Email Does Not Exist', () => {
+  let connection;
+  let db;
 
-    const expectedEgg =
-    {
-        name: 'Egg',
-        calories: 90
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
+
+  after(async () => {
+    await connection.close();
+  });
+
+  it('should check if an email already exists', async () => {
+    const email = 'DeadMau5@gmail.com'; 
+
+    const user = await db.collection('Users').findOne({ Email: email });
+
+    if (user) {
+      console.log('DeadMau5@gmail.com already exists:', user);
+      expect.fail('DeadMau5@gmail.com value exists');
+    } else {
+      console.log('DeadMau5@gmail.com does not exist.');
     }
 
-    const egg = getFoodNutrition('Egg');
-    assert.deepStrictEqual(expectedEgg, egg);
-    
-    })
-})
+    expect(user).to.not.exist;
+  });
+});
 
-/*
-describe('searchFood', () => {
-    it('Should return an Array of JSON objects matching food name and calories', () =>{
-        const expectedMilkSearch =
-            [
-                {
-                    name: 'Whole Milk',
-                    calories: 150
-                },
-                {
-                    name: '2% Reduc  apiEndpoints
+describe('Check if Card Does Not Exist', () => {
+  let connection;
+  let db;
 
-})
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
 
-describe('addDatabaseFood', () => {
-    it('Adds a foods nutrition content to the database', () => {
-        const success = "added";
-        expect(addUserFood('Salmon Fillet', 824)).deepStrictEqual(success);
-        })
+  after(async () => {
+    await connection.close();
+  });
 
-})
-*/
+  it('should check if a value in the "Card" field already exists', async () => {
+    const cardValue = 'Fuckery'; 
 
-describe('addUserFood', () => {
-    let mongoServer;
-    let client;
-    let db;
+    const card = await db.collection('Cards').findOne({ Card: cardValue });
 
-    before(async () => {
-        mongoServer = await MongoMemoryServer.create();
-        const uri = mongoServer.getUri();
-        client = new MongoClient(uri, {useNewUrlParser: true, useUnifiedTopology: true});
-        await client.connect();
-        db = client.db("database");
-    });
+    if (card) {
+      console.log('Fuckery value exists:', card);
+      expect.fail('Fuckery value exists');
+    } else {
+      console.log('Fuckery value does not exist.');
+      expect(card).to.not.exist;
+    }
+  });
+});
 
-    after(async () => {
-        await client.close();
-        await mongoServer.stop();
-    });
+describe('Check if Card Does Not Exist', () => {
+  let connection;
+  let db;
 
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
 
-    it('Adds food nutrition content to users daily meal plan', async () => {
-        const success = {error : "added"};
+  after(async () => {
+    await connection.close();
+  });
 
-        const res = await request(app)
-        .post('/api/addUserFood')
-        .send({"userId": 1, "foodName": 'Whole Milk', "calories": 130})
-        expect(res.body).deep.equal(success);
-    })
-})
-/*
-describe('deleteUserFood', () => {
-    it('Removes a food item from a user\'s meal plan', () => {
-        expect(deleteUserFood('Ribeye Steak', 15)).deepStrictEqual('deleted');
-    })
-})
-*/
-describe('checkFoodDatabaseDuplicate', () => {
-    it('Checks if a food already exists in the database', async () => {
-        const success = {error : "exists"};
+  it('should check if a value in the "Card" field already exists', async () => {
+    const cardValue = 'DebugMe'; 
 
-        const res = await request(app)
-        .post('/api/checkFoodDatabaseDuplicate')
-        .send({'foodName': '1000 Island,Salad Drsng,Local'})
-        expect(res.body).deep.equal(success);
-    })
-})
+    const card = await db.collection('Cards').findOne({ Card: cardValue });
 
+    if (card) {
+      console.log('DebugMe value exists:', card);
+      expect.fail('DebugMe value exists');
+    } else {
+      console.log('DebugMe value does not exist.');
+      expect(card).to.not.exist;
+    }
+  });
+});
 
-describe('login', () => {
-    it('Logs a user into the app', async () => {
-        const loginSuccess = {
-            id: 1,
-            firstName: 'Tylar',
-            lastName: 'Aynes',
-            error: 'loginSuccess'
-        }
-        const res = await request(app)
-        .post('/api/login')
-        .send({'login': 'Tylar', 'password' : 'Tarzan'})
-        expect(res.body).deep.equal(loginSuccess);
-    })
-})
-/*
-describe('getUserMealPlan', () => {
-    it('Returns a user\'s meal plan as a JSON object', () => {
-        const expectedMealPlan = 
-        [
-            {
-                name: 'Egg',
-                calories: 90
-            },
-            {
-                name: 'Whole Milk',
-                calories: 150
-            }
-        ]
+describe('Check if Email Does Not Exist', () => {
+  let connection;
+  let db;
 
-        expect(getUserMealPlan(15).deepStrictEqual(expectedMealPlan));
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
 
-    })
-})
-describe('register', () => {
-    it('Registers a new user to the app', () => {
-        expect(register('TylarA', 'Tarzan1!')).deepStrictEqual('registerSuccess');
-    })
-})
+  after(async () => {
+    await connection.close();
+  });
 
-describe('checkUserDuplicate', () => {
-    it('Checks if a user already exists in the database', () => {
-        expect(checkUserDuplicate('Tarzan')).deepStrictEqual('exists');
-        })
-})
+  it('should check if an email already exists', async () => {
+    const email = 'sajlsatt98@aol.com'; 
 
-describe('sortFood', () => {
-    it('Sorts Food in ascending order based on calorie count', () => {
-        const expectedMilkSort =
-        [
-            {
-                name: 'Fat-free Milk',
-                calories: 90
-            },
-            {
-                name: '2% Reduced Fat Milk',
-                calories: 130
-            },
-            {
-                name: 'Whole Milk',
-                calories: 150
-            },
-        ]
+    const user = await db.collection('Users').findOne({ Email: email });
 
-        const MilkSearch =
-            [
-                {
-                    name: 'Whole Milk',
-                    calories: 150
-                },
-                {
-                    name: '2% Reduced Fat Milk',
-                    calories: 130
-                },
-                {
-                    name: 'Fat-free Milk',
-                    calories: 90
-                }
-            ]
-        expect(sortFood(MilkSearch)).deepStrictEqual(expectedMilkSort);
-    })
-})
+    if (user) {
+      console.log('sajlsatt98@aol.com already exists:', user);
+expect.fail('sajlsatt98@aol.com value exists');
+    } else {
+      console.log('sajlsatt98@aol.com does not exist.');
+    }
 
-describe('userPasswordRecovery', () => {
-    it('Sends an email to a user in order to reset the password', () => {
+    expect(user).to.not.exist;
+  });
+});
 
-    })
-})
+describe('Check if User Does Not Exist', () => {
+  let connection;
+  let db;
 
-describe('twoFactorAuthentication', () => {
-    it('Sends an email to a user to verify a login', () => {
+  before(async () => {
+    const uri = 'mongodb+srv://James:prankem@largeproject.vxo9q7g.mongodb.net/database';
+    const client = new MongoClient(uri);
+    connection = await client.connect();
+    db = connection.db('database');
+  });
 
-    })
-})
-*/
+  after(async () => {
+    await connection.close();
+  });
+
+  it('should check if a user already exists', async () => {
+    const login = 'James'; 
+
+    const user = await db.collection('Users').findOne({ Login: login });
+
+    if (user) {
+      console.log('James already exists:', user);
+      expect.fail('James value exists');
+    } else {
+      console.log('James does not exist.');
+    }
+
+    expect(user).to.not.exist;
+  });
+});

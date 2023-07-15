@@ -1,7 +1,7 @@
 // unit tests can be run from Windows command line using 'npx mocha database.js' assuming dependencies (or their folder) 
 // are stored within same directory, and all npm dependencies are downloaded somewhere in your machine and added to PATH
 
-//The last 3 units tests fail by design!
+//The last 3 unit tests fail by design!
 const chai = require('chai');
 const expect = chai.expect;
 //const assert = chai.assert;

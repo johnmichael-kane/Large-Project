@@ -12,11 +12,11 @@ const app = require('./server');
 const { MongoClient } = require('mongodb');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const sinon = require('sinon');
-
-
-//**************************************start createJWT.js import**************************************
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
+//**************************************start createJWT.js import**************************************
+
 
 exports.createToken = function (id)
 {

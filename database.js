@@ -1,7 +1,7 @@
 // unit tests can be run from Windows command line using 'npx mocha database.js' assuming dependencies (or their folder) 
 // are stored within same directory, and all npm dependencies are downloaded somewhere in your machine and added to PATH
 // generally, you install npm dependencies by doing 'npm install x' in the command line 
-// MAKE SURE YOUR COMMAND LINE IS CD'D TO THE SAME DIRECTORY AS DATABASE.JS WHEN INSTALLING NPM DEPENDENCIES
+// MAKE SURE YOUR COMMAND LINE IS CD'D TO THE SAME DIRECTORY AS DATABASE.JS WHEN INSTALLING DEPENDENCIES
 
 //The last 3 unit tests fail by design!
 

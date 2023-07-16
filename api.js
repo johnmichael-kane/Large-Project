@@ -1,13 +1,59 @@
 //add the new serving size amount from userFood
 //assign the date 
-
+const user = require('./models/user.js');
+const Token = require("./models/Token.js");
 const { JsonWebTokenError } = require('jsonwebtoken');
+const sendEmail = require("./sendEmail");
+const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 
 require('express');
 require('mongodb');
 
 exports.setApp = function(app, client) {
 
+  app.post('/api/resetPassword',  async (req, res, next) => {
+    const {email, newPassword, code} = req.body;
+    const db = client.db("database");
+    const users = db.collection("Users");
+    
+    theEmail = await users.find({"Email" : email}).toArray();
+    console.log(theEmail.length);
+    query = {Email : theEmail[0].Email}
+    newPass = {$set: {"Password" : newPassword}}
+  
+    const result = await users.updateOne(query, newPass);
+    res.status(200).json({error: 'worked'});
+  });
+
+  app.post("/api/requestResetPassword", async (req, res, next) => 
+  {
+    const{email} = req.body;
+    const db = client.db("database");
+    const resetUser = await db.collection('Users').findOne({"Email": email});
+
+    if (!resetUser)
+      res.status(200).json({error :  'Email does not exist.'});
+  
+    let token = await db.collection('Tokens').find({"UserId": email});
+    if (token) console.log('there\'s a token')
+      await db.collection('Tokens').remove({"Email" : email});
+
+    creation = Date.now();
+    expiration = creation + 1800000;
+
+    let resetToken = crypto.randomBytes(32).toString("hex");
+    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+    const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+    const result = await db.collection('Tokens').insertOne(newToken);
+  
+    const link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${email}`;
+  
+    // sendEmail(email, link);
+    var ret = { error: 'email sent', link: link};
+    res.status(200).json(ret);
+  });
+	
 app.post('/api/addUserFood', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories

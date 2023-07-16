@@ -22,9 +22,9 @@ export default function TabTwoScreen() {
       source={require("C:/Users/Draco/NutritionApp/assets/images/startscreenbackground.jpg")}
       style={styles.backgroundImage}
     >
-      <Text style={styles.title}>Welcome! Please log in or register.</Text>
-      <View style={styles.usernameview}>
-        <Text>UserName:</Text>
+      <Text style={styles.title}>Register</Text>
+      <View style={styles.usernamealignment}>
+        <Text style={styles.usernamelabel}>UserName:</Text>
         <TextInput
           style={styles.usernameinput}
           placeholder="Username"
@@ -32,8 +32,8 @@ export default function TabTwoScreen() {
           onChangeText={onUserNameChange}
         ></TextInput>
       </View>
-      <View style={styles.passwordview}>
-        <Text>Password:</Text>
+      <View style={styles.passwordalignment}>
+        <Text style={styles.passwordlabel}>Password:</Text>
         <TextInput
           style={styles.passwordinput}
           placeholder="Password"
@@ -90,12 +90,28 @@ const styles = StyleSheet.create({
     alignContent: "center",
     top: 200,
   },
-  usernameinput: {
-    color: "black",
+  usernamelabel: {
+    color: "white",
     backgroundColor: "grey",
   },
-  passwordview: {
-    position: "absolute",
+  usernamealignment: {
+    alignContent: "center",
+    justifyContent: "space-evenly",
+    flexDirection: "row",
+    top: 200,
+  },
+  usernameinput: {
+    color: "white",
+    backgroundColor: "grey",
+  },
+  passwordlabel: {
+    color: "white",
+    backgroundColor: "grey",
+  },
+  passwordalignment: {
+    alignContent: "center",
+    justifyContent: "space-evenly",
+    flexDirection: "row",
     top: 230,
   },
   passwordinput: {

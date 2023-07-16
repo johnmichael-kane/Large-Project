@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import { Text, View } from "../../components/Themed";
-import { User, Food } from "../../API/UserModel";
+import { User, Food } from "../../API/APIModels";
 import React from "react";
 import { useNavigation } from "expo-router";
 import md5 from "../js/md5";

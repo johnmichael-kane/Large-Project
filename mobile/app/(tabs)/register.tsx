@@ -13,16 +13,8 @@ export default function TabTwoScreen() {
   const [UserName, onUserNameChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
   const [ConfirmPassword, onConfirmPasswordChange] = React.useState("");
-  const Login = () => {
+  const Register = () => {
     //check if username and password match a valid user in the database, and if so transition to the login screen
-    alert(
-      "Button Pressed, Username: " +
-        UserName +
-        " Password: " +
-        Password +
-        " Confirm Password: " +
-        ConfirmPassword
-    );
   };
   return (
     <ImageBackground
@@ -58,8 +50,8 @@ export default function TabTwoScreen() {
           onChangeText={onConfirmPasswordChange}
         ></TextInput>
       </View>
-      <View style={{ alignContent: "center", position: "absolute", top: 260 }}>
-        <Button title="Login" onPress={Login} color={"green"} />
+      <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
+        <Button title="Login" onPress={Register} color={"green"} />
       </View>
     </ImageBackground>
   );

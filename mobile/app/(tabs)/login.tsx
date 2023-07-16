@@ -44,8 +44,8 @@ export default function TabOneScreen() {
             jsonObject.Password,
             jsonObject.CalorieGoal
           );
+          //transition to big list page, assuming this code works
         }
-        xhr.send(jsonPayload);
       };
     } catch (err) {
       alert("ERROR");
@@ -63,22 +63,24 @@ export default function TabOneScreen() {
       source={require("C:/Users/Draco/NutritionApp/assets/images/startscreenbackground.jpg")}
       style={styles.backgroundImage}
     >
-      <Text style={styles.title}>Welcome! Please log in or register.</Text>
-      <View>
+      <Text style={styles.title}>Log In</Text>
+      <View style={styles.usernamealignment}>
+        <Text style={styles.usernamelabel}>Email: </Text>
         <TextInput
-          style={styles.username}
+          style={styles.usernameinput}
           placeholder="Email"
           onChangeText={onEmailAddressChange}
         ></TextInput>
       </View>
-      <View>
+      <View style={styles.passwordalignment}>
+        <Text style={styles.passwordlabel}>Password: </Text>
         <TextInput
-          style={styles.password}
+          style={styles.passwordinput}
           placeholder="Password"
           onChangeText={onPasswordChange}
         ></TextInput>
       </View>
-      <View style={{ alignContent: "center", position: "absolute", top: 260 }}>
+      <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
         <Button title="Login" onPress={Login} color={"green"} />
       </View>
     </ImageBackground>
@@ -113,15 +115,31 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  username: {
-    position: "absolute",
-    top: 200,
-    color: "black",
+  usernamelabel: {
+    color: "white",
     backgroundColor: "grey",
   },
-  password: {
-    position: "absolute",
+  usernamealignment: {
+    alignContent: "center",
+    justifyContent: "space-evenly",
+    flexDirection: "row",
+    top: 200,
+  },
+  usernameinput: {
+    color: "white",
+    backgroundColor: "grey",
+  },
+  passwordlabel: {
+    color: "white",
+    backgroundColor: "grey",
+  },
+  passwordalignment: {
+    alignContent: "center",
+    justifyContent: "space-evenly",
+    flexDirection: "row",
     top: 230,
+  },
+  passwordinput: {
     color: "black",
     backgroundColor: "grey",
   },

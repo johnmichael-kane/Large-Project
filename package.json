@@ -6,17 +6,24 @@
     "scripts": {
         "start": "node server.js",
         "heroku-postbuild": " NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend",
-        "test": "mocha ./apiUnitTests.js"
+        "test": "mocha ./database.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^5.1.0",
         "body-parser": "^1.20.2",
         "chai": "^4.3.7",
         "cors": "^2.8.5",
         "dotenv": "^16.3.1",
         "express": "^4.18.2",
+        "handlebars": "^4.7.7",
         "jsonwebtoken": "^9.0.1",
+        "mockgoose": "^8.0.4",
+        "mongoose": "^7.3.4",
+        "nodemailer": "^6.9.3",
+        "nodemon": "^3.0.1",
+        "react-jwt": "^1.2.0",
         "supertest": "^6.3.3"
     },
     "devDependencies": {

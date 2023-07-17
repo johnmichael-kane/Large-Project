@@ -35,38 +35,12 @@ const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
 );
 
 export default function BigList(foods: Food[], user: User) {
-  const myItemSeparator = () => {
-    return (
-      <View
-        style={{ height: 1, backgroundColor: "gray", marginHorizontal: 10 }}
-      />
-    );
-  };
-  const myListEmpty = () => {
-    return (
-      <View style={{ alignItems: "center" }}>
-        <Text style={styles.item}>No data found</Text>
-      </View>
-    );
-  };
-
   const [selectedId, setSelectedId] = useState<string>();
-  let totalCalories = 0;
-  let totalCarbs = 0;
-  let totalFats = 0;
-  let totalProtein = 0;
-  const calculateTotalValues = () => {
-    for (let i = 0; i < foods.length; i++) {
-      totalCalories += foods[i].Calories;
-      totalCarbs += foods[i].Carbs;
-      totalFats += foods[i].Fats;
-      totalProtein += foods[i].Protein;
-    }
-  };
-  const caloriecolor = totalCalories > user.CalorieGoal ? "red" : "black";
+
   const renderItem = ({ item }: { item: Food }) => {
     const backgroundColor = item.FoodName === selectedId ? "black" : "white";
     const color = item.FoodName === selectedId ? "white" : "black";
+
     return (
       <Item
         item={item}
@@ -84,26 +58,7 @@ export default function BigList(foods: Food[], user: User) {
         renderItem={renderItem}
         keyExtractor={(item) => item.FoodName}
         extraData={selectedId}
-        ItemSeparatorComponent={myItemSeparator}
-        ListEmptyComponent={myListEmpty}
-        ListHeaderComponent={() => (
-          <Text
-            style={{
-              fontSize: 30,
-              textAlign: "center",
-              marginTop: 20,
-              fontWeight: "bold",
-              textDecorationLine: "underline",
-            }}
-          >
-            All Food Items
-          </Text>
-        )}
       />
-      <View>
-        <Text>Calorie total: {totalCalories}</Text>
-        <Text style={}>Calorie Goal: {user.CalorieGoal}</Text>
-      </View>
     </SafeAreaView>
   );
 }

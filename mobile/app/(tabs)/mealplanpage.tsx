@@ -49,24 +49,12 @@ export default function BigList(foods: Food[], user: User) {
       </View>
     );
   };
-
   const [selectedId, setSelectedId] = useState<string>();
-  let totalCalories = 0;
-  let totalCarbs = 0;
-  let totalFats = 0;
-  let totalProtein = 0;
-  const calculateTotalValues = () => {
-    for (let i = 0; i < foods.length; i++) {
-      totalCalories += foods[i].Calories;
-      totalCarbs += foods[i].Carbs;
-      totalFats += foods[i].Fats;
-      totalProtein += foods[i].Protein;
-    }
-  };
-  const caloriecolor = totalCalories > user.CalorieGoal ? "red" : "black";
+
   const renderItem = ({ item }: { item: Food }) => {
     const backgroundColor = item.FoodName === selectedId ? "black" : "white";
     const color = item.FoodName === selectedId ? "white" : "black";
+
     return (
       <Item
         item={item}
@@ -96,14 +84,10 @@ export default function BigList(foods: Food[], user: User) {
               textDecorationLine: "underline",
             }}
           >
-            All Food Items
+            Meal Plan
           </Text>
         )}
       />
-      <View>
-        <Text>Calorie total: {totalCalories}</Text>
-        <Text style={}>Calorie Goal: {user.CalorieGoal}</Text>
-      </View>
     </SafeAreaView>
   );
 }

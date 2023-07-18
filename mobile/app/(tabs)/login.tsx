@@ -22,40 +22,13 @@ export default function TabOneScreen() {
   const [Password, onPasswordChange] = React.useState("");
 
   const Login = () => {
-    //check if username and password match a valid user in the database, and if so transition to the login screen
-    var hash = md5(Password);
-    let tmp = { Email: EmailAddress, Password: hash };
-    let jsonPayload = JSON.stringify(tmp);
-    let url = urlBase + "/Login." + extension;
-    let user: User;
-    let xhr = new XMLHttpRequest();
-
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-    try {
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          let jsonObject = JSON.parse(xhr.responseText);
-          if (jsonObject.EmailAddress === null)
-            alert("No user was found for that email and password.");
-
-          user = new User(
-            jsonObject.EmailAddress,
-            jsonObject.Password,
-            jsonObject.CalorieGoal
-          );
-          //transition to big list page, assuming this code works
-        }
-      };
-    } catch (err) {
-      alert("ERROR");
-    }
+    //use an API call to check if the user is logged in, and if so navigate to the biglist page otherwise use an alert to tell the user incorrect email or password entered
   };
   const GetBigList = () => {
-    //Get the entire list of meals
+    //Get the entire list of meals through an API call, parse the information and store it into an array of class food
   };
   const GetMealPlan = () => {
-    //Get the user's meal plan, parse the information and store it in the equivalent arrays
+    //Get the user's meal plan through an API Call, parse the information and store it in the equivalent arrays
   };
   return (
     <ImageBackground

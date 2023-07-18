@@ -15,26 +15,25 @@ import { useNavigation } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 
-type ItemProps = {
-  item: Food;
-  onPress: () => void;
-  backgroundColor: string;
-  textColor: string;
-};
-
-const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
-  <TouchableOpacity
+export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
+  const [selectedId, setSelectedId] = useState<string>();
+  type ItemProps = {
+    item: Food;
     //change this to send the food item to the user's meal plan through an API call
-    onPress={onPress}
-    style={[styles.item, { backgroundColor }]}
-  >
-    <Text style={[styles.data, { color: textColor }]}>
-      {item.FoodName}, Calories: {item.Calories}
-    </Text>
-  </TouchableOpacity>
-);
-
-export default function BigList(foods: Food[], user: User) {
+    onPress: () => void;
+    backgroundColor: string;
+    textColor: string;
+  };
+  const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.item, { backgroundColor }]}
+    >
+      <Text style={[styles.data, { color: textColor }]}>
+        {item.FoodName}, Calories: {item.Calories}
+      </Text>
+    </TouchableOpacity>
+  );
   const myItemSeparator = () => {
     return (
       <View
@@ -49,7 +48,6 @@ export default function BigList(foods: Food[], user: User) {
       </View>
     );
   };
-  const [selectedId, setSelectedId] = useState<string>();
   const renderItem = ({ item }: { item: Food }) => {
     const backgroundColor = item.FoodName === selectedId ? "black" : "white";
     const color = item.FoodName === selectedId ? "white" : "black";

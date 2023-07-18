@@ -14,8 +14,17 @@ export default function SettingsPage(user: User) {
   const [CalorieGoal, onCalorieGoalChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
   const [ConfirmPassword, onConfirmPasswordChange] = React.useState("");
-  const Register = () => {
-    //check if username and password match a valid user in the database, and if so transition to the login screen
+  const UpdateSettings = () => {
+    if (user.CalorieGoal != parseInt(CalorieGoal)) {
+      //Update the user's calorie goal and update the database with the new calorie goal
+      user.CalorieGoal = parseInt(CalorieGoal);
+      //write api call here
+    }
+    if (user.Password != Password && ConfirmPassword != Password) {
+      alert("New passwords do not match.");
+    } else if (user.Password != Password && ConfirmPassword === Password) {
+      //Password reset stuff goes here, this might have to go to another page
+    }
   };
   return (
     <View>
@@ -48,7 +57,11 @@ export default function SettingsPage(user: User) {
         ></TextInput>
       </View>
       <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
-        <Button title="Login" onPress={Register} color={"green"} />
+        <Button
+          title="Save Settings"
+          onPress={UpdateSettings}
+          color={"green"}
+        />
       </View>
     </View>
   );

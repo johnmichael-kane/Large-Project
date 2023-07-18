@@ -76,28 +76,38 @@ exports.setApp = function(app, client) {
   app.post("/api/requestEmailAuthorization", async (req, res, next) => 
   {
     const{email} = req.body;
+    console.log(email);
     const db = client.db("database");
     const resetUser = await db.collection('Users').findOne({"Email": email});
-
+    var ret;
+    console.log('im here')
     if (!resetUser)
-      res.status(200).json({error :  'Email does not exist.'});
+    {
+      ret = {error :  'Email does not exist.'};
+      console.log('im here2')
+    }
+    else
+    {
+      console.log('im here3')
+      let token = await db.collection('Tokens').find({"userId": email}).toArray();
+      await db.collection('Tokens').deleteOne({"userId" : email});
   
-    let token = await db.collection('Tokens').find({"userId": email}).toArray;
-    await db.collection('Tokens').deleteOne({"userId" : email});
-
-    creation = Date.now();
-    expiration = creation + 1800000;
-
-    let resetToken = crypto.randomBytes(32).toString("hex");
-    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
-    const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
-    const result = await db.collection('Tokens').insertOne(newToken);
+      creation = Date.now();
+      expiration = creation + 1800000;
   
-    const link = `${process.env.CLIENT_URL}/emailAuthorization?token=${resetToken}&id=${email}`;
-  
-    sendVerification(email, link);
-    var ret = { error: 'email sent', link: link};
+      let resetToken = crypto.randomBytes(32).toString("hex");
+      const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+      const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+      const result = await db.collection('Tokens').insertOne(newToken);
+    
+      const link = `${process.env.CLIENT_URL}/emailAuthorization?token=${resetToken}&id=${email}`;
+    
+      sendVerification(email, link);
+      ret = { error: 'email sent', link: link};
+    }
+    console.log('im here4')
     res.status(200).json(ret);
+
   });
 
   app.post("/api/requestResetPassword", async (req, res, next) => 
@@ -242,14 +252,16 @@ app.post('/api/register', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
     let error;
+    const {email,password} = req.body;
     const db = client.db("database");
-    const result = db.collection('Users').findOne(email).toArray();
+    const result = await db.collection('Users').find({"Email": email}).toArray();
     if(result.length > 0)
     {
         error = 'exists';
     }
     else{
-    const newUser = new user({Email: email, Password: password, EmailAuth: false});
+      const newUser = {Email: email, Password: password, EmailAuth: false};
+      const insert = await db.collection('Users').insertOne(newUser);
       error = 'created';
     }
     var ret = { error: error};

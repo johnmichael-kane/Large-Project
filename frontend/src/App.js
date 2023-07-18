@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import CardPage from './pages/CardPage';
 import RegisterPage from './pages/RegisterPage';
+import VerificationPage from './pages/VerificationPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/" index element={<LoginPage />} />
       <Route path="/cards" index element={<CardPage />} />
       <Route path="/register" index element={<RegisterPage />} />
+      <Route path="/emailAuthorization" index element={<VerificationPage />} />
     </Routes>
   </BrowserRouter>
 );

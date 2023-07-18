@@ -343,21 +343,21 @@ app.post('/api/login', async (req, res, next) =>
   var loginError = 'loginFailure';
   var ret;
   const token = require('./createJWT.js');
-  const { email, password} = req.body;
+  const {email, password} = req.body;
+
 
   const db = client.db("database");
-  const results = await db.collection('Users').find({Email:email,Password:password}).toArray();
-
-  if( results.length > 0 )
+  const results = await db.collection('Users').findOne({Email:email});
+  const isValid = await bcrypt.compare(password, results.Password);
+  if(isValid)
   {
     if(results.EmailAuth == true)
     {
-      ret = { Email:email, error:'loginSuccess'};
-
       try
       {
         const token = require("./createJWT.js");
         ret = token.createToken(email);
+        console.log(ret);
       }
       catch(e)
       {
@@ -369,11 +369,6 @@ app.post('/api/login', async (req, res, next) =>
       ret = { Email: email, error: loginError}
     }
   }
-  else
-  {
-     ret = { Email: email, error: loginError}
-  }
-
 
   res.status(200).json(ret);
 });

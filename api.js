@@ -137,6 +137,55 @@ exports.setApp = function(app, client) {
     res.status(200).json(ret);
   });
 
+  app.post('/api/deleteUserFood', async (req, res, next) =>
+  {
+    // incoming: int userId, string foodName, int calories
+    // outgoing: error
+    
+    //const { userId, foodName, calories } = req.body;
+    const token = require('./createJWT.js');
+    const {foodName, jwtToken, year, day, month} = req.body;
+  
+    try{
+      if(token.isExpired(jwtToken))
+      {
+        console.log('token expired')
+        var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+        res.status(200).json(r); 
+        return
+      }
+    }
+    catch(e)
+    {
+      console.log(e.message);
+    }
+    
+    var error = 'notDeleted';
+  
+    try
+    {
+      const db = client.db("database");
+      const result = db.collection('Meals').deleteOne({Email: jwtToken.Email, Foodname: foodName, Year: year, Month : month, Day : day});
+      error = 'deleted';
+    }
+    catch(e)
+    {
+      error = e.toString();
+    }
+  
+    var refreshedToken = null;
+    try{
+      refreshedToken = token.refresh(jwtToken);
+    }
+    catch(e)
+    {
+      console.log(e.message);
+    }
+  
+    var ret = { error: error, jwtToken: refreshedToken};
+    res.status(200).json(ret);
+  });
+
 app.post('/api/addUserFood', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
@@ -159,6 +208,7 @@ app.post('/api/addUserFood', async (req, res, next) =>
   {
     console.log(e.message);
   }
+
 //set year/month/day
 const date=new Date();
 let year=date.getFullYear();
@@ -188,9 +238,6 @@ let day=date.getDate();
     console.log(e.message);
   }
 
-  // userMealList.push(foodName);
-  // userCaloriesList.push(calories);
-
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
@@ -200,7 +247,6 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   // incoming: int userId, string foodName, int calories
   // outgoing: error
 	
-  // const {foodName, calories } = req.body;
   const token = require('./createJWT.js');
   const {foodName, calories, fats, carbohydrates, protein, servingSize, jwtToken} = req.body;
   
@@ -239,9 +285,6 @@ app.post('/api/addDatabaseFood', async (req, res, next) =>
   {
     console.log(e.message);
   }
-
-  // userMealList.push(foodName);
-  // userCaloriesList.push(calories);
 
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
@@ -285,13 +328,11 @@ app.post('/api/requestPasswordReset', async (req, res, next) => {
 
 });
 
-//finish this test
 app.post('/api/UserMealsDate', async (req, res, next) =>
 {
   // incoming: int userId, 
   // outgoing: error, Array of JSON objects: String foodName, int calories
 	
-  // Needs filling
   const token = require('./createJWT.js');
   const {year, month, day, jwtToken} = req.body;
   var error = 'success';

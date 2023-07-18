@@ -4,6 +4,7 @@ const user = require('./models/user.js');
 const Token = require("./models/Token.js");
 const { JsonWebTokenError } = require('jsonwebtoken');
 const sendEmail = require("./sendEmail");
+const sendVerification = require("./sendVerification");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 
@@ -16,14 +17,87 @@ exports.setApp = function(app, client) {
     const {email, newPassword, code} = req.body;
     const db = client.db("database");
     const users = db.collection("Users");
-    
     theEmail = await users.find({"Email" : email}).toArray();
-    console.log(theEmail.length);
-    query = {Email : theEmail[0].Email}
-    newPass = {$set: {"Password" : newPassword}}
+
+    let token = await db.collection('Tokens').find({"userId": email}).toArray();
+      if (token.length > 0)
+      {
+        const isValid = await bcrypt.compare(code, token[0].token);
+        if (isValid)
+        {
+          console.log('there\'s a token');
+          query = {Email : theEmail[0].Email};
+          const hash = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
+          newPass = {$set: {Password : hash}};
+          const result = await users.updateOne(query, newPass);
+          res.status(200).json({error: 'worked'});
+        }
+        else {
+          res.status(200).json({error: 'token invalid'});  
+        }
+      }
+      else{
+        res.status(200).json({error: 'token expired'});  
+      
+      }
+  });
+
+  app.post('/api/verifyEmail',  async (req, res, next) => {
+    const {email, code} = req.body;
+    const db = client.db("database");
+    const users = db.collection("Users");
+    theEmail = await users.find({"Email" : email}).toArray();
+
+
+    let token = await db.collection('Tokens').find({"userId": email}).toArray();
+      if (token.length > 0)
+      {
+        const isValid = await bcrypt.compare(code, token[0].token);
+        if (isValid)
+        {
+          console.log('there\'s a token');
+          console.log(theEmail.length);
+          query = {Email : theEmail[0].Email};
+          verifyEmail = {$set: {"EmailAuth" : true}};
+          const result = await users.updateOne(query, verifyEmail);
+          res.status(200).json({error: 'worked'});
+        }
+        else{
+          res.status(200).json({error: 'token invalid'});  
+        }
+      }
+      else{
+        res.status(200).json({error: 'token expired'});  
+      
+      }
+
+  });
+
+  app.post("/api/requestEmailAuthorization", async (req, res, next) => 
+  {
+    const{email} = req.body;
+    const db = client.db("database");
+    const resetUser = await db.collection('Users').findOne({"Email": email});
+
+    if (!resetUser)
+      res.status(200).json({error :  'Email does not exist.'});
   
-    const result = await users.updateOne(query, newPass);
-    res.status(200).json({error: 'worked'});
+    let token = await db.collection('Tokens').find({"userId": email}).toArray;
+    await db.collection('Tokens').deleteOne({"userId" : email});
+
+    creation = Date.now();
+    expiration = creation + 1800000;
+
+    let resetToken = crypto.randomBytes(32).toString("hex");
+    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+    const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+    const result = await db.collection('Tokens').insertOne(newToken);
+  
+    const link = `${process.env.CLIENT_URL}/emailAuthorization?token=${resetToken}&id=${email}`;
+  
+    sendVerification(email, link);
+    var ret = { error: 'email sent', link: link};
+    res.status(200).json(ret);
   });
 
   app.post("/api/requestResetPassword", async (req, res, next) => 
@@ -35,9 +109,8 @@ exports.setApp = function(app, client) {
     if (!resetUser)
       res.status(200).json({error :  'Email does not exist.'});
   
-    let token = await db.collection('Tokens').find({"UserId": email});
-    if (token) console.log('there\'s a token')
-      await db.collection('Tokens').remove({"Email" : email});
+    let token = await db.collection('Tokens').find({"userId": email}).toArray;
+    await db.collection('Tokens').deleteOne({"userId" : email});
 
     creation = Date.now();
     expiration = creation + 1800000;
@@ -49,11 +122,11 @@ exports.setApp = function(app, client) {
   
     const link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${email}`;
   
-    // sendEmail(email, link);
+    sendEmail(email, link);
     var ret = { error: 'email sent', link: link};
     res.status(200).json(ret);
   });
-	
+
 app.post('/api/addUserFood', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
@@ -168,30 +241,36 @@ app.post('/api/register', async (req, res, next) =>
 {
   // incoming: int userId, string foodName, int calories
   // outgoing: error
-	
-  // const {email, password } = req.body;
-  const {email, password} = req.body;
+    let error;
+    const db = client.db("database");
+    const result = db.collection('Users').findOne(email).toArray();
+    if(result.length > 0)
+    {
+        error = 'exists';
+    }
+    else{
+    const newUser = new user({Email: email, Password: password, EmailAuth: false});
+      error = 'created';
+    }
+    var ret = { error: error};
+    res.status(200).json(ret); 
 
-  const newUser = {Email: email, Password: password, EmailAuth: false};
-  var error = 'failure';
+});
 
+app.post('/api/requestPasswordReset', async (req, res, next) => {
+  const {email} = req.body;
+  let error;
   try
   {
     const db = client.db("database");
-    const result = db.collection('Users').insertOne(newUser);
-    error = 'success';
+    const result = db.collection('Users').find(email);
+    error = 'found';
   }
   catch(e)
   {
     error = e.toString();
   }
 
-
-  // userMealList.push(foodName);
-  // userCaloriesList.push(calories);
-
-  var ret = { error: error};
-  res.status(200).json(ret);
 });
 
 //finish this test
@@ -217,11 +296,11 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
   {
     console.log(e.message);
   }
-const db = client.db("database");
-const result = await db.collection('Meals').find({"Email": jwtToken.Email, "Year": year, "Month": month, "Day": day}).toArray();
-if(result.length<1){
-error='does not exist';
-}
+  const db = client.db("database");
+  const result = await db.collection('Meals').find({"Email": jwtToken.Email, "Year": year, "Month": month, "Day": day}).toArray();
+  if(result.length<1){
+    error='does not exist';
+  }
   nutritionResult = getTotalNutrition(result);
   var _name = [];
   var _calories = [];
@@ -346,11 +425,14 @@ app.post('/api/searchFood', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/checkUserDuplicate', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
 
-app.post('/api/sendEmail', async (req, res, next) => {
+  var error = 'dne';
   const token = require('./createJWT.js');
-  const{email, jwtToken} = req.body;
-  let error = 'failure';
+  const {email, jwtToken} = req.body;
 
   try{
     if(token.isExpired(jwtToken))
@@ -364,19 +446,25 @@ app.post('/api/sendEmail', async (req, res, next) => {
   {
     console.log(e.message);
   }
-  error = 'success';
 
+  const db = client.db("database");
+  const results = await db.collection('Users').find({ "Email": email}).toArray();
+  if(results.length > 0)
+  {
+    error = 'exists';
+  }
+
+  var refreshedToken = null;
   try{
-    sendPasswordRecovery(email);
+    refreshedToken = token.refresh(jwtToken);
   }
   catch(e)
   {
     console.log(e.message);
   }
-  ret = {Error: error}
+  
+  var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
-
-
 });
 
 
@@ -477,50 +565,7 @@ app.post('/api/addcard', async (req, res, next) =>
 
   var ret = { error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
-});
-
-	
-app.post('/api/checkUserDuplicate', async (req, res, next) => 
-{
-  // incoming: userId, search
-  // outgoing: results[], error
-
-  var error = 'dne';
-  const token = require('./createJWT.js');
-  const {email, jwtToken} = req.body;
-
-  try{
-    if(token.isExpired(jwtToken))
-    {
-      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
-      res.status(200).json(r);
-      return
-    }
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
-
-  const db = client.db("database");
-  const results = await db.collection('Users').find({ "Email": email}).toArray();
-  if(results.length > 0)
-  {
-    error = 'exists';
-  }
-
-  var refreshedToken = null;
-  try{
-    refreshedToken = token.refresh(jwtToken);
-  }
-  catch(e)
-  {
-    console.log(e.message);
-  }
-  
-  var ret = {error:error, jwtToken: refreshedToken};
-  res.status(200).json(ret);
-});
+});	
 
 app.post('/api/checkFoodDuplicate', async (req, res, next) => 
 {
@@ -582,31 +627,4 @@ protein+=array[i].Protein * array[i].NumServings;
 fats+=array[i].Fats * array[i].NumServings;
 }
 return {Calories: calories , Carbs: carbs, Protein : protein, Fats: fats}
-}
-
-function sendPasswordRecovery(email){
-  let nodemailer = require('nodemailer');
-
-  let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'nutritionapp7@gmail.com',
-      pass: 'afzttirvjllddhre'
-    }
-  });
-  
-  var mailOptions = {
-    from: 'nutritionapp7@gmail.com',
-    to: email,
-    subject: 'Sending Email using Node.js',
-    text: 'Trying this again'
-  };
-  
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  }); 
 }

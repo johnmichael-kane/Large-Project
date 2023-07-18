@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 
 function Login()
 {
@@ -19,8 +20,7 @@ function Login()
 
       try
       {    
-//          const response = await fetch('http://localhost:5000/api/login',
-            const response = await fetch(bp.buildPath('api/login'),
+          const response = await fetch(bp.buildPath('api/login'),
               {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
           var res = JSON.parse(await response.text());
@@ -50,6 +50,33 @@ function Login()
       }    
   };
 
+    const requestPasswordReset = async event =>
+    {
+        var obj = {email:loginName.value};
+        let emailReset = JSON.stringify(obj);
+        event.preventDefault();
+        try
+        {
+          const request = await fetch(bp.buildPath('api/requestResetPassword'),
+              {method:'POST',body:emailReset,headers:{'Content-Type': 'application/json'}});
+
+          var req = JSON.parse(await request.text());
+
+          if( req.error === 'Email does not exist')
+          {
+              setMessage( "User not found.");
+          }
+          else
+          {
+              setMessage('Password reset email sent.');
+          }
+      }
+      catch(e)
+      {
+          setMessage(e.toString());
+      }
+    }
+
     return(
       <div id="loginDiv">
         <form onSubmit={doLogin}>
@@ -66,6 +93,12 @@ function Login()
         <div>
           <span>Don't have an account? </span>
           <Link to="/register">Register</Link>
+        </div>
+        <div>
+        <form onSubmit={requestPasswordReset}>
+        <input type="submit" id="resetButton" class="buttons" value = "Forgot Password?"
+          onClick={requestPasswordReset} />
+          </form>
         </div>
      </div>
     );

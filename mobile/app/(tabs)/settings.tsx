@@ -27,7 +27,7 @@ export default function SettingsPage(user: User) {
     }
   };
   return (
-    <View>
+    <View style={{ backgroundColor: "white" }}>
       <Text style={styles.title}>Settings</Text>
       <View style={styles.caloriealignment}>
         <Text style={styles.calorielabel}>Calorie Goal:</Text>

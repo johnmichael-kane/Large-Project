@@ -17,16 +17,25 @@ import { useState } from "react";
 
 export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
   const [selectedId, setSelectedId] = useState<string>();
+  const UpdateMealPlan = (event: any) => {
+    let food: Food;
+    food = new Food("", 0, 0, 0, 0, 0, "");
+    if (event.type == Food) food = event;
+    for (let i = 0; i < mealPlan.length; i++) {
+      if (food === mealPlan[i]) return;
+    }
+    mealPlan.push(food);
+  };
   type ItemProps = {
     item: Food;
     //change this to send the food item to the user's meal plan through an API call
-    onPress: () => void;
+    onPress: (food: any) => void;
     backgroundColor: string;
     textColor: string;
   };
   const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={UpdateMealPlan}
       style={[styles.item, { backgroundColor }]}
     >
       <Text style={[styles.data, { color: textColor }]}>
@@ -54,7 +63,7 @@ export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
     return (
       <Item
         item={item}
-        onPress={() => setSelectedId(item.FoodName)}
+        onPress={setSelectedId}
         backgroundColor={backgroundColor}
         textColor={color}
       />

@@ -15,7 +15,7 @@ export class Food {
   Fats: number;
   Carbs: number;
   ServingSize: number;
-  date: Date;
+  date: string;
   constructor(
     foodName: string,
     calories: number,
@@ -23,7 +23,7 @@ export class Food {
     fats: number,
     carbs: number,
     ServingSize: number,
-    date: Date
+    date: string
   ) {
     this.FoodName = foodName;
     this.Calories = calories;

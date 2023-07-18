@@ -1,32 +1,22 @@
 import React, { useState } from 'react'
-function Register() {
+let bp = require('./Path.js');
+var storage = require('../tokenStorage.js');
 
+function Register() {
+  var email;
+  var password;
 
 const doRegister = async event => 
 {
     event.preventDefault();
-
-    var obj = {login:loginName.value,password:loginPassword.value};
+    var obj = {email:email.value,password:password.value};
     var js = JSON.stringify(obj);
-    function buildPath(route)
-    {
-        if (process.env.NODE_ENV === 'production') 
-        {
-            return 'https://' + app_name +  '.herokuapp.com/' + route;
-        }
-        else
-        {        
-            return 'http://localhost:5000/' + route;
-        }
-    }
-
     var loginName;
     var loginPassword;
     const [message,setMessage] = useState('');
     try
     {    
-//          const response = await fetch('http://localhost:5000/api/login',
-          const response = await fetch(buildPath('api/register'),
+          const response = await fetch(bp.buildPath('api/register'),
           {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
           let txt = await response.text();
@@ -52,9 +42,9 @@ return(
     <div id="loginDiv">
       <form onSubmit={doRegister}>
       <span id="inner-title">PLEASE Register</span><br />
-      <input type="text" id="loginName" placeholder="Username" 
+      <input type="text" id="email" placeholder="Email" 
         ref={(c) => loginName = c} /><br />
-      <input type="password" id="loginPassword" placeholder="Password" 
+      <input type="password" id="password" placeholder="Password" 
         ref={(c) => loginPassword = c} /><br />
 
       <input type="submit" id="loginButton" class="buttons" value = "Do It"

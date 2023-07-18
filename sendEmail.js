@@ -18,7 +18,7 @@ const sendEmail = async (email, link) => {
     from: 'nutritionapp7@gmail.com',
     to: email,
     subject: 'Password Reset',
-    text: 'This is you password reset link: http://' + link,
+    text: 'This is your password reset link: http://' + link,
   };
   
   transporter.sendMail(mailOptions, function(error, info){

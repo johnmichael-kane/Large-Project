@@ -1,39 +1,57 @@
 import React, { useState } from 'react'
-let bp = require('./Path.js');
-var storage = require('../tokenStorage.js');
 
 function Register() {
-  var email;
-  var password;
+  let bp = require('./Path.js');
+  var storage = require('../tokenStorage.js');
+  let email;
+  let password;
+  const [message,setMessage] = useState('');
+  const headers = {'Content-Type': 'application/json'}
 
 const doRegister = async event => 
 {
     event.preventDefault();
     var obj = {email:email.value,password:password.value};
     var js = JSON.stringify(obj);
-    var loginName;
-    var loginPassword;
-    const [message,setMessage] = useState('');
+
     try
     {    
           const response = await fetch(bp.buildPath('api/register'),
-          {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+          {method:'POST',body:js,headers:headers});
 
           let txt = await response.text();
           let res = JSON.parse(txt);
 
-          if( res.error.length > 0 )
+          if(res.error === 'created')
           {
-              setMessage( "API Error:" + res.error );
+              setMessage( "Account created.");
           }
-          else
+          else if (res.error === 'exists')
           {
-              setMessage('User has been added');
+              setMessage('User already exists');
           }
       }
       catch(e)
       {
           setMessage(e.toString());
+      }
+      try
+      {  
+            let emailObject = {email:email.value}
+            js = JSON.stringify(emailObject);  
+            const emailRes = await fetch(bp.buildPath('api/requestEmailAuthorization'),
+            {method:'POST',body:js,headers:headers});
+
+            let emailText = await emailRes.text();
+            let emailResponse = JSON.parse(emailText);
+            if(emailResponse.error === 'email sent')
+                setMessage( "Account created. Verification Email sent");
+            else 
+              setMessage( "Problem sending verification email.");
+      }
+      catch(e)
+      {
+        setMessage(e.toString());
       }
 
 };  
@@ -43,9 +61,9 @@ return(
       <form onSubmit={doRegister}>
       <span id="inner-title">PLEASE Register</span><br />
       <input type="text" id="email" placeholder="Email" 
-        ref={(c) => loginName = c} /><br />
+        ref={(c) => email = c} /><br />
       <input type="password" id="password" placeholder="Password" 
-        ref={(c) => loginPassword = c} /><br />
+        ref={(c) => password = c} /><br />
 
       <input type="submit" id="loginButton" class="buttons" value = "Do It"
         onClick={doRegister} />

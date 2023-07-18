@@ -4,19 +4,7 @@ function Login()
 {
   let bp = require('./Path.js');
   var storage = require('../tokenStorage.js');
-/*  const app_name = 'group7-largeproject-fcbd9bb42321'
-  function buildPath(route)
-  {
-      if (process.env.NODE_ENV === 'production') 
-      {
-          return 'https://' + app_name +  '.herokuapp.com/' + route;
-      }
-      else
-      {        
-          return 'http://localhost:5000/' + route;
-      }
-  }
- */ 
+
   var loginName;
   var loginPassword;
 
@@ -26,7 +14,7 @@ function Login()
   {
       event.preventDefault();
 
-      var obj = {login:loginName.value,password:loginPassword.value};
+      var obj = {email:loginName.value,password:loginPassword.value};
       var js = JSON.stringify(obj);
 
       try
@@ -46,10 +34,8 @@ function Login()
               // might be res.accessToken
               storage.storeToken(res);
               let userId = res.id;
-              let firstName = res.fn;
-              let lastName = res.ln;
 
-              var user = {firstName:res.fn,lastName:res.ln,id:res.id}
+              var user = {id:res.id}
               localStorage.setItem('user_data', JSON.stringify(user));
 
               
@@ -68,9 +54,9 @@ function Login()
       <div id="loginDiv">
         <form onSubmit={doLogin}>
         <span id="inner-title">PLEASE LOG IN</span><br />
-        <input type="text" id="loginName" placeholder="Username" 
+        <input type="text" id="loginName" placeholder="email" 
           ref={(c) => loginName = c} /><br />
-        <input type="password" id="loginPassword" placeholder="Password" 
+        <input type="password" id="loginPassword" placeholder="password" 
           ref={(c) => loginPassword = c} /><br />
 
         <input type="submit" id="loginButton" class="buttons" value = "Do It"

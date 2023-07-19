@@ -8,11 +8,14 @@ import {
 
 import { Text, View } from "../../components/Themed";
 import React from "react";
+import { Food, MealPlan } from "../../API/APIModels";
 
 export default function TabTwoScreen() {
   const [UserName, onUserNameChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
   const [ConfirmPassword, onConfirmPasswordChange] = React.useState("");
+  let BigList: Food[];
+  let MealPlan: Food[];
   const Register = () => {
     //check if username and password match a valid user in the database, and if so transition to the login screen
   };

@@ -10,19 +10,19 @@ import { Text, View } from "../../components/Themed";
 import { User, Food } from "../../API/APIModels";
 import React from "react";
 import { useNavigation } from "expo-router";
-import md5 from "../js/md5";
 
 export default function TabOneScreen() {
-  //This needs to be changed to what we use for the large project
-  const urlBase = "http://smallproject.site/LAMPAPI";
-  const extension = "php";
-
   const navigation = useNavigation();
   const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
 
   const Login = () => {
     //use an API call to check if the user is logged in, and if so navigate to the biglist page otherwise use an alert to tell the user incorrect email or password entered
+
+    //if successful
+    GetBigList();
+    GetMealPlan();
+    //navigate to the biglist page
   };
   const GetBigList = () => {
     //Get the entire list of meals through an API call, parse the information and store it into an array of class food
@@ -30,17 +30,19 @@ export default function TabOneScreen() {
   const GetMealPlan = () => {
     //Get the user's meal plan through an API Call, parse the information and store it in the equivalent arrays
   };
+  function ResetPassword() {
+    if (EmailAddress == null || EmailAddress === "") {
+      alert("Enter an email address to send the password request to.");
+    }
+    //Password reset stuff goes here, this might have to go to another page
+  }
   return (
-    <ImageBackground
-      blurRadius={2}
-      source={require("C:/Users/Draco/NutritionApp/assets/images/startscreenbackground.jpg")}
-      style={styles.backgroundImage}
-    >
+    <View style={styles.background}>
       <Text style={styles.title}>Log In</Text>
-      <View style={styles.usernamealignment}>
-        <Text style={styles.usernamelabel}>Email: </Text>
+      <View style={styles.emailalignment}>
+        <Text style={styles.emaillabel}>Email: </Text>
         <TextInput
-          style={styles.usernameinput}
+          style={styles.emailinput}
           placeholder="Email"
           onChangeText={onEmailAddressChange}
         ></TextInput>
@@ -56,7 +58,14 @@ export default function TabOneScreen() {
       <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
         <Button title="Login" onPress={Login} color={"green"} />
       </View>
-    </ImageBackground>
+      <View style={{ alignContent: "center", position: "absolute", top: 320 }}>
+        <Button
+          title="Reset Password"
+          onPress={ResetPassword}
+          color={"black"}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -79,6 +88,9 @@ const styles = StyleSheet.create({
     height: 1,
     width: "80%",
   },
+  background: {
+    backgroundColor: "white",
+  },
   backgroundImage: {
     position: "absolute",
     left: 0,
@@ -88,17 +100,17 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-  usernamelabel: {
+  emaillabel: {
     color: "white",
     backgroundColor: "grey",
   },
-  usernamealignment: {
+  emailalignment: {
     alignContent: "center",
     justifyContent: "space-evenly",
     flexDirection: "row",
     top: 200,
   },
-  usernameinput: {
+  emailinput: {
     color: "white",
     backgroundColor: "grey",
   },

@@ -28,7 +28,6 @@ export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
   };
   type ItemProps = {
     item: Food;
-    //change this to send the food item to the user's meal plan through an API call
     onPress: (food: any) => void;
     backgroundColor: string;
     textColor: string;

@@ -221,15 +221,15 @@ describe('Check if Card Does Not Exist', () => {
   });
 
   it('should check if a value in the "Card" field already exists', async () => {
-    const cardValue = 'Fuckery'; 
+    const cardValue = 'Jonathon'; 
 
     const card = await db.collection('Cards').findOne({ Card: cardValue });
 
     if (card) {
-      console.log('Fuckery value exists:', card);
-      expect.fail('Fuckery value exists');
+      console.log('Jonathon value exists:', card);
+      expect.fail('Jonathon value exists');
     } else {
-      console.log('Fuckery value does not exist.');
+      console.log('Jonathon value does not exist.');
       expect(card).to.not.exist;
     }
   });

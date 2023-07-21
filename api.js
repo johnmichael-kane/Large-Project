@@ -303,8 +303,8 @@ app.post('/api/register', async (req, res, next) =>
         error = 'exists';
     }
     else{
-      const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));//take out if this breaks
-      const newUser = {Email: email, Password: password, EmailAuth: false};
+      const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));//
+      const newUser = {Email: email, Password: hash, EmailAuth: false};
       const insert = await db.collection('Users').insertOne(newUser);
       error = 'created';
     }

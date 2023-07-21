@@ -10,7 +10,7 @@ interface LoginResponse {
 
 function login(email: string, password: string) {
   axios
-    .post<LoginResponse>('/api/login', { email, password })
+    .post<LoginResponse>('./api/login', { email, password })
     .then((response: AxiosResponse<LoginResponse>) => {
       const data: LoginResponse = response.data;
       if (data.error) {

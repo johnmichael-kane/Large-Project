@@ -100,7 +100,7 @@ exports.setApp = function(app, client) {
       const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
       const result = await db.collection('Tokens').insertOne(newToken);
     
-      const link = `${process.env.CLIENT_URL}/emailAuthorization?token=${resetToken}&id=${email}`;
+      const link = `${process.env.CLIENT_URL}emailAuthorization?token=${resetToken}&id=${email}`;
     
       sendVerification(email, link);
       ret = { error: 'email sent', link: link};
@@ -130,7 +130,7 @@ exports.setApp = function(app, client) {
     const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
     const result = await db.collection('Tokens').insertOne(newToken);
   
-    const link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${email}`;
+    const link = `${process.env.CLIENT_URL}passwordReset?token=${resetToken}&id=${email}`;
   
     sendEmail(email, link);
     var ret = { error: 'email sent', link: link};

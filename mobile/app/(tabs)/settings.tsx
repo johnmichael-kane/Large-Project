@@ -38,7 +38,7 @@ export default function SettingsPage(user: User) {
           onChangeText={onCalorieGoalChange}
         ></TextInput>
       </View>
-      <View style={styles.passwordalignment}>
+      {/* <View style={styles.passwordalignment}>
         <Text style={styles.passwordlabel}>Password:</Text>
         <TextInput
           style={styles.passwordinput}
@@ -55,7 +55,7 @@ export default function SettingsPage(user: User) {
           autoComplete="password"
           onChangeText={onConfirmPasswordChange}
         ></TextInput>
-      </View>
+      </View> */}
       <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
         <Button
           title="Save Settings"

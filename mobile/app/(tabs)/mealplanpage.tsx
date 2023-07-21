@@ -15,37 +15,50 @@ import { useNavigation } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 
-type ItemProps = {
-  item: Food;
-  onPress: () => void;
-  backgroundColor: string;
-  textColor: string;
-};
+export default function MealPlan(foods: Food[], user: User) {
+  type ItemProps = {
+    item: Food;
+    onPress: () => void;
+    backgroundColor: string;
+    textColor: string;
+  };
 
-const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
-  <TouchableOpacity
-    //change this to send the food item to the user's meal plan through an API call
-    onPress={onPress}
-    style={[styles.item, { backgroundColor }]}
-  >
-    <Text style={[styles.data, { color: textColor }]}>
-      {item.FoodName}, Calories: {item.Calories}
-    </Text>
-  </TouchableOpacity>
-);
-
-export default function BigList(foods: Food[], user: User) {
-  let totalCalories = 0;
-  let totalCarbs = 0;
-  let totalFats = 0;
+  const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
+    <TouchableOpacity
+      //change this to remove the food item to the user's meal plan through an API call
+      onPress={UpdateMealPlan}
+      style={[styles.item, { backgroundColor }]}
+    >
+      <Text style={[styles.data, { color: textColor }]}>
+        {item.FoodName}, Calories: {item.Calories}
+      </Text>
+    </TouchableOpacity>
+  );
+  let [totalCalories, updateTotalCalories] = React.useState(Number);
+  let [totalCarbs, updateTotalCarbs] = React.useState(Number);
+  let [totalFats, updateTotalFats] = React.useState(Number);
   let totalProtein = 0;
   const calculateTotalValues = () => {
+    totalCalories = 0;
+    totalCarbs = 0;
+    totalFats = 0;
+    totalProtein = 0;
     for (let i = 0; i < foods.length; i++) {
       totalCalories += foods[i].Calories;
       totalCarbs += foods[i].Carbs;
       totalFats += foods[i].Fats;
       totalProtein += foods[i].Protein;
     }
+  };
+  const UpdateMealPlan = (event: any) => {
+    let food: Food;
+    food = new Food("", 0, 0, 0, 0, 0, "");
+    if (event.type == Food) food = event;
+    for (let i = 0; i < foods.length; i++) {
+      if (food === foods[i]) foods.splice(i, 1);
+    }
+    //call api to remove selected food from user's list in the database
+    calculateTotalValues();
   };
   const myItemSeparator = () => {
     return (
@@ -61,8 +74,8 @@ export default function BigList(foods: Food[], user: User) {
       </View>
     );
   };
-  const [selectedId, setSelectedId] = useState<string>();
-  const caloriecolor = totalCalories > user.CalorieGoal ? "red" : "black";
+  const [selectedId, setSelectedId] = useState<string>("");
+  let caloriecolor = totalCalories > user.CalorieGoal ? "red" : "black";
   const caloriegoaltextcolor = StyleSheet.create({
     text: {
       color: caloriecolor,
@@ -106,8 +119,17 @@ export default function BigList(foods: Food[], user: User) {
         )}
       />
       <View>
-        <Text>Calorie total: {totalCalories}</Text>
-        <Text style={}>Calorie Goal: {user.CalorieGoal}</Text>
+        <Text onLayout={calculateTotalValues}>
+          Calorie total: {totalCalories}
+        </Text>
+        <Text style={caloriegoaltextcolor.text}>
+          Calorie Goal: {user.CalorieGoal}
+        </Text>
+        <Text onLayout={calculateTotalValues}>
+          Protein total: {totalProtein}
+        </Text>
+        <Text onLayout={calculateTotalValues}>Carbs total: {totalCarbs}</Text>
+        <Text onLayout={calculateTotalValues}>Fat total: {totalFats}</Text>
       </View>
     </SafeAreaView>
   );

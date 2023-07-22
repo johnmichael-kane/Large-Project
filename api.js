@@ -392,7 +392,7 @@ app.post('/api/UserMealsDate', async (req, res, next) =>
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: email, password
-  // outgoing: id, firstName, lastName, error
+  // outgoing: email, error
 	
   var loginError = 'loginFailure';
   var ret;

@@ -17,6 +17,9 @@ function login(email: string, password: string) {
       } else {
         const { userId, firstName, lastName } = data;
         console.log('Login successful!');
+        console.log('User ID:', userId);
+        console.log('First Name:', firstName);
+        console.log('Last Name:', lastName);
       }
     })
     .catch((error: any) => {

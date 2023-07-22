@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 
 interface LoginResponse {

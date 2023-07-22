@@ -6,28 +6,25 @@ import {
   Dimensions,
 } from "react-native";
 
-import axios, { AxiosResponse } from 'axios';
 import { Text, View } from "../../components/Themed";
 import { User, Food } from "../../API/APIModels";
 import React from "react";
 import { useNavigation } from "expo-router";
-import {login , LoginResponse} from "../../API/api"
 
 export default function TabOneScreen() {
   const navigation = useNavigation();
   const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
-
+  let BigList: Food[];
+  let MealPlan: Food[];
   const Login = () => {
+    //use an API call to check if the user is logged in, and if so navigate to the biglist page otherwise use an alert to tell the user incorrect email or password entered
 
-      // Make the login API call
-      const loginResult = login(EmailAddress, Password)
-      console.log("this is result " + loginResult)
-        GetBigList();
-        GetMealPlan();
-        // Navigate to the biglist page (you may need to implement the navigation logic here)
+    //if successful
+    GetBigList();
+    GetMealPlan();
+    //navigate to the biglist page
   };
-
   const GetBigList = () => {
     //Get the entire list of meals through an API call, parse the information and store it into an array of class food
   };
@@ -60,7 +57,7 @@ export default function TabOneScreen() {
         ></TextInput>
       </View>
       <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
-        <Button title="Login" onPress={() => Login()} color={"green"} />
+        <Button title="Login" onPress={Login} color={"green"} />
       </View>
       <View style={{ alignContent: "center", position: "absolute", top: 320 }}>
         <Button

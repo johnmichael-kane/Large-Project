@@ -14,28 +14,42 @@ import { User, Food } from "../../API/APIModels";
 import { useNavigation } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
+import { SearchBar } from "react-native-screens";
 
-export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
+let foods = [
+  new Food("test1", 1, 1, 1, 1, 1, "null"),
+  new Food("test2", 2, 2, 2, 2, 2, "test"),
+  new Food("test3", 3, 3, 3, 3, 3, "null"),
+  new Food("test4", 4, 4, 4, 4, 4, "test"),
+];
+let mealPlan = [new Food("test5", 5, 5, 5, 5, 5, "test")];
+export default function BigList(user: User) {
   const [selectedId, setSelectedId] = useState<string>();
   const UpdateMealPlan = (event: any) => {
     let food: Food;
     food = new Food("", 0, 0, 0, 0, 0, "");
-    if (event.type == Food) food = event;
-    for (let i = 0; i < mealPlan.length; i++) {
-      if (food === mealPlan[i]) return;
+    let emptyFood = food;
+    food = event;
+    for (let i = 0; i < foods.length; i++) {
+      if (food.FoodName === foods[i].FoodName) food = foods[i];
     }
-    mealPlan.push(food);
+    if (food == emptyFood) {
+      alert("error: unable to find the selected food");
+    } else {
+      mealPlan.push(food);
+      alert("Successfully added selected food " + food.FoodName);
+    }
   };
   type ItemProps = {
     item: Food;
-    onPress: (food: any) => void;
+    onPress: (food: Food) => void;
     backgroundColor: string;
     textColor: string;
   };
   const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
     <TouchableOpacity
-      onPress={UpdateMealPlan}
       style={[styles.item, { backgroundColor }]}
+      onPress={UpdateMealPlan}
     >
       <Text style={[styles.data, { color: textColor }]}>
         {item.FoodName}, Calories: {item.Calories}
@@ -62,7 +76,7 @@ export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
     return (
       <Item
         item={item}
-        onPress={setSelectedId}
+        onPress={UpdateMealPlan}
         backgroundColor={backgroundColor}
         textColor={color}
       />
@@ -90,6 +104,7 @@ export default function BigList(foods: Food[], user: User, mealPlan: Food[]) {
           >
             All Food Items
           </Text>
+          // <SearchBar placeholder="Enter food name here"></SearchBar>
         )}
       />
     </SafeAreaView>

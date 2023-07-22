@@ -420,9 +420,10 @@ app.post('/api/login', async (req, res, next) =>
     }
     else 
     {
-      ret = { Email: email, error: loginError}
+      ret = { Email: email, error: loginError};
     }
   }
+  else ret = { Email: email, error: loginError};
 
   res.status(200).json(ret);
 });

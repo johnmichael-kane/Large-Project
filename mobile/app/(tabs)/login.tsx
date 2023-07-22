@@ -13,22 +13,22 @@ import React from "react";
 import { useNavigation } from "expo-router";
 import {login , LoginResponse} from "../../API/api"
 
+
 export default function TabOneScreen() {
   const navigation = useNavigation();
   const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
-  let BigList: Food[];
-  let MealPlan: Food[];
+
   const Login  = async () => {
+
       // Make the login API call
       const loginResult = await login(EmailAddress, Password)
       console.log("this is result " + loginResult.Email)
-    if(!(loginResult.error === "loginFailure")
-    {
         GetBigList();
         GetMealPlan();
-    }
+        // Navigate to the biglist page (you may need to implement the navigation logic here)
   };
+
   const GetBigList = () => {
     //Get the entire list of meals through an API call, parse the information and store it into an array of class food
   };
@@ -61,7 +61,7 @@ export default function TabOneScreen() {
         ></TextInput>
       </View>
       <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
-        <Button title="Login" onPress={ Login()} color={"green"} />
+        <Button title="Login" onPress={() => Login()} color={"green"} />
       </View>
       <View style={{ alignContent: "center", position: "absolute", top: 320 }}>
         <Button

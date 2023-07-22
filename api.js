@@ -194,7 +194,7 @@ app.post('/api/addUserFood', async (req, res, next) =>
   //const { userId, foodName, calories } = req.body;
   const token = require('./createJWT.js');
   const {foodName, calories, fats, carbohydrates, protein, servingSize, numServings, jwtToken} = req.body;
-
+  console.log(jwtToken.Email)
   try{
     if(token.isExpired(jwtToken))
     {
@@ -329,7 +329,7 @@ app.post('/api/requestPasswordReset', async (req, res, next) => {
 
 });
 
-app.post('/api/getUserMealPlan', async (req, res, next) =>
+app.post('getUserMealPlan', async (req, res, next) =>
 {
   // incoming: int userId, 
   // outgoing: error, Array of JSON objects: String foodName, int calories
@@ -392,7 +392,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: email, password
-  // outgoing: email, error
+  // outgoing: id, firstName, lastName, error
 	
   var loginError = 'loginFailure';
   var ret;
@@ -420,10 +420,9 @@ app.post('/api/login', async (req, res, next) =>
     }
     else 
     {
-      ret = { Email: email, error: loginError};
+      ret = { Email: email, error: loginError}
     }
   }
-  else ret = { Email: email, error: loginError};
 
   res.status(200).json(ret);
 });

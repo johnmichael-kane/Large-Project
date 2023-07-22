@@ -50,5 +50,5 @@ exports.refresh = function( token )
 
   var Email = ud.payload.Email;
 
-  return _createToken(userId);
+  return _createToken(Email);
 }

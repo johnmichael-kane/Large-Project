@@ -22,7 +22,7 @@ export default function TabOneScreen() {
   const Login  = async () => {
       // Make the login API call
       const loginResult = await login(EmailAddress, Password)
-      console.log("this is result " + loginResult.Email + " " + loginResult.error)
+      console.log("this is result " + loginResult.Email)
     if(!(loginResult.error === "loginFailure")
     {
         GetBigList();

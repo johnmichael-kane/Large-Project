@@ -11,7 +11,7 @@ export function login(Email: string, Password: string) {
     .then((response: AxiosResponse<LoginResponse>) => {
       const data: LoginResponse = response.data;
       if (data.error) {
-        console.error('Login Error:', data.error);
+        console.log('Login Error:', data.error);
       } else {
         const { Email, error } = data;
         console.log('Login successful!');

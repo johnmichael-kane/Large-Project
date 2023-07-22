@@ -329,7 +329,7 @@ app.post('/api/requestPasswordReset', async (req, res, next) => {
 
 });
 
-app.post('getUserMealPlan', async (req, res, next) =>
+app.post('/api/getUserMealPlan', async (req, res, next) =>
 {
   // incoming: int userId, 
   // outgoing: error, Array of JSON objects: String foodName, int calories

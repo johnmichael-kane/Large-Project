@@ -22,7 +22,7 @@ export default function TabTwoScreen() {
   return (
     <ImageBackground
       blurRadius={2}
-      source={require("C:/Users/Draco/NutritionApp/assets/images/startscreenbackground.jpg")}
+      source={require("../../assets/images/startscreenbackground.jpg")}
       style={styles.backgroundImage}
     >
       <Text style={styles.title}>Register</Text>

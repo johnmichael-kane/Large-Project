@@ -1,18 +1,18 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-exports.createToken = function (id)
+exports.createToken = function (email)
 {
-    return _createToken(id);
+    return _createToken(email);
 }
 
-_createToken = function (id)
+_createToken = function (email)
 {
     try
     {
         // Leinecker says we may want to implement date
       const expiration = new Date();
-      const user = {userId:id};
+      const user = {Email:email};
 
       const accessToken =  jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
 
@@ -26,7 +26,7 @@ _createToken = function (id)
                       '365d'
       */
 
-      var ret = {accessToken:accessToken, id:id};
+      var ret = {accessToken:accessToken, Email:email};
     }
     catch(e)
     {
@@ -48,7 +48,7 @@ exports.refresh = function( token )
 {
   var ud = jwt.decode(token,{complete:true});
 
-  var userId = ud.payload.userId;
+  var Email = ud.payload.Email;
 
   return _createToken(userId);
 }

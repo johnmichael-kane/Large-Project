@@ -427,6 +427,63 @@ app.post('/api/login', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/getFood', async (req, res, next) => 
+{
+  // incoming: userId, search
+  // outgoing: results[], error
+
+  const token = require('./createJWT.js');
+  const {jwtToken} = req.body;
+
+  let error = "";
+  try{
+    if(token.isExpired(jwtToken))
+    {
+      var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+      res.status(200).json(r);
+      return
+    }
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  const db = client.db("database");
+  const results = await db.collection('Foods').find({}).toArray();
+  
+  var refreshedToken = null;
+  try{
+    refreshedToken = token.refresh(jwtToken);
+  }
+  catch(e)
+  {
+    console.log(e.message);
+  }
+
+  var _name = [];
+  var _calories = [];
+  var _protein = [];
+  var _fats = [];
+  var _carbs = [];
+  var _servingSize = [];
+  
+
+  for( var i=0; i<results.length; i++ )
+  {
+    _name.push(results[i].FoodName);
+    _calories.push(results[i].Calories);
+    _protein.push(results[i].Protein);
+    _fats.push(results[i].Fats);
+    _carbs.push(results[i].Carbohydrates)
+    _servingSize.push(results[i].ServingSize)
+  }
+
+  var ret = {nameResults: _name, caloriesResults: _calories, proteinResults: _protein,
+     fatResults: _fats, carbsResults: _carbs, servingResults: _servingSize, error:error, jwtToken: refreshedToken};
+  res.status(200).json(ret);
+});
+
 app.post('/api/searchFood', async (req, res, next) => 
 {
   // incoming: userId, search

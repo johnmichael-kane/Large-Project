@@ -10,7 +10,7 @@ interface LoginResponse {
 
 function login(email: string, password: string) {
   axios
-    .post<LoginResponse>('./api/login', { email, password })
+    .post<LoginResponse>('https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/login', { email, password })
     .then((response: AxiosResponse<LoginResponse>) => {
       const data: LoginResponse = response.data;
       if (data.error) {

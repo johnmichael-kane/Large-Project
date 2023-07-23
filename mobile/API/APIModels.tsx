@@ -14,9 +14,35 @@ export class Food {
   Protein: number;
   Fats: number;
   Carbs: number;
+  ServingSize: string;
+  constructor(
+    foodName: string,
+    calories: number,
+    protein: number,
+    fats: number,
+    carbs: number,
+    ServingSize: string,
+  ) {
+    this.FoodName = foodName;
+    this.Calories = calories;
+    this.Protein = protein;
+    this.Fats = fats;
+    this.Carbs = carbs;
+    this.ServingSize = ServingSize;
+    }
+}
+
+export class Meal {
+  Email: string;
+  FoodName: string;
+  Calories: number;
+  Protein: number;
+  Fats: number;
+  Carbs: number;
   ServingSize: number;
   date: string;
   constructor(
+    email : string,
     foodName: string,
     calories: number,
     protein: number,
@@ -25,6 +51,7 @@ export class Food {
     ServingSize: number,
     date: string
   ) {
+    this.Email = email;
     this.FoodName = foodName;
     this.Calories = calories;
     this.Protein = protein;
@@ -34,6 +61,7 @@ export class Food {
     this.date = date;
   }
 }
+
 export class MealPlan {
   nameResults: string[];
   calorieResults: number[];
@@ -44,7 +72,7 @@ export class MealPlan {
   Fats: number;
   Protein: number;
   Carbs: number;
-  totalCalories: number;
+  Calories: number;
   constructor(
     nameResults: string[],
     calorieResults: number[],
@@ -52,10 +80,10 @@ export class MealPlan {
     fatResults: number[],
     carbsResults: number[],
     numServings: number[],
+    Calories: number,
     Fats: number,
     Protein: number,
-    Carbs: number,
-    totalCalories: number
+    Carbs: number
   ) {
     this.nameResults = nameResults;
     this.calorieResults = calorieResults;
@@ -66,6 +94,6 @@ export class MealPlan {
     this.Fats = Fats;
     this.Protein = Protein;
     this.Carbs = Carbs;
-    this.totalCalories = totalCalories;
+    this.Calories = Calories;
   }
 }

@@ -57,19 +57,36 @@ const doRegister = async event =>
 };  
 
 return(
-    <div id="loginDiv">
-      <form onSubmit={doRegister}>
-      <span id="inner-title">PLEASE Register</span><br />
-      <input type="text" id="email" placeholder="Email" 
-        ref={(c) => email = c} /><br />
-      <input type="password" id="password" placeholder="Password" 
-        ref={(c) => password = c} /><br />
-
-      <input type="submit" id="loginButton" class="buttons" value = "Do It"
-        onClick={doRegister} />
-      </form>
-      <span id="loginResult">{message}</span>
-   </div>
+  <div>
+    <p></p>
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <div class="row align-items-center">
+          <div class="header-text input-group-lg">
+            <p><font size="+3"><center>Please Register</center></font></p>
+          </div>
+          <div id="loginDiv">
+            <form onSubmit={doRegister}>
+            <div class="input-group mp-3">
+              <input type="text" class="form-control form-control-lg bg-light fs 6" 
+              id="email" placeholder="Email" ref={(c) => email = c}></input>
+            </div>
+            <div class="input-group mp-3">
+              <input type="password" class="form-control form-control-lg bg-light fs 6" 
+              id="password" placeholder="Password" ref={(c) => password = c}></input>
+            </div>
+            <p></p>
+            <div class="input-group mb-3">
+              <button class="btn btn-lg btn-primary w-100 fs-6" id="loginButton"
+              onClick={doRegister} input type="submit">Register</button>
+            </div>
+            </form>
+            <span id="loginResult">{message}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   );
 }
 export default Register;

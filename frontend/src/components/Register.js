@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 
 function Register() {
   let bp = require('./Path.js');
@@ -80,6 +81,10 @@ return(
               <button class="btn btn-lg btn-primary w-100 fs-6" id="loginButton"
               onClick={doRegister} input type="submit">Register</button>
             </div>
+            <div>
+                    <span> Already have an account? Log in </span>
+                    <Link to="/">here</Link>
+                  </div>
             </form>
             <span id="loginResult">{message}</span>
           </div>

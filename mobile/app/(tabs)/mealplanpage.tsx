@@ -26,7 +26,7 @@ export default function MealPlan(foods: Food[], user: User) {
   const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
     <TouchableOpacity
       //change this to remove the food item to the user's meal plan through an API call
-      onPress={UpdateMealPlan}
+      onPress={() => UpdateMealPlan(item)}
       style={[styles.item, { backgroundColor }]}
     >
       <Text style={[styles.data, { color: textColor }]}>
@@ -50,6 +50,7 @@ export default function MealPlan(foods: Food[], user: User) {
       totalProtein += foods[i].Protein;
     }
   };
+
   const UpdateMealPlan = (event: any) => {
     let food: Food;
     food = new Food("", 0, 0, 0, 0, 0, "");

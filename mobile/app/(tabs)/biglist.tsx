@@ -49,7 +49,7 @@ export default function BigList(user: User) {
   const Item = ({ item, onPress, backgroundColor, textColor }: ItemProps) => (
     <TouchableOpacity
       style={[styles.item, { backgroundColor }]}
-      onPress={UpdateMealPlan}
+      onPress={() => UpdateMealPlan(item)}
     >
       <Text style={[styles.data, { color: textColor }]}>
         {item.FoodName}, Calories: {item.Calories}
@@ -76,7 +76,7 @@ export default function BigList(user: User) {
     return (
       <Item
         item={item}
-        onPress={UpdateMealPlan}
+        onPress={() => UpdateMealPlan(item)}
         backgroundColor={backgroundColor}
         textColor={color}
       />

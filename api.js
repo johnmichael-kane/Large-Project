@@ -4,6 +4,7 @@ const user = require('./models/user.js');
 const Token = require("./models/Token.js");
 const { JsonWebTokenError } = require('jsonwebtoken');
 const sendEmail = require("./sendEmail");
+const sendCode = require("./sendCode");
 const sendVerification = require("./sendVerification");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
@@ -715,8 +716,145 @@ app.post('/api/checkFoodDuplicate', async (req, res, next) =>
   var ret = {error:error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
+
+app.post('/api/resetPasswordMobile',  async (req, res, next) => {
+  const {email, newPassword, code} = req.body;
+  const db = client.db("database");
+  const users = db.collection("Users");
+  theEmail = await users.find({"Email" : email}).toArray();
+
+  let token = await db.collection('MobileTokens').find({"userId": email}).toArray();
+    if (token.length > 0)
+    {
+      const isValid = await bcrypt.compare(code, token[0].token);
+      if (isValid)
+      {
+        console.log('there\'s a token');
+        query = {Email : theEmail[0].Email};
+        const hash = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
+        newPass = {$set: {Password : hash}};
+        const result = await users.updateOne(query, newPass);
+        res.status(200).json({error: 'worked'});
+      }
+      else {
+        res.status(200).json({error: 'token invalid'});  
+      }
+    }
+    else{
+      res.status(200).json({error: 'token expired'});  
+    
+    }
+});
+
+app.post('/api/verifyEmailMobile',  async (req, res, next) => {
+  const {email, code} = req.body;
+  const db = client.db("database");
+  const users = db.collection("Users");
+  theEmail = await users.find({"Email" : email}).toArray();
+
+
+  let token = await db.collection('MobileTokens').find({"userId": email}).toArray();
+    if (token.length > 0)
+    {
+      const isValid = await bcrypt.compare(code, token[0].token);
+      if (isValid)
+      {
+        console.log('there\'s a token');
+        console.log(theEmail.length);
+        query = {Email : theEmail[0].Email};
+        verifyEmail = {$set: {"EmailAuth" : true}};
+        const result = await users.updateOne(query, verifyEmail);
+        res.status(200).json({error: 'worked'});
+      }
+      else{
+        res.status(200).json({error: 'token invalid'});  
+      }
+    }
+    else{
+      res.status(200).json({error: 'token expired'});  
+    
+    }
+
+});
+
+app.post("/api/requestEmailAuthorizationMobile", async (req, res, next) => 
+{
+  const{email} = req.body;
+  const db = client.db("database");
+  const resetUser = await db.collection('Users').findOne({"Email": email});
+  var ret;
+  if (!resetUser)
+  {
+    ret = {error :  'Email does not exist.'};
+  }
+  else
+  {
+    console.log('im here3')
+    let token = await db.collection('MobileTokens').find({"userId": email}).toArray();
+    await db.collection('MobileTokens').deleteOne({"userId" : email});
+
+    creation = Date.now();
+    expiration = creation + 1800000;
+
+    let resetToken = getSixDigitCode();
+    const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+    const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+    const result = await db.collection('MobileTokens').insertOne(newToken);
+  
+    let verify = 'Email authorization';
+    console.log(verify);
+    sendCode(email,  verify, resetToken);
+    ret = { error: 'email sent'};
+  }
+  console.log('im here4')
+  res.status(200).json(ret);
+
+});
+
+app.post("/api/requestResetPasswordMobile", async (req, res, next) => 
+{
+  const{email} = req.body;
+  const db = client.db("database");
+  const resetUser = await db.collection('Users').findOne({"Email": email});
+
+
+  if (!resetUser)
+    res.status(200).json({error :  'Email does not exist.'});
+
+  let token = await db.collection('MobileTokens').find({"userId": email}).toArray;
+  await db.collection('MobileTokens').deleteOne({"userId" : email});
+
+  creation = Date.now();
+  expiration = creation + 1800000;
+
+  let resetToken = getSixDigitCode();
+  const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
+  const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+  const result = await db.collection('MobileTokens').insertOne(newToken);
+
+  let verify = 'Password reset';
+  console.log(verify);
+  sendCode(email, verify, resetToken);
+  var ret = { error: 'email sent'};
+  res.status(200).json(ret);
+});
 	
 }
+
+function getSixDigitCode() {
+
+  minimumValue = 100000;
+  maximumValue = 999999;
+  range = maximumValue-minimumValue + 1
+
+  // Generate random number
+  const randomBytes = crypto.randomBytes(3);
+  const randomNumber = randomBytes.readUIntBE(0, 3);
+
+  const sixDigitCode = randomNumber % range;
+
+  return sixDigitCode.toString();
+};
 
 function getTotalNutrition(array){
   //start off with an array
@@ -733,4 +871,4 @@ protein+=array[i].Protein * array[i].NumServings;
 fats+=array[i].Fats * array[i].NumServings;
 }
 return {Calories: calories , Carbs: carbs, Protein : protein, Fats: fats}
-}
+};

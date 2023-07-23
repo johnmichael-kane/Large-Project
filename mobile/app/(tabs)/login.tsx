@@ -23,8 +23,8 @@ export default function TabOneScreen() {
   const navigation = useNavigation();
   const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
-  let BigList: Food[];
-  let mealPlan: MealPlan;
+  var BigList: Food[] = [];
+  var mealPlan: MealPlan;
   const Login = async () => {
     // Make the login API call
     const loginResult = await login(EmailAddress, Password);
@@ -43,18 +43,23 @@ export default function TabOneScreen() {
         new Food(
           BigListResult.nameResults[i],
           BigListResult.caloriesResults[i],
-          BigListResult.carbsResults[i],
           BigListResult.proteinResults[i],
           BigListResult.fatResults[i],
-          BigListResult.numServings[i]
+          BigListResult.carbsResults[i],
+          BigListResult.servingResults[i]
         )
       );
     }
-    GetMealPlan(EmailAddress, BigListResult.accessToken);
+    GetMealPlan(EmailAddress, accessToken);
   };
   const GetMealPlan = async (email: string, accessToken: string) => {
+
     //Get the user's meal plan through an API Call, parse the information and store it in the equivalent arrays
-    const MealPlanResult = await GetUserMealPlan(email, accessToken);
+    const date=new Date();
+    let year=date.getFullYear();
+    let month=date.getMonth()+1;
+    let day=date.getDate();
+    const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
     mealPlan = new MealPlan(
       MealPlanResult.nameResults,
       MealPlanResult.caloriesResults,
@@ -65,8 +70,13 @@ export default function TabOneScreen() {
       MealPlanResult.Fats,
       MealPlanResult.Protein,
       MealPlanResult.Carbs,
-      MealPlanResult.totalCalories
+      MealPlanResult.Calories
     );
+    for(let i = 0; i < MealPlanResult.nameResults.length; i++)
+    {
+      console.log(MealPlanResult.nameResults[i]);
+    }
+
   };
   function ResetPassword() {
     if (EmailAddress == null || EmailAddress === "") {

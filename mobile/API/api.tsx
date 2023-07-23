@@ -9,25 +9,26 @@ export interface BigListResponse {
   nameResults: string[];
   caloriesResults: number[];
   proteinResults: number[];
-  carbsResults: number[];
   fatResults: number[];
-  numServings: number[];
-  accessToken: string;
+  carbsResults: number[];
+  servingResults: string[];
   error: string;
+  accessToken: string;
+
 }
 export interface UserMealPlanResponse {
   nameResults: string[];
   caloriesResults: number[];
   proteinResults: number[];
-  carbsResults: number[];
   fatResults: number[];
+  carbsResults: number[];
   numServings: number[];
-  totalCalories: number;
+  Calories: number;
   Fats: number;
   Protein: number;
   Carbs: number;
-  accessToken: string;
   error: string;
+  accessToken: string;
 }
 export interface AddUserFoodResponse {
   accessToken: string;
@@ -72,35 +73,37 @@ export function getBigList(accessToken: string): Promise<BigListResponse> {
   return new Promise((resolve, reject) => {
     axios
       .post<BigListResponse>(
-        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getUserMealPlan",
-        { accessToken }
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getFood",
+        { jwtToken : accessToken }
       )
       .then((response: AxiosResponse<BigListResponse>) => {
         const data: BigListResponse = response.data;
-        if (data.error === "mealPlanFailure") {
+        if (!(data.error === "")) {
           console.log("Meal Plan Error:", data.error);
-          resolve(data);
+          reject(data);
         } else {
-          console.log("Got the meal plan successfully!");
+          console.log("Got the big list successfully!");
           resolve(data);
         }
       })
       .catch((error: any) => {
-        console.error("Error in getting meal plan: ", error);
+        console.error("Error in getting big list: ", error);
         reject(error);
       });
   });
 }
 // api call that gets the user's meal plan
 export function GetUserMealPlan(
-  email: string,
+  year: Number,
+  month: Number,
+  day: Number,
   accessToken: string
 ): Promise<UserMealPlanResponse> {
   return new Promise((resolve, reject) => {
     axios
       .post<UserMealPlanResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getUserMealPlan",
-        { email, accessToken }
+        {year: year, month: month, day: day, jwtToken : accessToken }
       )
       .then((response: AxiosResponse<UserMealPlanResponse>) => {
         const data: UserMealPlanResponse = response.data;

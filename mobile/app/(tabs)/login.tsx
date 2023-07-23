@@ -6,40 +6,77 @@ import {
   Dimensions,
 } from "react-native";
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from "axios";
 import { Text, View } from "../../components/Themed";
-import { User, Food } from "../../API/APIModels";
+import { User, Food, MealPlan } from "../../API/APIModels";
 import React from "react";
 import { useNavigation } from "expo-router";
-import {login , LoginResponse} from "../../API/api"
-
+import {
+  getBigList,
+  GetUserMealPlan,
+  login,
+  LoginResponse,
+  PasswordResetRequest,
+} from "../../API/api";
 
 export default function TabOneScreen() {
   const navigation = useNavigation();
   const [EmailAddress, onEmailAddressChange] = React.useState("");
   const [Password, onPasswordChange] = React.useState("");
-
-  const Login  = async () => {
-
-      // Make the login API call
-      const loginResult = await login(EmailAddress, Password)
-      console.log("this is result " + loginResult.Email)
-        GetBigList();
-        GetMealPlan();
-        // Navigate to the biglist page (you may need to implement the navigation logic here)
+  let BigList: Food[];
+  let mealPlan: MealPlan;
+  const Login = async () => {
+    // Make the login API call
+    const loginResult = await login(EmailAddress, Password);
+    console.log(
+      "this is result " + loginResult.Email + " " + loginResult.error
+    );
+    if (!(loginResult.error === "loginFailure")) {
+      GetBigList(loginResult.accessToken);
+    }
   };
-
-  const GetBigList = () => {
+  const GetBigList = async (accessToken: string) => {
     //Get the entire list of meals through an API call, parse the information and store it into an array of class food
+    const BigListResult = await getBigList(accessToken);
+    for (let i = 0; i < BigListResult.nameResults.length; i++) {
+      BigList.push(
+        new Food(
+          BigListResult.nameResults[i],
+          BigListResult.caloriesResults[i],
+          BigListResult.carbsResults[i],
+          BigListResult.proteinResults[i],
+          BigListResult.fatResults[i],
+          BigListResult.numServings[i]
+        )
+      );
+    }
+    GetMealPlan(EmailAddress, BigListResult.accessToken);
   };
-  const GetMealPlan = () => {
+  const GetMealPlan = async (email: string, accessToken: string) => {
     //Get the user's meal plan through an API Call, parse the information and store it in the equivalent arrays
+    const MealPlanResult = await GetUserMealPlan(email, accessToken);
+    mealPlan = new MealPlan(
+      MealPlanResult.nameResults,
+      MealPlanResult.caloriesResults,
+      MealPlanResult.proteinResults,
+      MealPlanResult.fatResults,
+      MealPlanResult.carbsResults,
+      MealPlanResult.numServings,
+      MealPlanResult.Fats,
+      MealPlanResult.Protein,
+      MealPlanResult.Carbs,
+      MealPlanResult.totalCalories
+    );
   };
   function ResetPassword() {
     if (EmailAddress == null || EmailAddress === "") {
       alert("Enter an email address to send the password request to.");
     }
     //Password reset stuff goes here, this might have to go to another page
+
+  }
+  async function PasswordResetRequestLogin(email: string){
+    const PasswordResetRequestResult = await PasswordResetRequest(email);
   }
   return (
     <View style={styles.background}>

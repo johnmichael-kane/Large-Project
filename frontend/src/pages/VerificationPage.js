@@ -8,7 +8,6 @@ const VerificationPage = () =>
 
     return(
       <div>
-        <PageTitle />
         <EmailVerification/>
       </div>
     );

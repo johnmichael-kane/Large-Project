@@ -1,5 +1,7 @@
 import React, { useState,useEffect } from 'react'
+import { Link } from 'react-router-dom';
 
+import 'bootstrap/dist/css/bootstrap.min.css'
 function EmailVerification()
 {
 
@@ -50,7 +52,22 @@ function EmailVerification()
   
     return(
         <div>
-        <span id="loginResult">{message}</span>
+          <div class="container">
+            <div class="row text-center">
+            <div class="col-md">
+                <div class="card-body text-center">
+                  <div class="h1 mb-3">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                  <span id="loginResult">{message}</span>
+                  <div>
+                    <span> Return to log in </span>
+                    <Link to="/">here</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     );
 };

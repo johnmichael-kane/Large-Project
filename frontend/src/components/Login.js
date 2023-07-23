@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 
+import 'bootstrap/dist/css/bootstrap.min.css'
 function Login()
 {
   let bp = require('./Path.js');
@@ -78,29 +79,43 @@ function Login()
     }
 
     return(
-      <div id="loginDiv">
-        <form onSubmit={doLogin}>
-        <span id="inner-title">PLEASE LOG IN</span><br />
-        <input type="text" id="loginName" placeholder="email" 
-          ref={(c) => loginName = c} /><br />
-        <input type="password" id="loginPassword" placeholder="password" 
-          ref={(c) => loginPassword = c} /><br />
+      <div>
+        <p></p>
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <div class="row align-items-center">
+          <div class="header-text input-group-lg">
+            <p><font size="+3"><center>Log in to Macrotracker</center></font></p>
+          </div>
 
-        <input type="submit" id="loginButton" class="buttons" value = "Do It"
-          onClick={doLogin} />
-        </form>
-        <span id="loginResult">{message}</span>
-        <div>
-          <span>Don't have an account? </span>
-          <Link to="/register">Register</Link>
-        </div>
-        <div>
-        <form onSubmit={requestPasswordReset}>
-        <input type="submit" id="resetButton" class="buttons" value = "Forgot Password?"
-          onClick={requestPasswordReset} />
+          <form onSubmit={doLogin}>
+            <div class="input-group mp-3">
+              <input type="text" class="form-control form-control-lg bg-light fs 6" 
+              id="loginName" placeholder="Email" ref={(c) => loginName = c}></input>
+            </div>
+            <div class="input-group mp-3">
+              <input type="password" class="form-control form-control-lg bg-light fs 6" 
+              id="loginPassword" placeholder="Password" ref={(c) => loginPassword = c}></input>
+            </div>
+            <div class="forgot">
+              <form onSubmit={requestPasswordReset}>
+                <small><a href="#" id="resetButton"onClick={requestPasswordReset}>Forgot Password?</a></small>
+              </form>
+            </div>
+            <p></p>
+            <div class="input-group mb-3">
+              <button class="btn btn-lg btn-primary w-100 fs-6" onClick={doLogin}
+              input type="submit">Login</button>
+            </div>
           </form>
+          <div>
+            <span>Don't have an account? </span>
+            <Link to="/register">Register</Link>
+          </div>
         </div>
-     </div>
+      </div>
+    </div>
+    </div>
     );
 };
 

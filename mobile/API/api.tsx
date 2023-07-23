@@ -43,6 +43,51 @@ export interface PasswordResetRequestResponse {
   error: string;
 }
 
+export interface EmailVerificationRequestResponse{
+  error: string;
+}
+
+export interface PasswordResetResponse {
+  error: string;
+}
+
+export interface EmailVerifyResponse {
+  error: string;
+}
+
+export interface VerifyEmailResponse {
+  error: string;
+}
+
+export interface RegisterResponse {
+  error: string;
+}
+
+
+export function Register(email: string, password: string): Promise<RegisterResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<RegisterResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/login",
+        {email: email, password: password }
+      )
+      .then((response: AxiosResponse<RegisterResponse>) => {
+        const data: RegisterResponse = response.data;
+        if (data.error === "exists") {
+          console.log("Register Error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Register successful!");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in login: ", error);
+        reject(error);
+      });
+  });
+}
+
 export function login(email: string, password: string): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {
     axios
@@ -107,8 +152,8 @@ export function GetUserMealPlan(
       )
       .then((response: AxiosResponse<UserMealPlanResponse>) => {
         const data: UserMealPlanResponse = response.data;
-        if (data.error === "mealPlanFailure") {
-          console.log("Meal Plan Error:", data.error);
+        if (!(data.error === "success")) {
+          console.log("Meal Plan Error: ", data.error);
           resolve(data);
         } else {
           console.log("Got the meal plan successfully!");
@@ -130,11 +175,11 @@ export function AddUserFood(
     axios
       .post<AddUserFoodResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/addUserFood",
-        { email, accessToken }
+        { email: email, jwtToken: accessToken }
       )
       .then((response: AxiosResponse<AddUserFoodResponse>) => {
         const data: AddUserFoodResponse = response.data;
-        if (data.error === "addUserFoodError") {
+        if (!(data.error === "added")) {
           console.log("Adding Food Error:", data.error);
           resolve(data);
         } else {
@@ -157,20 +202,23 @@ export function RemoveUserFood(
     axios
       .post<DeleteUserFoodResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/deleteUserFood",
-        { email, accessToken }
+        { email: email, jwtToken : accessToken }
       )
       .then((response: AxiosResponse<DeleteUserFoodResponse>) => {
         const data: DeleteUserFoodResponse = response.data;
-        if (data.error === "addUserFoodError") {
-          console.log("Adding Food Error:", data.error);
+        if (data.error === "notDeleted") {
+          console.log("Deleting Food Error:", data.error);
+          resolve(data);
+        } else if (data.error === "deleted"){
+          console.log("Deleted Successfully!");
           resolve(data);
         } else {
-          console.log("Added Successfully!");
+          console.log(data.error);
           resolve(data);
         }
       })
       .catch((error: any) => {
-        console.error("Error in adding food: ", error);
+        console.error("Error in deleting food: ", error);
         reject(error);
       });
   });
@@ -183,22 +231,102 @@ export function PasswordResetRequest(
     axios
       .post<PasswordResetRequestResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestResetPassword",
-        { email }
+        { email : email }
       )
       .then((response: AxiosResponse<PasswordResetRequestResponse>) => {
         const data: PasswordResetRequestResponse = response.data;
-        if (data.error === "addUserFoodError") {
-          console.log("Adding Food Error:", data.error);
+        if (!(data.error === "email sent")) {
+            console.log("Password Reset Existence Error: ", data.error);
+
           resolve(data);
         } else {
-          console.log("Added Successfully!");
+          console.log("Password recent email successful!");
           resolve(data);
         }
       })
       .catch((error: any) => {
-        console.error("Error in adding food: ", error);
+        console.error("Error in password reset request: ", error);
         reject(error);
       });
   });
 }
+
+export function PasswordReset(
+  email: string
+): Promise<PasswordResetResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<PasswordResetResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetPassword",
+        { email : email }
+      )
+      .then((response: AxiosResponse<PasswordResetResponse>) => {
+        const data: PasswordResetResponse = response.data;
+        if (!(data.error === "worked")) {
+          console.log("Password Reset Error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Password Reset Successfully!");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in resetting password: ", error);
+        reject(error);
+      });
+  });
+}
+
+export function EmailVerificationRequest(
+  email: string
+): Promise<EmailVerificationRequestResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<EmailVerificationRequestResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestEmailAuthorization",
+        { email : email}
+      )
+      .then((response: AxiosResponse<EmailVerificationRequestResponse>) => {
+        const data: EmailVerificationRequestResponse = response.data;
+        if (!(data.error === "email sent")) {
+          console.log("Email verification error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Verification email sent Successfully!");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in sending verification email: ", error);
+        reject(error);
+      });
+  });
+}
+
+export function VerifyEmail(
+  email: string
+): Promise<VerifyEmailResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<VerifyEmailResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/verifyEmail",
+        { email : email }
+      )
+      .then((response: AxiosResponse<VerifyEmailResponse>) => {
+        const data: VerifyEmailResponse = response.data;
+        if (!(data.error === 'worked')) {
+          console.log("Email verification Error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Email verified!");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in verifying email: ", error);
+        reject(error);
+      });
+  });
+}
+
 // api call(s) that is/are used for email verification

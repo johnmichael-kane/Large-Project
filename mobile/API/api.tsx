@@ -230,7 +230,7 @@ export function PasswordResetRequest(
   return new Promise((resolve, reject) => {
     axios
       .post<PasswordResetRequestResponse>(
-        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestResetPassword",
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestResetPasswordMobile",
         { email : email }
       )
       .then((response: AxiosResponse<PasswordResetRequestResponse>) => {
@@ -257,7 +257,7 @@ export function PasswordReset(
   return new Promise((resolve, reject) => {
     axios
       .post<PasswordResetResponse>(
-        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetPassword",
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetPasswordMobile",
         { email : email }
       )
       .then((response: AxiosResponse<PasswordResetResponse>) => {
@@ -283,7 +283,7 @@ export function EmailVerificationRequest(
   return new Promise((resolve, reject) => {
     axios
       .post<EmailVerificationRequestResponse>(
-        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestEmailAuthorization",
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestEmailAuthorizationMobile",
         { email : email}
       )
       .then((response: AxiosResponse<EmailVerificationRequestResponse>) => {
@@ -309,7 +309,7 @@ export function VerifyEmail(
   return new Promise((resolve, reject) => {
     axios
       .post<VerifyEmailResponse>(
-        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/verifyEmail",
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/verifyEmailMobile",
         { email : email }
       )
       .then((response: AxiosResponse<VerifyEmailResponse>) => {
@@ -328,5 +328,3 @@ export function VerifyEmail(
       });
   });
 }
-
-// api call(s) that is/are used for email verification

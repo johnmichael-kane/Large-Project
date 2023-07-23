@@ -731,6 +731,7 @@ app.post('/api/resetPasswordMobile',  async (req, res, next) => {
       {
         console.log('there\'s a token');
         query = {Email : theEmail[0].Email};
+        await db.collection('MobileTokens').deleteOne({"userId" : email});
         const hash = await bcrypt.hash(newPassword, Number(process.env.BCRYPT_SALT));
         newPass = {$set: {Password : hash}};
         const result = await users.updateOne(query, newPass);
@@ -759,6 +760,7 @@ app.post('/api/verifyEmailMobile',  async (req, res, next) => {
       const isValid = await bcrypt.compare(code, token[0].token);
       if (isValid)
       {
+        await db.collection('MobileTokens').deleteOne({"userId" : email});
         console.log('there\'s a token');
         console.log(theEmail.length);
         query = {Email : theEmail[0].Email};

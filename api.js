@@ -387,7 +387,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   }
 
   var ret = { nameResults: _name, caloriesResults: _calories, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs, numServings: _servings,
-     Calories: nutritionResult.calories, Fats: nutritionResult.Fats, Protein: nutritionResult.Protein, Carbs: nutritionResult.Carbs,
+     Calories: nutritionResult.Calories, Fats: nutritionResult.Fats, Protein: nutritionResult.Protein, Carbs: nutritionResult.Carbs,
       error: error, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });

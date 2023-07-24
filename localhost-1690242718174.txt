@@ -1,1 +1,214 @@
 <table border = '1'> <tr> <th Food Name> </th> <th Calories> </th> <th Protein> </th> <th Fats> </th> <th Carbs> </th> <th Servings> </th> <th> </th> <tr><td id='name0'><span>Apricot Nectar,No Added Vit C</span></td><td id='calories0'><span>140</span></td><td id='protein0'><span>2</span></td><td id='fats0'><span>0</span></td><td id='carbs0'><span>36</span></td><td id='servings0'><span>1</span></td><td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td></tr><tr><td id='name1'><span>Egg</span></td><td id='calories1'><span>1</span></td><td id='protein1'><span>4</span></td><td id='fats1'><span>2</span></td><td id='carbs1'><span>3</span></td><td id='servings1'><span>6</span></td><td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td></tr><tr><td id='name2'><span>Egg</span></td><td id='calories2'><span>1</span></td><td id='protein2'><span>4</span></td><td id='fats2'><span>2</span></td><td id='carbs2'><span>3</span></td><td id='servings2'><span>6</span></td><td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td></tr><tr><td id='name3'><span>Egg</span></td><td id='calories3'><span>1</span></td><td id='protein3'><span>4</span></td><td id='fats3'><span>2</span></td><td id='carbs3'><span>3</span></td><td id='servings3'><span>6</span></td><td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td></tr><tr><td id='name4'><span>Apricot Nectar,No Added Vit C</span></td><td id='calories4'><span>140</span></td><td id='protein4'><span>2</span></td><td id='fats4'><span>0</span></td><td id='carbs4'><span>36</span></td><td id='servings4'><span>1</span></td><td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td></tr><tr><td id='nameTotal'><span> Total: </span><td id='caloriesTotal'><span>298</span><td id='proteinTotal'><span>76</span><td id='fatTotal'><span>36</span><td id='carbsTotal'><span>126</span></tr></table>
+
+
+
+import React, { useState } from 'react';
+import { useJwt } from 'react-jwt';
+
+function CardUI() {
+
+
+    let bp = require('./Path.js');
+    var card = '';
+    var search = '';
+    let text = '';
+    var foodName, calories, fats, protein, carbohydrates, servingSize, numServings;
+    const [message, setMessage] = useState('');
+    const [searchResults, setResults] = useState('');
+    const [cardList, setCardList] = useState('');
+    var temp = ''
+
+    let _ud = localStorage.getItem('user_data');
+    let ud = JSON.parse(_ud);
+    let userId = ud.email;
+
+    var storage = require('../tokenStorage.js');
+
+    const addCard = async event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+        var obj = { userId: userId, card: card.value, jwtToken: tok };
+        var js = JSON.stringify(obj);
+
+        try {
+
+            const response = await fetch(bp.buildPath('api/addcard'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let txt = await response.text();
+            let res = JSON.parse(txt);
+
+            if (res.error.length > 0) {
+                setMessage("API Error:" + res.error);
+            }
+            else {
+                setMessage('Card has been added');
+                storage.storeToken(res.jwtToken);
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
+
+    };
+
+    const searchCard = async event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+        var obj = { userId: userId, search: search.value, jwtToken: tok };
+        var js = JSON.stringify(obj);
+        try {
+
+            const response = await fetch(bp.buildPath('api/searchcards'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let txt = await response.text();
+            let res = JSON.parse(txt);
+            let _results = res.results;
+            let resultText = '';
+            for (var i = 0; i < _results.length; i++) {
+                resultText += _results[i];
+                if (i < _results.length - 1) {
+                    resultText += ', ';
+                }
+            }
+            setResults('Card(s) have been retrieved');
+            setCardList(resultText);
+            storage.storeToken(res.jwtToken);
+        }
+        catch (e) {
+            alert(e.toString());
+            setResults(e.toString());
+        }
+    };
+
+    const addUserFood = async event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+        let obj = {
+            foodName: foodName.value, calories: calories.value, fats: fats.value,
+            carbohydrates: carbohydrates.value, protein: protein.value, servingSize: servingSize.value,
+            numServings: numServings.value, jwtToken: tok
+        };
+        let js = JSON.stringify(obj);
+
+        try {
+            const response = await fetch(bp.buildPath('api/addUserFood'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let res = JSON.parse(await response.text());
+            temp = res.toString;
+            if (res.error === "notAdded") {
+                setMessage("API Error: " + res.error);
+            }
+            else {
+                setMessage('Food has been added to your meal plan');
+                //getUserMealPlan();
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
+    }
+
+
+    const deleteUserFood = (foodName) => event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+    }
+
+
+    const getUserMealPlan = async event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+        const date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        let obj = {year:year, month:month, day:day, jwtToken:tok};
+        let js = JSON.stringify(obj);
+
+        try {
+            const response = await fetch(bp.buildPath('api/getUserMealPlan'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let res = JSON.parse(await response.text());
+            if (res.error != 'success') {
+                setMessage("API Error: " + res.error);
+            }
+            else {
+                let text = "<table border = '1'> <tr> <th Food Name> </th> <th Calories> </th> <th Protein> </th> <th Fats> </th> <th Carbs> </th> <th Servings> </th> <th> </th> "
+                for (let i = 0; i < res.caloriesResults.length; i++) {
+                    text += "<tr>";
+                    text += "<td id='name" +i+"'><span>" +res.nameResults[i] +"</span></td>";
+                    text += "<td id='calories" +i+"'><span>" +res.caloriesResults[i] +"</span></td>";
+                    text += "<td id='protein" +i+"'><span>" +res.proteinResults[i] +"</span></td>";
+                    text += "<td id='fats" +i+"'><span>" +res.fatResults[i] +"</span></td>";
+                    text += "<td id='carbs" +i+"'><span>" +res.carbsResults[i] +"</span></td>";
+                    text += "<td id='servings" +i+"'><span>" +res.numServings[i] +"</span></td>";
+                    text += "<td><button type='button' onClick=deleteUserFood(res.nameResults[i])>Delete</button></td>";
+                    text += "</tr>";
+                }
+                text += "<tr>";
+                text += "<td id='nameTotal'><span> Total: </span>";
+                text += "<td id='caloriesTotal'><span>" +res.Calories +"</span>";
+                text += "<td id='proteinTotal'><span>" +res.Protein +"</span>";
+                text += "<td id='fatTotal'><span>" +res.Fats +"</span>";
+                text += "<td id='carbsTotal'><span>" +res.Carbs +"</span>";
+                text += "</tr></table>";
+                console.log(text);
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
+    }
+
+
+    return (
+        <div id="cardUIDiv">
+            <br />
+            <span id="userId">{temp}</span>
+            <input type="text" id="searchText" placeholder="Card To Search For"
+                ref={(c) => search = c} />
+            <button type="button" id="searchCardButton" class="buttons"
+                onClick={searchCard}> Search Card</button><br />
+            <span id="cardSearchResult">{searchResults}</span>
+            <p id="cardList">{cardList}</p><br /><br />
+            <input type="text" id="cardText" placeholder="Card To Add"
+                ref={(c) => card = c} />
+            <button type="button" id="addCardButton" class="buttons"
+                onClick={addCard}>Add Card</button><br />
+            <span id="cardAddResult"></span>
+            <input type="text" id="foodName" placeholder="Food Name"
+                ref={(c) => foodName = c} />
+            <input type="text" id="calories" placeholder="Calories"
+                ref={(c) => calories = c} />
+            <input type="text" id="fats" placeholder="Fats"
+                ref={(c) => fats = c} />
+            <input type="text" id="carbohydrates" placeholder="Carbs"
+                ref={(c) => carbohydrates = c} />
+            <input type="text" id="protein" placeholder="Protein"
+                ref={(c) => protein = c} />
+            <input type="text" id="servingSize" placeholder="Serving Size"
+                ref={(c) => servingSize = c} />
+            <input type="text" id="numServings" placeholder="Servings"
+                ref={(c) => numServings = c} />
+            <button type="button" id="addFoodButton" class="buttons"
+                onClick={addUserFood}>Add Food</button>
+            <button type="button" id="getMealPlanButton" class="buttons"
+                onClick={getUserMealPlan}>Load Todays Meals</button>
+            <span id="foodAddResult">{message}</span>
+            <></>
+        </div>
+
+    );
+}
+
+export default CardUI;

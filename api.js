@@ -340,7 +340,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   const token = require('./createJWT.js');
   const {year, month, day, jwtToken} = req.body;
   var error = 'success';
-
+  let email = token.getData(jwtToken);
   try{
     if(token.isExpired(jwtToken))
     {
@@ -354,7 +354,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
     console.log(e.message);
   }
   const db = client.db("database");
-  const result = await db.collection('Meals').find({"Email": jwtToken.Email, "Year": year, "Month": month, "Day": day}).toArray();
+  const result = await db.collection('Meals').find({"Email": email, "Year": year, "Month": month, "Day": day}).toArray();
   if(result.length<1){
     error='does not exist';
   }

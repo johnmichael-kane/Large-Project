@@ -3,7 +3,7 @@ import { useJwt } from 'react-jwt';
 
 function CardUI() {
 
-
+    let email = "";
     let bp = require('./Path.js');
     var card = '';
     var search = '';

@@ -195,7 +195,8 @@ app.post('/api/addUserFood', async (req, res, next) =>
   //const { userId, foodName, calories } = req.body;
   const token = require('./createJWT.js');
   const {foodName, calories, fats, carbohydrates, protein, servingSize, numServings, jwtToken} = req.body;
-  console.log(jwtToken.Email)
+
+  let email = token.getData(jwtToken);
   try{
     if(token.isExpired(jwtToken))
     {
@@ -216,13 +217,14 @@ let year=date.getFullYear();
 let month=date.getMonth()+1;
 let day=date.getDate();
 	
-  const newFood = {Email: jwtToken.Email, Year: year, Month: month, Day: day, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
+  const newFood = {Email: email, Year: year, Month: month, Day: day, FoodName: foodName, Calories: calories, Fats: fats, Carbohydrates: carbohydrates, Protein: protein, ServingSize: servingSize, NumServings: numServings};
   var error = 'notAdded';
 
   try
   {
     const db = client.db("database");
     const result = db.collection('Meals').insertOne(newFood);
+    console.log("imhere")
     error = 'added';
   }
   catch(e)

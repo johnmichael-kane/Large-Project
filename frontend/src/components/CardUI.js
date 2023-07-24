@@ -96,7 +96,7 @@ function CardUI() {
     
                 let res = JSON.parse(await response.text());
                 temp = res.toString;
-                if( res.error = "notAdded" )
+                if( res.error === "notAdded" )
                 {
                     setMessage( "API Error: " + res.error );
                 }

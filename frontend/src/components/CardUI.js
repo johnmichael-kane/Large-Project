@@ -18,35 +18,16 @@ function CardUI() {
     let userId = ud.email;
 
     var storage = require('../tokenStorage.js');
-    const query = new Proxy(new URLSearchParams(window.location.search), {
-        get: (searchParams, prop) => searchParams.get(prop),  
-        });
-        const code = query.token; 
-        const email = query.id
-      /*const app_name = 'group7-largeproject-fcbd9bb42321'
-       function buildPath(route)
-       {
-           if (process.env.NODE_ENV === 'production') 
-           {
-               return 'https://' + app_name +  '.herokuapp.com/' + route;
-           }
-           else  let bp = require('.Path.js');
-               return 'http://localhost:5000/' + route;
-           }
-           }    */  
-   
+
     const addCard = async event => {
         event.preventDefault();
-
-        //let obj = {userId:userId,card:card.value};
-        //let js = JSON.stringify(obj);
-
+        
         var tok = storage.retrieveToken();
         var obj = { userId: userId, card: card.value, jwtToken: tok };
         var js = JSON.stringify(obj);
 
         try {
-            //          const response = await fetch('http://localhost:5000/api/addcard',
+
             const response = await fetch(bp.buildPath('api/addcard'),
                 { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
 
@@ -70,13 +51,11 @@ function CardUI() {
     const searchCard = async event => {
         event.preventDefault();
 
-        //        let obj = {userId:userId,search:search.value};
-        //        let js = JSON.stringify(obj);
         var tok = storage.retrieveToken();
         var obj = { userId: userId, search: search.value, jwtToken: tok };
         var js = JSON.stringify(obj);
         try {
-            //          const response = await fetch('http://localhost:5000/api/searchcards',
+
             const response = await fetch(bp.buildPath('api/searchcards'),
                 { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
 

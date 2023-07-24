@@ -52,3 +52,9 @@ exports.refresh = function( token )
 
   return _createToken(Email);
 }
+
+exports.getData = function( token )
+{
+  var ud = jwt.decode(token,{complete:true});
+  return ud.payload.Email;
+}

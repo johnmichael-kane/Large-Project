@@ -11,7 +11,14 @@ function CardUI() {
     const [cardList, setCardList] = useState('');
     var temp = '';
 
-    const [mealPlan, setMealPlan] = useState([]);
+    const [mealPlan, setMealPlan] = useState({
+        nameResults: [],
+        caloriesResults: [],
+        proteinResults: [],
+        fatResults: [],
+        carbsResults: [],
+        numServings: []
+    });
 
     let _ud = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);

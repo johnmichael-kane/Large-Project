@@ -108,7 +108,7 @@ console.log("foods:", foods);
               <p>Protein: {foods.proteinResults[index]}</p>
               <p>Fats: {foods.fatResults[index]}</p>
               <p>Carbs: {foods.carbsResults[index]}</p>
-              <p>Servings: {foods.servingResults[index]}</p>
+              <p>Serving Size: {foods.servingResults[index]}</p>
               <button onClick={(event) => addUserFood(event, foodName)}>
                 Add
               </button>

@@ -11,7 +11,6 @@ function CardUI() {
     const [cardList, setCardList] = useState('');
     var temp = '';
     
-
     const [mealPlan, setMealPlan] = useState({
         nameResults: [],
         caloriesResults: [],
@@ -26,66 +25,6 @@ function CardUI() {
     let userId = ud.email;
 
     var storage = require('../tokenStorage.js');
-
-    const addCard = async event => {
-        event.preventDefault();
-
-        var tok = storage.retrieveToken();
-        var obj = { userId: userId, card: card.value, jwtToken: tok };
-        var js = JSON.stringify(obj);
-
-        try {
-
-            const response = await fetch(bp.buildPath('api/addcard'),
-                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
-
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-
-            if (res.error.length > 0) {
-                setMessage("API Error:" + res.error);
-            }
-            else {
-                setMessage('Card has been added');
-                storage.storeToken(res.jwtToken);
-            }
-        }
-        catch (e) {
-            setMessage(e.toString());
-        }
-
-    };
-
-    const searchCard = async event => {
-        event.preventDefault();
-
-        var tok = storage.retrieveToken();
-        var obj = { userId: userId, search: search.value, jwtToken: tok };
-        var js = JSON.stringify(obj);
-        try {
-
-            const response = await fetch(bp.buildPath('api/searchcards'),
-                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
-
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-            let _results = res.results;
-            let resultText = '';
-            for (var i = 0; i < _results.length; i++) {
-                resultText += _results[i];
-                if (i < _results.length - 1) {
-                    resultText += ', ';
-                }
-            }
-            setResults('Card(s) have been retrieved');
-            setCardList(resultText);
-            storage.storeToken(res.jwtToken);
-        }
-        catch (e) {
-            alert(e.toString());
-            setResults(e.toString());
-        }
-    };
 
     const addUserFood = async event => {
         event.preventDefault();
@@ -108,7 +47,7 @@ function CardUI() {
             }
             else {
                 setMessage('Food has been added to your meal plan');
-                //getUserMealPlan();
+                getUserMealPlan();
             }
         }
         catch (e) {
@@ -135,6 +74,7 @@ function CardUI() {
           }
           else {
               setMessage('Food has been removed from your meal plan');
+              getUserMealPlan();
           }
       }
       catch (e) {
@@ -150,8 +90,7 @@ function CardUI() {
         setMealPlan(newMealPlanData);
     };
 
-    const getUserMealPlan = async event => {
-        event.preventDefault();
+    const getUserMealPlan = async () => {
         var tok = storage.retrieveToken();
         const date = new Date();
         let year = date.getFullYear();
@@ -177,47 +116,14 @@ function CardUI() {
         }
     };
 
+    useEffect(() => {
+        getUserMealPlan();
+      }, []);
+
     console.log("mealPlan:", mealPlan);
     return (
         <div id="cardUIDiv">
-            <br />
-            <span id="userId">{temp}</span>
-            <input
-                type="text"
-                id="searchText"
-                placeholder="Card To Search For"
-                ref={(c) => (search = c)}
-            />
-            <button
-                type="button"
-                id="searchCardButton"
-                className="buttons"
-                onClick={searchCard}
-            >
-                Search Card
-            </button>
-            <br />
-            <span id="cardSearchResult">{searchResults}</span>
-            <p id="cardList">{cardList}</p>
-            <br />
-            <br />
-            <input
-                type="text"
-                id="cardText"
-                placeholder="Card To Add"
-                ref={(c) => (card = c)}
-            />
-            <button
-                type="button"
-                id="addCardButton"
-                className="buttons"
-                onClick={addCard}
-            >
-                Add Card
-            </button>
-            <br />
-            <span id="cardAddResult"></span>
-            <input
+              <input
                 type="text"
                 id="foodName"
                 placeholder="Food Name"

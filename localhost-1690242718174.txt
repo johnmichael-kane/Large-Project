@@ -178,6 +178,7 @@ function CardUI() {
 
       useEffect(() => {
         displayHTMLStringAsGrid();
+        getUserMealPlan(); 
       }, []);
 
     /////////////////end new////////////////

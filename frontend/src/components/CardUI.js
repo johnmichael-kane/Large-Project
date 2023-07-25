@@ -10,6 +10,7 @@ function CardUI() {
     const [searchResults, setResults] = useState('');
     const [cardList, setCardList] = useState('');
     var temp = '';
+    
 
     const [mealPlan, setMealPlan] = useState({
         nameResults: [],
@@ -268,21 +269,37 @@ function CardUI() {
                 onClick={getUserMealPlan}
             >
                 Load Todays Meals
-            </button>
-            <span id="foodAddResult">{message}</span>
+                </button>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"></link>
+            <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css"></link>
 
-            <div className="grid-container">
-                {mealPlan.nameResults && mealPlan.nameResults.length > 0 ? (
+            <script defer src="https://code.jquery.com/jquery-3.7.0.js"></script>
+            <script defer src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+            <script defer src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+            <script defer src="script.js"></script>
+            <table id="example" class="table table-striped" style={{width: '100%'}}>
+        <thead>
+            <tr>
+                <th>Food Name</th>
+                <th>Calories</th>
+                <th>Fats</th>
+                <th>Carbs</th>
+                <th>Protein</th>
+                <th>Servings</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        {mealPlan.nameResults && mealPlan.nameResults.length > 0 ? (
                     mealPlan.nameResults.map((foodName, index) => (
-                        <div key={index} className="grid-item">
-                            <h3>{foodName}</h3>
-                            <tc>Calories: {mealPlan.caloriesResults[index]}</tc>
-                            <tc>Protein: {mealPlan.proteinResults[index]}</tc>
-                            <tc>Fats: {mealPlan.fatResults[index]}</tc>
-                            <tc>Carbs: {mealPlan.carbsResults[index]}</tc>
-                            <tc>Servings: {mealPlan.numServings[index]}</tc>
-                            <tc><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></tc>
-                        </div>
+                        <tr key={index} className="grid-item">
+                            <td>{foodName}</td>
+                            <td>{mealPlan.caloriesResults[index]}</td>
+                            <td>{mealPlan.proteinResults[index]}</td>
+                            <td>{mealPlan.fatResults[index]}</td>
+                            <td>{mealPlan.carbsResults[index]}</td>
+                            <td>{mealPlan.numServings[index]}</td>
+                            <td><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></td>
+                        </tr>
                         
                     ))
                     
@@ -290,12 +307,17 @@ function CardUI() {
                  : (
                     <p>Getting user meal plan</p>
                 )}
-            </div>
-            <h3>Totals</h3>
-            <tc>Calories: {mealPlan.Calories}</tc>
-            <tc>Protein: {mealPlan.Protein}</tc>
-            <tc>Fats: {mealPlan.Fats}</tc>
-            <tc>Carbs: {mealPlan.Carbs}</tc>
+        <tfoot>
+            <tr>
+                <th>Totals:</th>
+                <th>{mealPlan.Calories}</th>
+                <th>{mealPlan.Fats}</th>
+                <th>{mealPlan.Carbs}</th>
+                <th>{mealPlan.Protein}</th>
+                <th>Servings</th>
+            </tr>
+        </tfoot>
+    </table>
         </div>
     );
 }

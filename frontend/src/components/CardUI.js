@@ -310,7 +310,7 @@ function CardUI() {
         <tfoot class="table-secondary">
             <tr>
                 <th>Totals:</th>
-                <th>{mealPlan.totalCalories}</th>
+                <th>{mealPlan.Calories}</th>
                 <th>{mealPlan.Fats}</th>
                 <th>{mealPlan.Carbs}</th>
                 <th>{mealPlan.Protein}</th>

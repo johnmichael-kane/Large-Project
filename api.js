@@ -192,13 +192,15 @@ exports.setApp = function(app, client) {
     {
       console.log(e.message);
     }
+
+    let email = token.getData(jwtToken);
     
     var error = 'notDeleted';
   
     try
     {
       const db = client.db("database");
-      const result = db.collection('Meals').deleteOne({Email: jwtToken.Email, Foodname: foodName, Year: year, Month : month, Day : day});
+      const result = db.collection('Meals').deleteOne({Email: email, Foodname: foodName, Year: year, Month : month, Day : day});
       error = 'deleted';
     }
     catch(e)
@@ -373,6 +375,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   const {year, month, day, jwtToken} = req.body;
   var error = 'success';
   let email = token.getData(jwtToken);
+  console.log(email);
   try{
     if(token.isExpired(jwtToken))
     {

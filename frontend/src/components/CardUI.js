@@ -1,17 +1,17 @@
-import React, {useState } from 'react';
-import { useJwt } from 'react-jwt';
+import React, { useState, useEffect } from 'react';
 
 function CardUI() {
-
-    let email = "";
     let bp = require('./Path.js');
     var card = '';
     var search = '';
+    let text = '';
     var foodName, calories, fats, protein, carbohydrates, servingSize, numServings;
     const [message, setMessage] = useState('');
     const [searchResults, setResults] = useState('');
     const [cardList, setCardList] = useState('');
-    var temp = ''
+    var temp = '';
+
+    const [mealPlan, setMealPlan] = useState([]);
 
     let _ud = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
@@ -21,7 +21,7 @@ function CardUI() {
 
     const addCard = async event => {
         event.preventDefault();
-        
+
         var tok = storage.retrieveToken();
         var obj = { userId: userId, card: card.value, jwtToken: tok };
         var js = JSON.stringify(obj);
@@ -78,75 +78,195 @@ function CardUI() {
             setResults(e.toString());
         }
     };
-    
-        const addUserFood = async event => 
-        {
-            event.preventDefault();
-    
-            var tok = storage.retrieveToken();
-            let obj = {foodName: foodName.value, calories: calories.value, fats: fats.value, 
-                carbohydrates: carbohydrates.value, protein: protein.value, servingSize: servingSize.value, 
-                numServings: numServings.value, jwtToken: tok};
-            let js = JSON.stringify(obj);
-    
-            try
-            {
-                const response = await fetch(bp.buildPath('api/addUserFood'),
-                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-    
-                let res = JSON.parse(await response.text());
-                temp = res.toString;
-                if( res.error === "notAdded" )
-                {
-                    setMessage( "API Error: " + res.error );
-                }
-                else
-                {
-                    setMessage('Food has been added to your meal plan');
-                }
-            }
-            catch(e)
-            {
-                setMessage(e.toString());
-            }
-    
-        }
-       
 
+    const addUserFood = async event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+        let obj = {
+            foodName: foodName.value, calories: calories.value, fats: fats.value,
+            carbohydrates: carbohydrates.value, protein: protein.value, servingSize: servingSize.value,
+            numServings: numServings.value, jwtToken: tok
+        };
+        let js = JSON.stringify(obj);
+
+        try {
+            const response = await fetch(bp.buildPath('api/addUserFood'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let res = JSON.parse(await response.text());
+            if (res.error === "notAdded") {
+                setMessage("API Error: " + res.error);
+            }
+            else {
+                setMessage('Food has been added to your meal plan');
+                //getUserMealPlan();
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
+    }
+
+
+    const deleteUserFood = (foodName) => event => {
+        event.preventDefault();
+
+        var tok = storage.retrieveToken();
+    }
+
+    const updateMealPlan = (newMealPlanData) => {
+        setMealPlan(newMealPlanData);
+    };
+
+    const getUserMealPlan = async event => {
+        event.preventDefault();
+        var tok = storage.retrieveToken();
+        const date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        let obj = { year: year, month: month, day: day, jwtToken: tok };
+        let js = JSON.stringify(obj);
+        try {
+            const response = await fetch(bp.buildPath('api/getUserMealPlan'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            let text = await response.text();
+            let res = JSON.parse(text);
+            setMealPlan(res);
+            console.log("mealPlan: ", mealPlan);
+            console.log("length: ", mealPlan.nameResults.length);
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
+
+    console.log("mealPlan:", mealPlan);
     return (
         <div id="cardUIDiv">
             <br />
             <span id="userId">{temp}</span>
-            <input type="text" id="searchText" placeholder="Card To Search For"
-                ref={(c) => search = c} />
-            <button type="button" id="searchCardButton" class="buttons"
-                onClick={searchCard}> Search Card</button><br />
+            <input
+                type="text"
+                id="searchText"
+                placeholder="Card To Search For"
+                ref={(c) => (search = c)}
+            />
+            <button
+                type="button"
+                id="searchCardButton"
+                className="buttons"
+                onClick={searchCard}
+            >
+                Search Card
+            </button>
+            <br />
             <span id="cardSearchResult">{searchResults}</span>
-            <p id="cardList">{cardList}</p><br /><br />
-            <input type="text" id="cardText" placeholder="Card To Add"
-                ref={(c) => card = c} />
-            <button type="button" id="addCardButton" class="buttons"
-                onClick={addCard}>Add Card</button><br />
-            <span id="cardAddResult">{email}</span>
-            <input type="text" id="foodName" placeholder="Food Name"
-                ref={(c) => foodName = c}/>
-            <input type="text" id="calories" placeholder="Calories"
-                ref={(c) => calories= c}/>
-            <input type="text" id="fats" placeholder="Fats"
-                ref={(c) => fats = c}/>
-            <input type="text" id="carbohydrates" placeholder="Carbs"
-                ref={(c) => carbohydrates = c}/>
-            <input type="text" id="protein" placeholder="Protein"
-                ref={(c) => protein = c}/>
-            <input type="text" id="servingSize" placeholder="Serving Size"
-                ref={(c) => servingSize = c}/>
-            <input type="text" id="numServings" placeholder="Servings"
-                ref={(c) => numServings = c}/>    
-            <button type="button" id="addFoodButton" class="buttons"
-                onClick={addUserFood}>Please</button>
+            <p id="cardList">{cardList}</p>
+            <br />
+            <br />
+            <input
+                type="text"
+                id="cardText"
+                placeholder="Card To Add"
+                ref={(c) => (card = c)}
+            />
+            <button
+                type="button"
+                id="addCardButton"
+                className="buttons"
+                onClick={addCard}
+            >
+                Add Card
+            </button>
+            <br />
+            <span id="cardAddResult"></span>
+            <input
+                type="text"
+                id="foodName"
+                placeholder="Food Name"
+                ref={(c) => (foodName = c)}
+            />
+            <input
+                type="text"
+                id="calories"
+                placeholder="Calories"
+                ref={(c) => (calories = c)}
+            />
+            <input type="text" id="fats" placeholder="Fats" ref={(c) => (fats = c)} />
+            <input
+                type="text"
+                id="carbohydrates"
+                placeholder="Carbs"
+                ref={(c) => (carbohydrates = c)}
+            />
+            <input
+                type="text"
+                id="protein"
+                placeholder="Protein"
+                ref={(c) => (protein = c)}
+            />
+            <input
+                type="text"
+                id="servingSize"
+                placeholder="Serving Size"
+                ref={(c) => (servingSize = c)}
+            />
+            <input
+                type="text"
+                id="numServings"
+                placeholder="Servings"
+                ref={(c) => (numServings = c)}
+            />
+            <button
+                type="button"
+                id="addFoodButton"
+                className="buttons"
+                onClick={addUserFood}
+            >
+                Add Food
+            </button>
+            <button
+                type="button"
+                id="getMealPlanButton"
+                className="buttons"
+                onClick={getUserMealPlan}
+            >
+                Load Todays Meals
+            </button>
             <span id="foodAddResult">{message}</span>
-        </div>
 
+            <div className="grid-container">
+                {mealPlan.nameResults && mealPlan.nameResults.length > 0 ? (
+                    mealPlan.nameResults.map((foodName, index) => (
+                        <div key={index} className="grid-item">
+                            <h3>{foodName}</h3>
+                            <tc>Calories: {mealPlan.caloriesResults[index]}</tc>
+                            <tc>Protein: {mealPlan.proteinResults[index]}</tc>
+                            <tc>Fats: {mealPlan.fatResults[index]}</tc>
+                            <tc>Carbs: {mealPlan.carbsResults[index]}</tc>
+                            <tc>Servings: {mealPlan.numServings[index]}</tc>
+                            <tc><button onClick={() => deleteUserFood(foodName)}>Delete</button></tc>
+                        </div>
+                        
+                    ))
+                    
+                )
+                 : (
+                    <p>Getting user meal plan</p>
+                )}
+            </div>
+            <h3>Totals</h3>
+            <tc>Calories: {mealPlan.Calories}</tc>
+            <tc>Protein: {mealPlan.Protein}</tc>
+            <tc>Fats: {mealPlan.Fats}</tc>
+            <tc>Carbs: {mealPlan.Carbs}</tc>
+        </div>
     );
 }
 

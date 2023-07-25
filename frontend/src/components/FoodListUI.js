@@ -22,6 +22,14 @@ const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
 
+  const [servings, getServings] = useState([]);
+
+  const updateServings = (index, value) => {
+    getServings((previous) =>
+      previous.map((last, i) => (i === index ? value : last))
+    );
+  };
+
  const filteredFoods = foods.nameResults.filter(
     (foodName) =>
       foodName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,6 +54,8 @@ const handleSearchChange = (event) => {
     if (Array.isArray(res.nameResults)) {
       const { nameResults, caloriesResults, proteinResults, fatResults, carbsResults, servingResults } = res;
       setFoods({ nameResults, caloriesResults, proteinResults, fatResults, carbsResults, servingResults });
+      const initialServings = res.nameResults.map(() => 1); // Default value is 1, change it as needed
+      getServings(initialServings);
     } else {
       setMessage("API Response Error");
     }
@@ -54,12 +64,15 @@ const handleSearchChange = (event) => {
   }
 };
 
-    const addUserFood = async (foodName,calories,protein,fat,carbs,servingSize) => {
-
-
+    const addUserFood = async (foodName,calories,protein,fat,carbs,servingSize, numServings) => {
+        if(numServings <= 0)
+        {
+          setMessage("Serving size must be greater than zero.")
+          return;
+        }
         var tok = storage.retrieveToken();
         let obj = {foodName: foodName, calories: calories, fats: fat, carbohydrates : carbs, protein : protein,
-           servingSize : servingSize, numServings: 1, jwtToken: tok};
+           servingSize : servingSize, numServings: numServings, jwtToken: tok};
         let js = JSON.stringify(obj);
 
         try {
@@ -72,7 +85,6 @@ const handleSearchChange = (event) => {
             }
             else {
                 setMessage('Food has been added to your meal plan');
-                //getUserMealPlan();
             }
         }
         catch (e) {
@@ -124,8 +136,14 @@ console.log("foods:", foods);
                             <td>{foods.fatResults[index]}</td>
                             <td>{foods.carbsResults[index]}</td>
                             <td>{foods.servingResults[index]}</td>
-                            <td class="table-dark"><button onClick={() => addUserFood(foodName, foods.caloriesResults[index],
-                               foods.proteinResults[index], foods.fatResults[index], foods.carbsResults[index], foods.servingResults[index])}>Add</button></td>
+                            <td class="table-dark"><input
+                               type="number"
+                               placeholder="Total Servings"
+                               value ={servings[index]}
+                               onChange={(e) => updateServings(index, e.target.value)}
+                              /><button onClick={() => addUserFood(foodName, foods.caloriesResults[index],
+                               foods.proteinResults[index], foods.fatResults[index], foods.carbsResults[index], foods.servingResults[index],servings[index])}>Add</button>
+                            </td>
                         </tr>
                     ))
                     

@@ -200,9 +200,9 @@ function CardUI() {
                         <tr key={index}>
                             <td>{foodName}</td>
                             <td>{mealPlan.caloriesResults[index]}</td>
-                            <td>{mealPlan.proteinResults[index]}</td>
                             <td>{mealPlan.fatResults[index]}</td>
                             <td>{mealPlan.carbsResults[index]}</td>
+                            <td>{mealPlan.proteinResults[index]}</td>
                             <td>{mealPlan.numServings[index]}</td>
                             <td class="table-dark"><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></td>
                         </tr>

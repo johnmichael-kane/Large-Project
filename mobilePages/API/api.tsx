@@ -42,6 +42,9 @@ export interface PasswordResetRequestResponse {
   code: string;
   error: string;
 }
+export interface CalorieResetRequestResponse{
+  error: string;
+}
 
 export function login(email: string, password: string): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {
@@ -201,4 +204,34 @@ export function PasswordResetRequest(
       });
   });
 }
+
+// api call calorie goal reset
+
+export function CalorieResetRequest(
+  accessToken : string,
+  newGoal: number
+): Promise<CalorieResetRequestResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<CalorieResetRequestResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetCalorieGoal",
+        { jwtToken : accessToken, newGoal : newGoal}
+      )
+      .then((response: AxiosResponse<CalorieResetRequestResponse>) => {
+        const data: CalorieResetRequestResponse = response.data;
+        if (!(data.error === "worked")) {
+          console.log("Calorie goal reset error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Calorie goal reset successfully");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in  resetting calorie goal: ", error);
+        reject(error);
+      });
+  });
+}
+
 // api call(s) that is/are used for email verification

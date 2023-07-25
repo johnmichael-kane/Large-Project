@@ -168,6 +168,19 @@ function CardUI() {
         catch (e) {
             setMessage(e.toString());
         }
+      ////////////////new////////////////
+      const largeHTMLString = text;
+
+      const displayHTMLStringAsGrid = () => {
+        const gridContainer = document.getElementById('gridContainer');
+        gridContainer.innerHTML = largeHTMLString;
+      };
+
+      useEffect(() => {
+        displayHTMLStringAsGrid();
+      }, []);
+
+    /////////////////end new////////////////
     }
 
 
@@ -206,6 +219,7 @@ function CardUI() {
                 onClick={getUserMealPlan}>Load Todays Meals</button>
             <span id="foodAddResult">{message}</span>
             <></>
+            <div id="gridContainer"></div>//////////////////new code//////////////////
         </div>
 
     );

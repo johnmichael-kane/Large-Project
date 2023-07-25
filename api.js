@@ -200,7 +200,7 @@ exports.setApp = function(app, client) {
     try
     {
       const db = client.db("database");
-      const result = db.collection('Meals').deleteOne({Email: email, Foodname: foodName, Year: year, Month : month, Day : day});
+      const result = db.collection('Meals').deleteOne({Email: email, FoodName: foodName, Year: year, Month : month, Day : day});
       error = 'deleted';
     }
     catch(e)
@@ -423,7 +423,7 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
 
   var ret = { nameResults: _name, caloriesResults: _calories, proteinResults: _protein, fatResults: _fats, carbsResults: _carbs, numServings: _servings,
      Calories: nutritionResult.Calories, Fats: nutritionResult.Fats, Protein: nutritionResult.Protein, Carbs: nutritionResult.Carbs,
-      error: error, jwtToken: refreshedToken};
+      error: error, year: year, month: month, day: day, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
 

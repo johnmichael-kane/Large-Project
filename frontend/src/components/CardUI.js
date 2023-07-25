@@ -277,8 +277,8 @@ function CardUI() {
             <script defer src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
             <script defer src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
             <script defer src="script.js"></script>
-            <table id="example" class="table table-striped" style={{width: '100%'}}>
-        <thead>
+            <table id="example" class="table" style={{width: '100%'}}>
+        <thead class="table-dark">
             <tr>
                 <th>Food Name</th>
                 <th>Calories</th>
@@ -286,19 +286,19 @@ function CardUI() {
                 <th>Carbs</th>
                 <th>Protein</th>
                 <th>Servings</th>
-                <th>Remove</th>
+                <th> </th>
             </tr>
         </thead>
         {mealPlan.nameResults && mealPlan.nameResults.length > 0 ? (
                     mealPlan.nameResults.map((foodName, index) => (
-                        <tr key={index} className="grid-item">
+                        <tr key={index}>
                             <td>{foodName}</td>
                             <td>{mealPlan.caloriesResults[index]}</td>
                             <td>{mealPlan.proteinResults[index]}</td>
                             <td>{mealPlan.fatResults[index]}</td>
                             <td>{mealPlan.carbsResults[index]}</td>
                             <td>{mealPlan.numServings[index]}</td>
-                            <td><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></td>
+                            <td class="table-dark"><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></td>
                         </tr>
                         
                     ))
@@ -307,14 +307,15 @@ function CardUI() {
                  : (
                     <p>Getting user meal plan</p>
                 )}
-        <tfoot>
+        <tfoot class="table-secondary">
             <tr>
                 <th>Totals:</th>
-                <th>{mealPlan.Calories}</th>
+                <th>{mealPlan.totalCalories}</th>
                 <th>{mealPlan.Fats}</th>
                 <th>{mealPlan.Carbs}</th>
                 <th>{mealPlan.Protein}</th>
                 <th>Servings</th>
+                <th> </th>
             </tr>
         </tfoot>
     </table>

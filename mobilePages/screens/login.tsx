@@ -4,6 +4,7 @@ import {
   Button,
   TextInput,
   Dimensions,
+  TouchableHighlight,
 } from "react-native";
 
 import axios, { AxiosResponse } from "axios";
@@ -24,9 +25,8 @@ export default function TabOneScreen() {
   const [EmailAddress, setEmail] = React.useState("");
   const [Password, setPassword] = React.useState("");
   var BigList: Food[] = [];
-  var userMealPlan: MealPlan;
+  var mealPlan: MealPlan;
   var user = new User("", "");
-
   const handleLogin = () => {
     login(EmailAddress, Password)
       .then((loginResponse: LoginResponse) => {
@@ -68,7 +68,7 @@ export default function TabOneScreen() {
     let day = date.getDate();
     const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
     if (MealPlanResult != null)
-      userMealPlan = new MealPlan(
+      mealPlan = new MealPlan(
         MealPlanResult.nameResults,
         MealPlanResult.caloriesResults,
         MealPlanResult.proteinResults,
@@ -98,7 +98,7 @@ export default function TabOneScreen() {
   }
 
   const navigateBigList = () => {
-    navigation.navigate("BigList", { user, BigList, userMealPlan });
+    navigation.navigate("BigList", { user, BigList });
   };
 
   const navigateRegister = (bigList: Food[]) => {
@@ -107,7 +107,6 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -126,17 +125,15 @@ export default function TabOneScreen() {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Login" onPress={handleLogin} color="green" />
-        <Button
-          title="Reset Password"
-          // onPress = Reset Password
-          color="black"
-        />
-        <Button
-          title="Register Account"
-          onPress={navigateRegister}
-          color="green"
-        />
+        <TouchableHighlight>
+          <Button title="Login" onPress={handleLogin} color="black" />
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <Button title="Reset Password" color="black"/>
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <Button title="Register Account" onPress={navigateRegister} color="black" />
+        </TouchableHighlight>
       </View>
     </View>
   );
@@ -156,14 +153,16 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   inputContainer: {
+    flex: 0.1,
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    marginRight: 20,
   },
   label: {
     flex: 1,
-    color: "white",
-    backgroundColor: "grey",
+    color: "#000",
+    backgroundColor: "#fff",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -173,14 +172,16 @@ const styles = StyleSheet.create({
   input: {
     flex: 2,
     color: "black",
-    backgroundColor: "grey",
+    backgroundColor: "#e8e8e8",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     fontSize: 16,
   },
   buttonContainer: {
-    marginTop: 30,
+    flex: 0.6,
+    flexDirection: "column",
     width: "80%",
+    justifyContent: "space-evenly",
   },
 });

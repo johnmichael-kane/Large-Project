@@ -11,9 +11,9 @@ import {
 import * as React from "react";
 import { Text, View } from "../components/Themed";
 import { User, Food } from "../API/APIModels";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SearchBar } from "react-native-screens";
   
 let foods = [
@@ -27,7 +27,10 @@ let mealPlan = [new Food("test5", 5, 5, 5, 5, 5, "test")];
 
 export default function BigList() {
     const navigation = useNavigation();
+    const route = useRoute(); 
+    const response = route.params;
     const [selectedId, setSelectedId] = useState<string>();
+
     const UpdateMealPlan = (event: any) => {
       let food: Food;
       food = new Food("", 0, 0, 0, 0, 0, "");
@@ -85,7 +88,24 @@ export default function BigList() {
         />
       );
     };
-  
+    const navigateSettings = () => {
+      navigation.navigate('Settings');
+    }
+    const addFood = () => {
+      // Add food to list
+    }
+
+    // Removes back arrow
+    useEffect(() => {
+      const hideBackButton = () => {
+        navigation.setOptions({
+          headerLeft: () => null,
+        });
+      };
+
+      hideBackButton();
+    }, []);
+
     return (
       <SafeAreaView style={styles.container}>
         <FlatList
@@ -96,26 +116,21 @@ export default function BigList() {
           ItemSeparatorComponent={myItemSeparator}
           ListEmptyComponent={myListEmpty}
           ListHeaderComponent={() => (
-            <Text
-              style={{
-                fontSize: 30,
-                textAlign: "center",
-                marginTop: 20,
-                fontWeight: "bold",
-                textDecorationLine: "underline",
-              }}
-            >
-              All Food Items
-            </Text>
-            // <SearchBar placeholder="Enter food name here"></SearchBar>
+            <View style={styles.header}>
+              <Text style={styles.headerText}>{response.Email}'s Meal Plan</Text>
+              <TouchableOpacity onPress={addFood} style={styles.addButton}>
+                <Text style={styles.addButtonText}>Add</Text>
+              </TouchableOpacity>
+            </View>
           )}
         />
-        <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
-        <Text style={styles.settingsButtonText}>Settings</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.settingsButton} onPress={navigateSettings}>
+          <Text style={styles.settingsButtonText}>Settings</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     );
   }
+  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -133,18 +148,36 @@ export default function BigList() {
       fontSize: 16,
     },
     settingsButton: {
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        right: 20,
-        backgroundColor: 'green',
-        paddingVertical: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-      },
-      settingsButtonText: {
-        color: 'white',
-        fontSize: 16,
-      },
+      position: 'absolute',
+      bottom: 20,
+      left: 20,
+      right: 20,
+      backgroundColor: 'green',
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    settingsButtonText: {
+      color: 'white',
+      fontSize: 16,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+    },
+    headerText: {
+      fontSize: 30,
+      fontWeight: 'bold',
+      textDecorationLine: 'underline',
+    },
+    addButton: {
+      flex: 1,
+    },
+    addButtonText: {
+      fontSize: 18,
+      color: 'green',
+      fontWeight: 'bold',
+    },
   });
-  

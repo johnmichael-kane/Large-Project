@@ -21,20 +21,22 @@ import {
 
 export default function TabOneScreen() {
     const navigation = useNavigation();
-    const [EmailAddress, onEmailAddressChange] = React.useState("");
-    const [Password, onPasswordChange] = React.useState("");
+    const [EmailAddress, setEmail] = React.useState("");
+    const [Password, setPassword] = React.useState("");
     var BigList: Food[] = [];
     var mealPlan: MealPlan;
-    const Login = async () => {
-      // Make the login API call
-      const loginResult = await login(EmailAddress, Password);
-      console.log(
-        "this is result " + loginResult.Email + " " + loginResult.error
-      );
-      if (!(loginResult.error === "loginFailure")) {
-        GetBigList(loginResult.accessToken);
-      }
-    }; 
+
+    const handleLogin = () => {
+      login(EmailAddress, Password)
+        .then((response: LoginResponse) => {
+          // Navigate to biglist screen, passing user information
+          // navigation.navigate('BigList', response);
+          console.log('Login Response: ', response);
+        })
+        .catch((error: any) => {
+          console.error('Login Error: ', error);
+        });
+    };
     
     const GetBigList = async (accessToken: string) => {
       //Get the entire list of meals through an API call, parse the information and store it into an array of class food
@@ -94,107 +96,92 @@ export default function TabOneScreen() {
       const PasswordResetRequestResult = await PasswordResetRequest(email);
     }
 
+    const navigateBigList = () => {
+      let testUser = new User(EmailAddress, "password", 3000);
+      navigation.navigate('BigList', testUser);
+    };
+
+    const navigateRegister = () => {
+      navigation.navigate('Register');
+    }
+
     return (
-      <View style={styles.background}>
+      <View style={styles.container}>
         <Text style={styles.title}>Log In</Text>
-        <View style={styles.emailalignment}>
-          <Text style={styles.emaillabel}>Email: </Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
           <TextInput
-            style={styles.emailinput}
+            style={styles.input}
             placeholder="Email"
-            onChangeText={onEmailAddressChange}
-          ></TextInput>
+            onChangeText={setEmail}
+          />
         </View>
-        <View style={styles.passwordalignment}>
-          <Text style={styles.passwordlabel}>Password: </Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
           <TextInput
-            style={styles.passwordinput}
+            style={styles.input}
             placeholder="Password"
-            onChangeText={onPasswordChange}
-          ></TextInput>
+            secureTextEntry
+            onChangeText={setPassword}
+          />
         </View>
-        <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
+        <View style={styles.buttonContainer}>
           <Button 
             title="Login" 
-            onPress={() => navigation.navigate('BigList')} 
-            color={"green"} />
-        </View>
-        <View style={{ alignContent: "center", position: "absolute", top: 320 }}>
-          <Button
-            title="Reset Password"
-            onPress={ResetPassword}
-            color={"black"}
-          />
-        </View>
-        <View style={{ alignContent: "center", position: "absolute", top: 350 }}>
-          <Button
-            title="Register Account"
-            onPress={() => navigation.navigate('Register')}
-            color={"green"}
-          />
+            onPress={navigateBigList} 
+            color="green" />
+          <Button 
+            title="Reset Password" 
+            // onPress = Reset Password 
+            color="black" />
+          <Button 
+            title="Register Account" 
+            onPress={navigateRegister} 
+            color="green" />
         </View>
       </View>
     );
-  }
-  
+  };
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     title: {
       fontSize: 32,
-      fontWeight: "bold",
-      textAlign: "center",
-      position: "absolute",
-      top: 70,
-      color: "red",
+      fontWeight: 'bold',
+      color: 'red',
+      marginBottom: 30,
     },
-    separator: {
-      marginVertical: 30,
-      height: 1,
-      width: "80%",
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
     },
-    background: {
-      backgroundColor: "white",
+    label: {
+      flex: 1,
+      color: 'white',
+      backgroundColor: 'grey',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      marginRight: 10,
+      fontSize: 16,
     },
-    backgroundImage: {
-      position: "absolute",
-      left: 0,
-      top: 0,
-      width: Dimensions.get("window").width,
-      height: Dimensions.get("window").height,
-      justifyContent: "flex-start",
-      alignItems: "center",
+    input: {
+      flex: 2,
+      color: 'black',
+      backgroundColor: 'grey',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      fontSize: 16,
     },
-    emaillabel: {
-      color: "white",
-      backgroundColor: "grey",
-    },
-    emailalignment: {
-      alignContent: "center",
-      justifyContent: "space-evenly",
-      flexDirection: "row",
-      top: 200,
-    },
-    emailinput: {
-      color: "white",
-      backgroundColor: "grey",
-    },
-    passwordlabel: {
-      color: "white",
-      backgroundColor: "grey",
-    },
-    passwordalignment: {
-      alignContent: "center",
-      justifyContent: "space-evenly",
-      flexDirection: "row",
-      top: 230,
-    },
-    passwordinput: {
-      color: "black",
-      backgroundColor: "grey",
+    buttonContainer: {
+      marginTop: 30,
+      width: '80%',
     },
   });
-  

@@ -8,6 +8,7 @@ import CardPage from './pages/CardPage';
 import RegisterPage from './pages/RegisterPage';
 import VerificationPage from './pages/VerificationPage';
 import PasswordPage from './pages/PasswordPage';
+import FoodPage from './pages/FoodPage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Route path="/register" index element={<RegisterPage />} />
       <Route path="/emailAuthorization" index element={<VerificationPage />} />
       <Route path="/passwordReset" index element={<PasswordPage />} />
+      <Route path="/foods" index element={<FoodPage />} />
     </Routes>
   </BrowserRouter>
 );

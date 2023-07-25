@@ -115,12 +115,28 @@ function CardUI() {
         }
     }
 
-
-    const deleteUserFood = (foodName) => event => {
-        event.preventDefault();
-
+    const deleteUserFood  = async (foodName, year, day, month) => {
         var tok = storage.retrieveToken();
-    }
+        let obj = {foodName: foodName, jwtToken: tok, year: year, day: day, month: month };
+
+        let js = JSON.stringify(obj);
+
+        try {
+            const response = await fetch(bp.buildPath('api/deleteUserFood'),
+                { method: 'POST', body: js, headers: { 'Content-Type': 'application/json' } });
+
+            let res = JSON.parse(await response.text());
+            if (res.error === "notDeleted") {
+                setMessage("API Error: " + res.error);
+            }
+            else {
+                setMessage('Food has been removed from your meal plan');
+            }
+        }
+        catch (e) {
+            setMessage(e.toString());
+        }
+    };
 
     const updateMealPlan = (newMealPlanData) => {
         setMealPlan(newMealPlanData);
@@ -258,7 +274,7 @@ function CardUI() {
                             <tc>Fats: {mealPlan.fatResults[index]}</tc>
                             <tc>Carbs: {mealPlan.carbsResults[index]}</tc>
                             <tc>Servings: {mealPlan.numServings[index]}</tc>
-                            <tc><button onClick={() => deleteUserFood(foodName)}>Delete</button></tc>
+                            <tc><button onClick={() => deleteUserFood(foodName,mealPlan.year,mealPlan.day,mealPlan.month)}>Delete</button></tc>
                         </div>
                         
                     ))

@@ -90,6 +90,25 @@ function CardUI() {
         setMealPlan(newMealPlanData);
     };
 
+    const resetCalorieGoal = async (newGoal) => {
+        var tok = storage.retrieveToken();
+        let obj = {jwtToken: tok, newGoal: newGoal};
+        let js = JSON.stringify(obj);
+        try {
+            const response = await fetch(bp.buildPath('api/resetCalorieGoal'), {
+                method: 'POST',
+                body: js,
+                headers: { 'Content-Type': 'application/json' }
+            });
+            let text = await response.text();
+            let res = JSON.parse(text);
+            if(res.error === 'worked')
+                setMessage("Calorie Goal reset");
+        } catch (e) {
+            setMessage(e.toString());
+        }
+    };
+    
     const getUserMealPlan = async () => {
         var tok = storage.retrieveToken();
         const date = new Date();

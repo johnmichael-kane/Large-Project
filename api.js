@@ -14,6 +14,35 @@ require('mongodb');
 
 exports.setApp = function(app, client) {
 
+  app.post('/api/resetCalorieGoal',  async (req, res, next) => {
+    const token = require('./createJWT.js');
+    const {jwtToken, newGoal} = req.body;
+
+    try{
+      if(token.isExpired(jwtToken))
+      {
+        console.log('token expired')
+        var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+        res.status(200).json(r); 
+        return
+      }
+    }
+    catch(e)
+    {
+      console.log(e.message);
+    }
+    email = token.getData(jwtToken);
+
+    const db = client.db("database");
+    const users = db.collection("Users");
+    theEmail = await users.find({"Email" : email}).toArray();
+
+          query = {Email : theEmail[0].Email};;
+          newPass = {$set: {calorieGoal : newGoal}};
+          const result = await users.updateOne(query, newPass);
+          res.status(200).json({error: 'worked'});
+  });
+
   app.post('/api/resetPassword',  async (req, res, next) => {
     const {email, newPassword, code} = req.body;
     const db = client.db("database");
@@ -118,7 +147,10 @@ exports.setApp = function(app, client) {
     const resetUser = await db.collection('Users').findOne({"Email": email});
 
     if (!resetUser)
+    {
       res.status(200).json({error :  'Email does not exist.'});
+      return;
+    }
   
     let token = await db.collection('Tokens').find({"userId": email}).toArray;
     await db.collection('Tokens').deleteOne({"userId" : email});
@@ -307,7 +339,7 @@ app.post('/api/register', async (req, res, next) =>
     }
     else{
       const hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT));//
-      const newUser = {Email: email, Password: hash, EmailAuth: false};
+      const newUser = {Email: email, Password: hash, EmailAuth: false, calorieGoal: 2000};
       const insert = await db.collection('Users').insertOne(newUser);
       error = 'created';
     }

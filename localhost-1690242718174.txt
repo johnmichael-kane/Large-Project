@@ -219,7 +219,7 @@ function CardUI() {
                 onClick={getUserMealPlan}>Load Todays Meals</button>
             <span id="foodAddResult">{message}</span>
             <></>
-            <div id="gridContainer"></div>//////////////////new code//////////////////
+            <div id="gridContainer"></div>  //////////////////new code//////////////////
         </div>
 
     );

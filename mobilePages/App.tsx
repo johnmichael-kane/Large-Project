@@ -13,7 +13,15 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator 
+        initialRouteName="Login"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "black",
+          },
+          headerTintColor: "white",
+        }}
+      >
         <Stack.Screen name="Login" component={TabOneScreen} />
         <Stack.Screen name="Register" component={(TabTwoScreen)} />
         <Stack.Screen name="BigList" component={BigList} />

@@ -6,34 +6,53 @@ function FoodListUI() {
     var temp = '';
     var foodName, calories, fats, protein, carbohydrates, servingSize, numServings;
     const [message, setMessage] = useState('');
-    const [foods, setFoods] = useState([]);
+    const [foods, setFoods] = useState({
+    nameResults: [],
+    caloriesResults: [],
+    proteinResults: [],
+    fatResults: [],
+    carbsResults: [],
+    servingResults: []
+  });
     let _ud = localStorage.getItem('user_data');
     let ud = JSON.parse(_ud);
-
+const [searchQuery, setSearchQuery] = useState('');
     var storage = require('../tokenStorage.js');
+const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
-    const getFood = async event => {
-        event.preventDefault();
-        var tok = storage.retrieveToken();
-        let obj = { jwtToken: tok }
-        let js = JSON.stringify(obj);
-        try {
-            const response = await fetch(bp.buildPath('api/getFood'), {
-                method: 'POST',
-                body: js,
-                headers: { 'Content-Type': 'application.json' }
-            });
+ const filteredFoods = foods.nameResults.filter(
+    (foodName) =>
+      foodName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+    const getFood = async (event) => {
+  event.preventDefault();
+  var tok = storage.retrieveToken();
+  let obj = { jwtToken: tok };
+  let js = JSON.stringify(obj);
+  try {
+    const response = await fetch(bp.buildPath('api/getFood'), {
+      method: 'POST',
+      body: js,
+      headers: { 'Content-Type': 'application/json' }
+    });
 
-            let text = await response.text();
-            let res = JSON.parse(text);
-            setFoods(res);
-            console.log("food list", foods);
-            console.log("length", foods.nameResults.length);
-        }
-        catch (e) {
-            setMessage(e.toString());
-        }
+    let text = await response.text();
+    let res = JSON.parse(text);
+
+    console.log("API response:", res); // Add this line to check the response
+
+    if (Array.isArray(res.nameResults)) {
+      const { nameResults, caloriesResults, proteinResults, fatResults, carbsResults, servingResults } = res;
+      setFoods({ nameResults, caloriesResults, proteinResults, fatResults, carbsResults, servingResults });
+    } else {
+      setMessage("API Response Error");
     }
+  } catch (e) {
+    setMessage(e.toString());
+  }
+};
 
     const addUserFood = async event => {
         event.preventDefault();
@@ -63,43 +82,44 @@ function FoodListUI() {
             setMessage(e.toString());
         }
     }
+console.log("foods:", foods);
+     return (
+    <div id="FoodListUIDiv">
+      <br />
+      <span id="userId">{temp}</span>
+      {/* Search bar */}
+      <input
+        type="text"
+        placeholder="Search food..."
+        value={searchQuery}
+        onChange={handleSearchChange}
+      />
+      <button type="button" className="buttons" onClick={getFood}>
+        Load all foods
+      </button>
+      <span id="foodAddResult">{message}</span>
 
-    return (
-        <div id="FoodListUIDiv">
-            <br />
-            <span id="userId">{temp}</span>
-            <button
-                type="button"
-                id="getFoodsButton"
-                className="buttons"
-                onClick={getFood}
-            >
-                Load all foods
-            </button>
-            <span id="foodAddResult">{message}</span>
-
-            <div className="grid-container">
-                {foods.nameResults && foods.nameResults.length > 0 ? (
-                    foods.nameResults.map((foodName, index) => (
-                        <div key={index} className="grid-item">
-                            <h3>{foodName}</h3>
-                            <tc>Calories: {foods.caloriesResults[index]}</tc>
-                            <tc>Protein: {foods.proteinResults[index]}</tc>
-                            <tc>Fats: {foods.fatResults[index]}</tc>
-                            <tc>Carbs: {foods.carbsResults[index]}</tc>
-                            <tc>Servings: {foods.numServings[index]}</tc>
-                            <tc><button onClick={() => addUserFood(foodName)}>Add</button></tc>
-                        </div>
-
-                    ))
-
-                )
-                    : (
-                        <p>Getting all foods</p>
-                    )}
+      <div className="grid-container">
+        {filteredFoods.length > 0 ? (
+          filteredFoods.map((foodName, index) => (
+            <div key={index} className="grid-item">
+              <h3>{foodName}</h3>
+              <p>Calories: {foods.caloriesResults[index]}</p>
+              <p>Protein: {foods.proteinResults[index]}</p>
+              <p>Fats: {foods.fatResults[index]}</p>
+              <p>Carbs: {foods.carbsResults[index]}</p>
+              <p>Servings: {foods.servingResults[index]}</p>
+              <button onClick={(event) => addUserFood(event, foodName)}>
+                Add
+              </button>
             </div>
-        </div>
-    );
+          ))
+        ) : (
+          <p>No matching foods found.</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default FoodListUI;

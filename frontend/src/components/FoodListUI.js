@@ -87,7 +87,7 @@ console.log("foods:", foods);
     <div id="FoodListUIDiv">
       <br />
       <span id="userId">{temp}</span>
-      {/* Search bar */}
+      { }
       <input
         type="text"
         placeholder="Search food..."

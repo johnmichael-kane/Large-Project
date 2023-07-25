@@ -135,17 +135,6 @@ console.log("foods:", foods);
                  : (
                     <p>No matching foods found.</p>
                 )}
-        <tfoot class="table-secondary">
-            <tr>
-                <th>Totals:</th>
-                <th>{mealPlan.totalCalories}</th>
-                <th>{mealPlan.Fats}</th>
-                <th>{mealPlan.Carbs}</th>
-                <th>{mealPlan.Protein}</th>
-                <th>Servings</th>
-                <th> </th>
-            </tr>
-        </tfoot>
     </table>
     </div>
   );

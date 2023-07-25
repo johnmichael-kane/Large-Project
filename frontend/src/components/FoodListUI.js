@@ -41,7 +41,7 @@ const handleSearchChange = (event) => {
     let text = await response.text();
     let res = JSON.parse(text);
 
-    console.log("API response:", res); // Add this line to check the response
+    console.log("API response:", res);
 
     if (Array.isArray(res.nameResults)) {
       const { nameResults, caloriesResults, proteinResults, fatResults, carbsResults, servingResults } = res;

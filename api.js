@@ -454,11 +454,13 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
           }
           catch (e) {
             ret = { error: e.message };
+            console.log(ret);
           }
         }
-        else {
-          ret = { Email: email, error: loginError }
-        }
+      }
+      else {
+        ret = { Email: email, error: loginError }
+        console.log(ret);
       }
 
       res.status(200).json(ret);

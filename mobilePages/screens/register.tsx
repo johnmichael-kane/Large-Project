@@ -20,49 +20,45 @@ import {
       //check if username and password match a valid user in the database, and if so transition to the login screen
     };
     return (
-      <ImageBackground
-        blurRadius={2}
-        source={require("../assets/images/startscreenbackground.jpg")}
-        style={styles.backgroundImage}
-      >
-        <Text style={styles.title}>Register</Text>
-        <View style={styles.usernamealignment}>
-          <Text style={styles.usernamelabel}>UserName:</Text>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>UserName:</Text>
           <TextInput
-            style={styles.usernameinput}
+            style={styles.input}
             placeholder="Username"
             autoComplete="username"
             onChangeText={onUserNameChange}
           ></TextInput>
         </View>
-        <View style={styles.passwordalignment}>
-          <Text style={styles.passwordlabel}>Password:</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password:</Text>
           <TextInput
-            style={styles.passwordinput}
+            style={styles.input}
             placeholder="Password"
             autoComplete="password"
             onChangeText={onPasswordChange}
           ></TextInput>
         </View>
-        <View style={styles.confirmpasswordview}>
-          <Text>Confirm Password:</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Confirm Password:</Text>
           <TextInput
-            style={styles.confirmpasswordinput}
+            style={styles.input}
             placeholder="Confirm Password"
             autoComplete="password"
             onChangeText={onConfirmPasswordChange}
           ></TextInput>
         </View>
-        <View style={{ alignContent: "center", position: "absolute", top: 290 }}>
-          <Button title="Login" onPress={Register} color={"green"} />
+        <View style={styles.buttonContainer}>
+          <Button title="Login" onPress={Register} color="black" />
         </View>
-      </ImageBackground>
+      </View>
     );
   }
   
   const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: "white",
       alignItems: "center",
       justifyContent: "center",
     },
@@ -128,6 +124,38 @@ import {
     confirmpasswordinput: {
       color: "black",
       backgroundColor: "grey",
+    },
+    inputContainer: {
+      flex: 0.1,
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 20,
+      marginRight: 20,
+    },
+    label: {
+      flex: 1,
+      color: "#000",
+      backgroundColor: "#fff",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      marginRight: 10,
+      fontSize: 16,
+    },
+    input: {
+      flex: 2,
+      color: "black",
+      backgroundColor: "#e8e8e8",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+      fontSize: 16,
+    },
+    buttonContainer: {
+      flex: 0.4,
+      flexDirection: "column",
+      width: "80%",
+      justifyContent: "space-evenly",
     },
   });
   

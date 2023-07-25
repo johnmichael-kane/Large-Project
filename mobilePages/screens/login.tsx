@@ -24,8 +24,9 @@ export default function TabOneScreen() {
   const [EmailAddress, setEmail] = React.useState("");
   const [Password, setPassword] = React.useState("");
   var BigList: Food[] = [];
-  var mealPlan: MealPlan;
+  var userMealPlan: MealPlan;
   var user = new User("", "");
+
   const handleLogin = () => {
     login(EmailAddress, Password)
       .then((loginResponse: LoginResponse) => {
@@ -67,7 +68,7 @@ export default function TabOneScreen() {
     let day = date.getDate();
     const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
     if (MealPlanResult != null)
-      mealPlan = new MealPlan(
+      userMealPlan = new MealPlan(
         MealPlanResult.nameResults,
         MealPlanResult.caloriesResults,
         MealPlanResult.proteinResults,
@@ -97,7 +98,7 @@ export default function TabOneScreen() {
   }
 
   const navigateBigList = () => {
-    navigation.navigate("BigList", { user, BigList });
+    navigation.navigate("BigList", { user, BigList, userMealPlan });
   };
 
   const navigateRegister = (bigList: Food[]) => {

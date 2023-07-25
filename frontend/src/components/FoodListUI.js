@@ -54,15 +54,12 @@ const handleSearchChange = (event) => {
   }
 };
 
-    const addUserFood = async event => {
-        event.preventDefault();
+    const addUserFood = async (foodName,calories,protein,fat,carbs,servingSize) => {
+
 
         var tok = storage.retrieveToken();
-        let obj = {
-            foodName: foodName.value, calories: calories.value, fats: fats.value,
-            carbohydrates: carbohydrates.value, protein: protein.value, servingSize: servingSize.value,
-            numServings: numServings.value, jwtToken: tok
-        };
+        let obj = {foodName: foodName, calories: calories, fats: fat, carbohydrates : carbs, protein : protein,
+           servingSize : servingSize, numServings: 1, jwtToken: tok};
         let js = JSON.stringify(obj);
 
         try {
@@ -114,7 +111,7 @@ console.log("foods:", foods);
                 <th>Fats</th>
                 <th>Carbs</th>
                 <th>Protein</th>
-                <th>Servings</th>
+                <th>Serving Size</th>
                 <th> </th>
             </tr>
         </thead>
@@ -127,7 +124,8 @@ console.log("foods:", foods);
                             <td>{foods.fatResults[index]}</td>
                             <td>{foods.carbsResults[index]}</td>
                             <td>{foods.servingResults[index]}</td>
-                            <td class="table-dark"><button onClick={(event) => addUserFood(event, foodName)}>Add</button></td>
+                            <td class="table-dark"><button onClick={() => addUserFood(foodName, foods.caloriesResults[index],
+                               foods.proteinResults[index], foods.fatResults[index], foods.carbsResults[index], foods.servingResults[index])}>Add</button></td>
                         </tr>
                     ))
                     

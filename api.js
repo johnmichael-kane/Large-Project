@@ -140,34 +140,33 @@ exports.setApp = function(app, client) {
 
   });
 
-  app.post("/api/requestResetPassword", async (req, res, next) => 
-  {
-    const{email} = req.body;
+app.post("/api/requestResetPassword", async (req, res, next) => {
+    const { email } = req.body;
     const db = client.db("database");
-    const resetUser = await db.collection('Users').findOne({"Email": email});
+    const resetUser = await db.collection('Users').findOne({ "Email": email });
 
-    if (!resetUser)
-    {
-      res.status(200).json({error :  'Email does not exist.'});
-      return;
+    if (!resetUser){
+      res.status(200).json({ id:-1 });
+      console.log('Nonexistant user');
     }
-  
-    let token = await db.collection('Tokens').find({"userId": email}).toArray;
-    await db.collection('Tokens').deleteOne({"userId" : email});
+    else{
+    let token = await db.collection('Tokens').find({ "userId": email }).toArray;
+    await db.collection('Tokens').deleteOne({ "userId": email });
 
     creation = Date.now();
     expiration = creation + 1800000;
 
     let resetToken = crypto.randomBytes(32).toString("hex");
     const hash = await bcrypt.hash(resetToken, Number(process.env.BCRYPT_SALT));
-    const newToken ={userId: email, token: hash,createdAt: new Date(creation), expireAt: new Date(expiration)}
+    const newToken = { userId: email, token: hash, createdAt: new Date(creation), expireAt: new Date(expiration) }
     const result = await db.collection('Tokens').insertOne(newToken);
-  
+
     const link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${email}`;
-  
+
     sendEmail(email, link);
-    var ret = { error: 'email sent', link: link};
+    var ret = { error: 'email sent', link: link };
     res.status(200).json(ret);
+    }
   });
 
   app.post('/api/deleteUserFood', async (req, res, next) =>
@@ -427,43 +426,44 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
-app.post('/api/login', async (req, res, next) => 
-{
-  // incoming: email, password
-  // outgoing: id, firstName, lastName, error
-	
-  var loginError = 'loginFailure';
-  var ret;
-  const token = require('./createJWT.js');
-  const {email, password} = req.body;
+  app.post('/api/login', async (req, res, next) => {
+    // incoming: email, password
+    // outgoing: id, firstName, lastName, error
+
+    var loginError = 'loginFailure';
+    var ret;
+    const token = require('./createJWT.js');
+    const { email, password } = req.body;
 
 
-  const db = client.db("database");
-  const results = await db.collection('Users').findOne({Email:email});
-  const isValid = await bcrypt.compare(password, results.Password);
-  if(isValid)
-  {
-    if(results.EmailAuth == true)
-    {
-      try
-      {
-        const token = require("./createJWT.js");
-        ret = token.createToken(email);
-        console.log(ret);
-      }
-      catch(e)
-      {
-        ret = {error:e.message};
-      }
+    const db = client.db("database");
+    const results = await db.collection('Users').findOne({ Email: email });
+    if (!results) {
+      ret = { id: -1 };
+      console.log('Incorrect login credentials')
+      res.status(200).json(ret);
     }
-    else 
-    {
-      ret = { Email: email, error: loginError}
-    }
-  }
+    else {
+      const isValid = await bcrypt.compare(password, results.Password);
+      if (isValid) {
+        if (results.EmailAuth == true) {
+          try {
+            const token = require("./createJWT.js");
+            ret = token.createToken(email);
+            console.log(ret);
+          }
+          catch (e) {
+            ret = { error: e.message };
+          }
+        }
+        else {
+          ret = { Email: email, error: loginError }
+        }
+      }
 
-  res.status(200).json(ret);
-});
+      res.status(200).json(ret);
+    }
+  });
 
 app.post('/api/getFood', async (req, res, next) => 
 {

@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import * as React from "react";
 import { Text, View } from "../components/Themed";
-import { User, Food } from "../API/APIModels";
+import { User, Food, MealPlan } from "../API/APIModels";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { SearchBar } from "react-native-screens";
+import { GetUserMealPlan } from "../API/api";
 
 export default function BigList() {
   const navigation = useNavigation();
@@ -80,7 +81,58 @@ export default function BigList() {
     );
   };
   const navigateSettings = () => {
-    navigation.navigate("Settings");
+    let user = response.user;
+    let BigList = response.BigList;
+    let userMealPlan = response.userMealPlan;
+    navigation.navigate("Settings", { user, BigList, userMealPlan });
+  };
+  const updateUserMealPlan = async () => {
+    const date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let accessToken = response.user.accessToken;
+    const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
+    if (MealPlanResult != null)
+      response.userMealPlan = new MealPlan(
+        MealPlanResult.nameResults,
+        MealPlanResult.caloriesResults,
+        MealPlanResult.proteinResults,
+        MealPlanResult.fatResults,
+        MealPlanResult.carbsResults,
+        MealPlanResult.numServings,
+        MealPlanResult.Fats,
+        MealPlanResult.Protein,
+        MealPlanResult.Carbs,
+        MealPlanResult.Calories
+      );
+  };
+  const navigateMealPlan = () => {
+    let completedMealPlan: Food[] = [];
+    updateUserMealPlan();
+    let foodNameResults = response.userMealPlan.nameResults;
+    let foodnumber = foodNameResults.length;
+    for (let i = 0; i < foodnumber; i++) {
+      completedMealPlan.push(
+        new Food(
+          response.userMealPlan.nameResults[i],
+          response.userMealPlan.calorieResults[i],
+          response.userMealPlan.proteinResults[i],
+          response.userMealPlan.fatsResults[i],
+          response.userMealPlan.carbsResults[i],
+          response.userMealPlan.numServings[i]
+        )
+      );
+    }
+    let user = response.user;
+    let BigList = response.BigList;
+    let userMealPlan = response.userMealPlan;
+    navigation.navigate("MealPlanPage", {
+      user,
+      BigList,
+      userMealPlan,
+      completedMealPlan,
+    });
   };
   const addFood = () => {
     // Add food to list
@@ -108,18 +160,22 @@ export default function BigList() {
         ListEmptyComponent={myListEmpty}
         ListHeaderComponent={() => (
           <View style={styles.header}>
-            <Text style={styles.headerText}>
-              {response.user.Email}'s Meal Plan
-            </Text>
+            <Text style={styles.headerText}>All Foods</Text>
           </View>
         )}
       />
       <TouchableOpacity
         style={styles.settingsButton}
+        onPress={navigateMealPlan}
+      >
+        <Text style={styles.mealplanbuttonText}>Meal Plan</Text>
+      </TouchableOpacity>
+      {/* <TouchableOpacity
+        style={styles.settingsButton}
         onPress={navigateSettings}
       >
         <Text style={styles.settingsButtonText}>Settings</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 }
@@ -151,6 +207,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   settingsButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  mealplanbutton: {
+    position: "absolute",
+    bottom: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  mealplanbuttonText: {
     color: "white",
     fontSize: 16,
   },

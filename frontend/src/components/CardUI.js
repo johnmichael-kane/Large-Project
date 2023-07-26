@@ -202,7 +202,7 @@ function CardUI() {
             <script defer src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
             <script defer src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
             <script defer src="script.js"></script>
-            <table id="example" class="table" style={{width: '100%'}}>
+            <table id="example" class="table" style={{width: '100%', textAlign: 'center'}}>
         <thead class="table-dark">
             <tr>
                 <th>Food Name</th>

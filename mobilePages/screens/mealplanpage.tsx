@@ -22,6 +22,9 @@ export default function MealPlanPage() {
   const route = useRoute();
   const response = route.params;
   const [selectedId, setSelectedId] = useState<string>();
+  let completedMealPlan: Food[] = [];
+  let removedJWT = "";
+  let calorieTotal = 0;
 
   const UpdateMealPlan = (event: any) => {
     let food: Food;
@@ -45,8 +48,62 @@ export default function MealPlanPage() {
       day,
       month
     );
-    if (removedresult.error === "deleted") alert("removed food");
-    else alert("Error: " + removedresult.error);
+    removedJWT = removedresult.jwtToken.accessToken;
+    navigateMealPlan();
+  };
+  const updateUserMealPlan = async () => {
+    const date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let accessToken = response.user.accessToken;
+    let MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
+    if (removedJWT != "") {
+      MealPlanResult = await GetUserMealPlan(year, month, day, removedJWT);
+    }
+    if (MealPlanResult != null)
+      response.userMealPlan = new MealPlan(
+        MealPlanResult.nameResults,
+        MealPlanResult.caloriesResults,
+        MealPlanResult.proteinResults,
+        MealPlanResult.fatResults,
+        MealPlanResult.carbsResults,
+        MealPlanResult.numServings,
+        MealPlanResult.Calories,
+        MealPlanResult.Fats,
+        MealPlanResult.Protein,
+        MealPlanResult.Carbs
+      );
+  };
+  const navigateMealPlan = () => {
+    completedMealPlan = [];
+    updateUserMealPlan();
+    let foodNameResults = response.userMealPlan.nameResults;
+    let foodnumber = foodNameResults.length;
+    for (let i = 0; i < foodnumber; i++) {
+      calorieTotal += response.userMealPlan.calorieResults[i];
+      completedMealPlan.push(
+        new Food(
+          response.userMealPlan.nameResults[i],
+          response.userMealPlan.calorieResults[i],
+          response.userMealPlan.proteinResults[i],
+          response.userMealPlan.fatResults[i],
+          response.userMealPlan.carbsResults[i],
+          response.userMealPlan.numServings[i]
+        )
+      );
+    }
+    let user = response.user;
+    let BigList = response.BigList;
+    let userMealPlan = response.userMealPlan;
+    let Password = response.Password;
+    navigation.navigate("MealPlanPage", {
+      user,
+      BigList,
+      userMealPlan,
+      completedMealPlan,
+      calorieTotal,
+    });
   };
   type ItemProps = {
     item: Food;
@@ -130,11 +187,18 @@ export default function MealPlanPage() {
       <View style={styles.dataContainer}>
         <Text style={styles.text}>Calorie total: {response.calorieTotal}</Text>
         <Text style={styles.text}>Fat total: {response.userMealPlan.Fats}</Text>
-        <Text style={styles.text}>Protein total: {response.userMealPlan.Protein}</Text>
-        <Text style={styles.text}>Carbs total: {response.userMealPlan.Carbs}</Text>
+        <Text style={styles.text}>
+          Protein total: {response.userMealPlan.Protein}
+        </Text>
+        <Text style={styles.text}>
+          Carbs total: {response.userMealPlan.Carbs}
+        </Text>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.allFoodsButton} onPress={navigateBigList}>
+        <TouchableOpacity
+          style={styles.allFoodsButton}
+          onPress={navigateBigList}
+        >
           <Text style={styles.settingsButtonText}>All Foods</Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import * as React from "react";
 import { Text, View } from "../components/Themed";
-import { User, Food } from "../API/APIModels";
+import { User, Food, MealPlan } from "../API/APIModels";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { SearchBar } from "react-native-screens";
+import { GetUserMealPlan, RemoveUserFood } from "../API/api";
 
 export default function MealPlanPage() {
   const navigation = useNavigation();
@@ -25,15 +26,27 @@ export default function MealPlanPage() {
   const UpdateMealPlan = (event: any) => {
     let food: Food;
     food = event;
-    for (let i = 0; i < response.MealPlanList.length; i++) {
-      if (food.FoodName === response.MealPlanList[i].FoodName)
-        response.MealPlanList.splice(i, 1);
+    for (let i = 0; i < response.completedMealPlan.length; i++) {
+      if (food.FoodName === response.completedMealPlan[i].FoodName) {
+        response.completedMealPlan.splice(i, 1);
+        removeFromPlan(food);
+      }
     }
-    if (food === event) {
-      alert("error: unable to find the selected food");
-    } else {
-      alert("Successfully removed food " + food.FoodName);
-    }
+  };
+  const removeFromPlan = async (food: Food) => {
+    const date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let removedresult = await RemoveUserFood(
+      food.FoodName,
+      response.user.accessToken,
+      year,
+      day,
+      month
+    );
+    if (removedresult.error === "deleted") alert("removed food");
+    else alert("Error: " + removedresult.error);
   };
   type ItemProps = {
     item: Food;
@@ -89,9 +102,6 @@ export default function MealPlanPage() {
     let userMealPlan = response.userMealPlan;
     navigation.navigate("BigList", { user, BigList, userMealPlan });
   };
-  const addFood = () => {
-    // Add food to list
-  };
 
   // Removes back arrow
   useEffect(() => {
@@ -105,7 +115,7 @@ export default function MealPlanPage() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={response.completedMealPlan}
         renderItem={renderItem}
@@ -121,6 +131,9 @@ export default function MealPlanPage() {
           </View>
         )}
       />
+      <View>
+        <Text>Calorie total: {response.userMealPlan.Calories}</Text>
+      </View>
       <TouchableOpacity style={styles.settingsButton} onPress={navigateBigList}>
         <Text style={styles.settingsButtonText}>All Foods</Text>
       </TouchableOpacity>
@@ -130,7 +143,7 @@ export default function MealPlanPage() {
       >
         <Text style={styles.settingsButtonText}>Settings</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -147,15 +160,29 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
   },
+  calorietotaltext: {
+    fontSize: 20,
+
+  },
   data: {
     fontSize: 16,
+  },
+  biglistbutton: {
+    position: "absolute",
+    bottom: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
   },
   settingsButton: {
     position: "absolute",
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "green",
+    backgroundColor: "black",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",

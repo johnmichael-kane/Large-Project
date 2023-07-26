@@ -181,7 +181,7 @@ function CardUI() {
   console.log("mealPlan:", mealPlan);
 
   return (
-    <div id="cardUIDiv">
+    <div id="cardUIDiv" style={{ width: '100%', textAlign: 'center' }}>
       
       <DatePicker
         selected={selectedDate}

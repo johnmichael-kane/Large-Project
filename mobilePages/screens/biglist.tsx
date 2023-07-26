@@ -179,11 +179,6 @@ export default function BigList() {
         extraData={selectedId}
         ItemSeparatorComponent={myItemSeparator}
         ListEmptyComponent={myListEmpty}
-        ListHeaderComponent={() => (
-          <View style={styles.header}>
-            <Text style={styles.headerText}>All Foods</Text>
-          </View>
-        )}
       />
       <View style={styles.buttonContainer}>
         <TouchableOpacity

@@ -22,6 +22,7 @@ export default function BigList() {
   const route = useRoute();
   const response = route.params;
   const [selectedId, setSelectedId] = useState<string>();
+  let [addedAccessToken, setAddedAccessToken] = React.useState("");
   let calorieTotal = 0;
   let userMealPlan: MealPlan;
   let completedMealPlan: Food[] = [];
@@ -50,6 +51,7 @@ export default function BigList() {
     );
     if (insertresponse.error === "added") {
       alert("Successfully added " + food.FoodName + " to your meal plan");
+      setAddedAccessToken(insertresponse.jwtToken.accessToken);
     } else {
       alert("Error: " + insertresponse.error);
     }
@@ -100,6 +102,7 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
+    let Password = response.Password;
     navigation.navigate("Settings", { user, BigList, userMealPlan });
   };
   const updateUserMealPlan = async () => {
@@ -108,7 +111,15 @@ export default function BigList() {
     let month = date.getMonth() + 1;
     let day = date.getDate();
     let accessToken = response.user.accessToken;
-    const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
+    let MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
+    if (addedAccessToken != "") {
+      MealPlanResult = await GetUserMealPlan(
+        year,
+        month,
+        day,
+        addedAccessToken
+      );
+    }
     if (MealPlanResult != null)
       response.userMealPlan = new MealPlan(
         MealPlanResult.nameResults,
@@ -144,12 +155,13 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
+    let Password = response.Password;
     navigation.navigate("MealPlanPage", {
       user,
       BigList,
       userMealPlan,
       completedMealPlan,
-      calorieTotal
+      calorieTotal,
     });
   };
 

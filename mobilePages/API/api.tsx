@@ -48,7 +48,9 @@ export interface CalorieResetRequestResponse {
 export interface EnterPasswordResetRequestResponse {
   error: string;
 }
-
+export interface EmailVerificationRequestResponse {
+  error: string;
+}
 export function login(email: string, password: string): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {
     axios
@@ -288,3 +290,28 @@ export function CalorieResetRequest(
 }
 
 // api call(s) that is/are used for email verification
+export function EmailVerificationRequest(
+  email: string
+): Promise<EmailVerificationRequestResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<EmailVerificationRequestResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/requestEmailAuthorization",
+        { email }
+      )
+      .then((response: AxiosResponse<EmailVerificationRequestResponse>) => {
+        const data: EmailVerificationRequestResponse = response.data;
+        if (!(data.error === "email sent")) {
+          console.log("Email verification error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Email sent successfully");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in email verification: ", error);
+        reject(error);
+      });
+  });
+}

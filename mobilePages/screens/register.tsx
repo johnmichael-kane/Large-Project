@@ -4,30 +4,60 @@ import {
     ImageBackground,
     StyleSheet,
     TextInput,
+    TouchableOpacity
   } from "react-native";
   
   import { Text, View } from "../components/Themed";
   import React from "react";
   import { Food, MealPlan } from "../API/APIModels";
+  import { useNavigation } from "@react-navigation/native";
+  import { Register, 
+           RegisterResponse,  
+           EmailVerificationRequest,
+           EmailVerificationRequestResponse
+  } from "../API/api";
   
   export default function TabTwoScreen() {
-    const [UserName, onUserNameChange] = React.useState("");
+    const [Email, onEmailChange] = React.useState("");
     const [Password, onPasswordChange] = React.useState("");
     const [ConfirmPassword, onConfirmPasswordChange] = React.useState("");
+    const navigation = useNavigation();
     let BigList: Food[];
     let MealPlan: Food[];
-    const Register = () => {
-      //check if username and password match a valid user in the database, and if so transition to the login screen
+
+    const registerUser = () => {
+      if (Password !== ConfirmPassword) {
+        alert("Passwords do not match!");
+        return; 
+      }
+      Register(Email,Password)
+        .then((registerResponse: RegisterResponse ) => {
+          console.log("Register Response: ", registerResponse);
+          verifyEmail();
+        })
+        .catch((error: any) => {
+          console.error("Registration Error: ", error);
+        })
+      
     };
+    const verifyEmail = () => {
+      EmailVerificationRequest(Email)
+        .then((verificationResponse: EmailVerificationRequestResponse) => {
+          navigation.navigate("Login");
+        })
+        .catch((error: any) => {
+          console.error("Email Verification Error: ", error);
+        })
+    }
     return (
       <View style={styles.container}>
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>UserName:</Text>
+          <Text style={styles.label}>Email:</Text>
           <TextInput
             style={styles.input}
-            placeholder="Username"
-            autoComplete="username"
-            onChangeText={onUserNameChange}
+            placeholder="Email:"
+            autoComplete="Email"
+            onChangeText={onEmailChange}
           ></TextInput>
         </View>
         <View style={styles.inputContainer}>
@@ -48,9 +78,11 @@ import {
             onChangeText={onConfirmPasswordChange}
           ></TextInput>
         </View>
-        <View style={styles.buttonContainer}>
-          <Button title="Login" onPress={Register} color="black" />
-        </View>
+        <TouchableOpacity 
+          style ={styles.registerButton} 
+          onPress={registerUser}>
+          <Text style={styles.buttonText}>REGISTER</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -156,6 +188,20 @@ import {
       flexDirection: "column",
       width: "80%",
       justifyContent: "space-evenly",
+    },
+    registerButton: { 
+      position: "absolute",
+      bottom: 20,
+      left: 20,
+      right: 20,
+      backgroundColor: "black",
+      paddingVertical: 12,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    buttonText: {
+      color: "white",
+      fontsize: 16
     },
   });
   

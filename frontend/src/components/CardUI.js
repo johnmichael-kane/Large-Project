@@ -143,7 +143,10 @@ function CardUI() {
     if (date) {
       setSelectedDate(date);
     } else {
+      // Handle the case when the user clears the date
+      // For example, you can show an alert or reset the selected date to today
       alert("Please select a valid date.");
+      // Alternatively, you can set the selected date to a default value, for example, today's date
       setSelectedDate(new Date());
     }
   };
@@ -220,7 +223,7 @@ function CardUI() {
       <table
         id="example"
         className="table"
-        style={{ width: "100%", textAlign: "center" }}
+        style={{ width: '100%', textAlign: 'center' }}
       >
         <thead class="table-dark">
           <tr>

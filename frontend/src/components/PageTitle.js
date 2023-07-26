@@ -30,7 +30,7 @@ function PageTitle()
             <div class="collapse navbar-collapse" id="navmenu">
               <ul class ="navbar-nav ms-auto">
                 <li class="nav-item">
-                  <a href="#" class="nav-link">History</a>
+                  <a href="#" class="nav-link">Meal Plans</a>
                 </li>
                 <li class="nav-item">
                   <a href="#" class="nav-link">Add Food</a>

@@ -15,27 +15,48 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { SearchBar } from "react-native-screens";
-import { GetUserMealPlan } from "../API/api";
+import { AddUserFood, GetUserMealPlan } from "../API/api";
 
 export default function BigList() {
   const navigation = useNavigation();
   const route = useRoute();
   const response = route.params;
   const [selectedId, setSelectedId] = useState<string>();
+  let userMealPlan: MealPlan;
 
-  const UpdateMealPlan = (event: any) => {
+  const UpdateMealPlan = (event: Food) => {
     let food: Food;
     food = new Food("", 0, 0, 0, 0, "");
     let emptyFood = food;
     food = event;
     for (let i = 0; i < response.BigList.length; i++) {
-      if (food.FoodName === response.BigList[i].FoodName)
-        food = response.BigList[i];
+      if (food.FoodName === response.BigList[i].FoodName) {
+        insertToMealPlan(food);
+        return;
+      }
     }
-    if (food == emptyFood) {
-      alert("error: unable to find the selected food");
+  };
+  const insertToMealPlan = async (food: Food) => {
+    let insertresponse = await AddUserFood(
+      food.FoodName,
+      food.Calories,
+      food.Fats,
+      food.Carbs,
+      food.Protein,
+      food.ServingSize,
+      1,
+      response.user.accessToken
+    );
+    if (insertresponse.error === "added") {
+      alert(
+        "Successfully added " +
+          food.FoodName +
+          " to " +
+          response.user.email +
+          "'s meal plan."
+      );
     } else {
-      alert("Successfully added selected food " + food.FoodName);
+      alert("Error: " + insertresponse.error);
     }
   };
   type ItemProps = {
@@ -83,7 +104,7 @@ export default function BigList() {
   const navigateSettings = () => {
     let user = response.user;
     let BigList = response.BigList;
-    let userMealPlan = response.userMealPlan;
+    userMealPlan = response.userMealPlan;
     navigation.navigate("Settings", { user, BigList, userMealPlan });
   };
   const updateUserMealPlan = async () => {
@@ -101,10 +122,10 @@ export default function BigList() {
         MealPlanResult.fatResults,
         MealPlanResult.carbsResults,
         MealPlanResult.numServings,
+        MealPlanResult.Calories,
         MealPlanResult.Fats,
         MealPlanResult.Protein,
-        MealPlanResult.Carbs,
-        MealPlanResult.Calories
+        MealPlanResult.Carbs
       );
   };
   const navigateMealPlan = () => {
@@ -118,7 +139,7 @@ export default function BigList() {
           response.userMealPlan.nameResults[i],
           response.userMealPlan.calorieResults[i],
           response.userMealPlan.proteinResults[i],
-          response.userMealPlan.fatsResults[i],
+          response.userMealPlan.fatResults[i],
           response.userMealPlan.carbsResults[i],
           response.userMealPlan.numServings[i]
         )
@@ -126,16 +147,13 @@ export default function BigList() {
     }
     let user = response.user;
     let BigList = response.BigList;
-    let userMealPlan = response.userMealPlan;
+    userMealPlan = response.userMealPlan;
     navigation.navigate("MealPlanPage", {
       user,
       BigList,
       userMealPlan,
       completedMealPlan,
     });
-  };
-  const addFood = () => {
-    // Add food to list
   };
 
   // Removes back arrow
@@ -150,9 +168,12 @@ export default function BigList() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={response.BigList}
+        maxToRenderPerBatch={30}
+        initialNumToRender={30}
+        style={{ height: "70%" }}
         renderItem={renderItem}
         keyExtractor={(item) => item.FoodName}
         extraData={selectedId}
@@ -176,7 +197,7 @@ export default function BigList() {
       >
         <Text style={styles.settingsButtonText}>Settings</Text>
       </TouchableOpacity> */}
-    </SafeAreaView>
+    </View>
   );
 }
 

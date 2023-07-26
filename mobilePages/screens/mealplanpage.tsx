@@ -132,7 +132,16 @@ export default function MealPlanPage() {
         )}
       />
       <View>
-        <Text>Calorie total: {response.userMealPlan.Calories}</Text>
+        <Text>Calorie total: {response.calorieTotal}</Text>
+      </View>
+      <View>
+        <Text>Fat total: {response.userMealPlan.Fats}</Text>
+      </View>
+      <View>
+        <Text>Protein total: {response.userMealPlan.Protein}</Text>
+      </View>
+      <View>
+        <Text>Carbs total: {response.userMealPlan.Carbs}</Text>
       </View>
       <TouchableOpacity style={styles.settingsButton} onPress={navigateBigList}>
         <Text style={styles.settingsButtonText}>All Foods</Text>
@@ -162,7 +171,6 @@ const styles = StyleSheet.create({
   },
   calorietotaltext: {
     fontSize: 20,
-
   },
   data: {
     fontSize: 16,

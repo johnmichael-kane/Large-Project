@@ -4,7 +4,7 @@ import {
   Button,
   TextInput,
   Dimensions,
-  TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 
 import axios, { AxiosResponse } from "axios";
@@ -107,6 +107,7 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Macrotracker</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -124,22 +125,16 @@ export default function TabOneScreen() {
           onChangeText={setPassword}
         />
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableHighlight>
-          <Button title="Login" onPress={handleLogin} color="black" />
-        </TouchableHighlight>
-        <TouchableHighlight>
-          <Button title="Reset Password" color="black" />
-        </TouchableHighlight>
-        <TouchableHighlight>
-          <Button
-            title="Register Account"
-            onPress={navigateRegister}
-            color="black"
-          />
-        </TouchableHighlight>
+      <TouchableOpacity style ={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.buttonText}>LOGIN</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style ={styles.resetButton} onPress={ResetPassword}>
+        <Text style={styles.buttonText}>RESET PASSWORD</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style ={styles.registerButton} onPress={navigateRegister}>
+        <Text style={styles.buttonText}>REGISTER ACCOUNT</Text>
+      </TouchableOpacity>
       </View>
-    </View>
   );
 }
 
@@ -153,7 +148,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "red",
+    color: "Black",
     marginBottom: 30,
   },
   inputContainer: {
@@ -182,10 +177,38 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
   },
-  buttonContainer: {
-    flex: 0.6,
-    flexDirection: "column",
-    width: "80%",
-    justifyContent: "space-evenly",
+  registerButton: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  resetButton: {
+    position: "absolute",
+    bottom: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  loginButton: {
+    position: "absolute",
+    bottom: 140,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontsize: 16
   },
 });

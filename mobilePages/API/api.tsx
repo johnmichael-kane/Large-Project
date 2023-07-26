@@ -51,6 +51,9 @@ export interface EnterPasswordResetRequestResponse {
 export interface EmailVerificationRequestResponse {
   error: string;
 }
+export interface RegisterResponse { 
+  error: string; 
+}
 export function login(email: string, password: string): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {
     axios
@@ -311,6 +314,34 @@ export function EmailVerificationRequest(
       })
       .catch((error: any) => {
         console.error("Error in email verification: ", error);
+        reject(error);
+      });
+  });
+}
+
+// api call used for user registration
+export function Register(
+  email: string,
+  password: string
+): Promise<RegisterResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<RegisterResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/register",
+        { email, password }
+      )
+      .then((response: AxiosResponse<RegisterResponse>) => {
+        const data: RegisterResponse = response.data;
+        if (!(data.error === "email sent")) {
+          console.log("User Registration error: ", data.error);
+          resolve(data);
+        } else {
+          console.log("User Registered successfully");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in User Registration: ", error);
         reject(error);
       });
   });

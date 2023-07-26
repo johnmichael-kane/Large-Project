@@ -173,7 +173,7 @@ export default function BigList() {
         data={response.BigList}
         maxToRenderPerBatch={30}
         initialNumToRender={30}
-        style={{ height: 250 }}
+        style={{ height: 350 }}
         renderItem={renderItem}
         keyExtractor={(item) => item.FoodName}
         extraData={selectedId}
@@ -185,12 +185,16 @@ export default function BigList() {
           </View>
         )}
       />
-      
-      <TouchableOpacity
-        style={styles.mealplanbutton}
-        onPress={navigateMealPlan}>
-        <Text style={styles.buttonText}>Meal Plan</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.mealplanbutton}
+          onPress={navigateMealPlan}>
+          <Text style={styles.buttonText}>Meal Plan</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.settingsButton} onPress={navigateSettings}>
+          <Text style={styles.buttonText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -199,6 +203,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
+  },
+  buttonContainer: {
+    flex: 1
   },
   item: {
     padding: 20,
@@ -218,9 +225,19 @@ const styles = StyleSheet.create({
   },
   mealplanbutton: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: 100,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  settingsButton: {
+    position: "absolute",
+    bottom: 30,
+    left: 20,
+    right: 20,
     backgroundColor: "black",
     paddingVertical: 12,
     borderRadius: 8,

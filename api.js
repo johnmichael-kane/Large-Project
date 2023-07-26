@@ -35,12 +35,12 @@ exports.setApp = function(app, client) {
 
     const db = client.db("database");
     const users = db.collection("Users");
-    theEmail = await users.find({"Email" : email}).toArray();
+    theEmail = await users.findOne({"Email" : email});
 
-          query = {Email : theEmail[0].Email};;
+          query = {Email : theEmail.Email};
           newPass = {$set: {calorieGoal : newGoal}};
           const result = await users.updateOne(query, newPass);
-          res.status(200).json({error: 'worked'});
+          res.status(200).json({error: 'worked'});       
   });
 
   app.post('/api/resetPassword',  async (req, res, next) => {
@@ -425,6 +425,51 @@ app.post('/api/getUserMealPlan', async (req, res, next) =>
       error: error, year: year, month: month, day: day, jwtToken: refreshedToken};
   res.status(200).json(ret);
 });
+
+  app.post('/api/getCalorieGoal', async (req, res, next) => {
+    // incoming: jwtToken
+    // outgoing: calorieGoal, error
+
+    const token = require('./createJWT.js');
+    const {jwtToken} = req.body;
+    let email = token.getData(jwtToken);
+    let calorieGoal;
+    var error = 'success';
+
+    try{
+      if(token.isExpired(jwtToken))
+      {
+        var r = {error: 'The JWT is no longer valid', jwtToken: ''};
+        res.status(200).json(r);
+        return
+      }
+    }
+    catch(e)
+    {
+      console.log(e.message);
+    }
+    const db = client.db("database");
+    const result = await db.collection('Users').findOne({"Email": email});
+    calorieGoal = result.calorieGoal;
+
+    if(!result){
+      error = 'Does not exist';
+      console.log(error);
+      return;
+    }
+
+    var refreshedToken = null;
+    try{
+      refreshedToken = token.refresh(jwtToken);
+    }
+    catch(e)
+    {
+      console.log(e.message);
+    }    
+
+    var ret = { calorieGoal:  calorieGoal, jwtToken: refreshedToken, error: error};
+    res.status(200).json(ret);
+  });
 
   app.post('/api/login', async (req, res, next) => {
     // incoming: email, password

@@ -31,7 +31,7 @@ export interface UserMealPlanResponse {
   accessToken: string;
 }
 export interface AddUserFoodResponse {
-  accessToken: string;
+  jwtToken: string;
   error: string;
 }
 export interface DeleteUserFoodResponse {
@@ -51,8 +51,8 @@ export interface EnterPasswordResetRequestResponse {
 export interface EmailVerificationRequestResponse {
   error: string;
 }
-export interface RegisterResponse { 
-  error: string; 
+export interface RegisterResponse {
+  error: string;
 }
 export function login(email: string, password: string): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {

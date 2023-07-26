@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
+import Accordion from 'react-bootstrap/Accordion';
 import "react-datepicker/dist/react-datepicker.css";
 
 function CardUI() {
   let bp = require("./Path.js");
-  var card = "";
-  var search = "";
-  let text = "";
-  var foodName,
-    calories,
-    fats,
-    protein,
-    carbohydrates,
-    servingSize,
-    numServings;
+  var goal;
   const [message, setMessage] = useState("");
-  const [searchResults, setResults] = useState("");
-  const [cardList, setCardList] = useState("");
+  const [calorieMessage, setCalorieMessage] = useState("");
+  const [calorieGoal, setCalorieGoal] = useState("");
   var temp = "";
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [mealPlan, setMealPlan] = useState({
@@ -28,48 +20,9 @@ function CardUI() {
     numServings: [],
   });
 
-  let _ud = localStorage.getItem("user_data");
-  let ud = JSON.parse(_ud);
-  let userId = ud.email;
-
   var storage = require("../tokenStorage.js");
 
-  const addUserFood = async (event) => {
-    event.preventDefault();
-
-    var tok = storage.retrieveToken();
-    let obj = {
-      foodName: foodName.value,
-      calories: calories.value,
-      fats: fats.value,
-      carbohydrates: carbohydrates.value,
-      protein: protein.value,
-      servingSize: servingSize.value,
-      numServings: numServings.value,
-      jwtToken: tok,
-    };
-    let js = JSON.stringify(obj);
-
-    try {
-      const response = await fetch(bp.buildPath("api/addUserFood"), {
-        method: "POST",
-        body: js,
-        headers: { "Content-Type": "application/json" },
-      });
-
-      let res = JSON.parse(await response.text());
-      if (res.error === "notAdded") {
-        setMessage("API Error: " + res.error);
-      } else {
-        setMessage("Food has been added to your meal plan");
-        getUserMealPlan();
-      }
-    } catch (e) {
-      setMessage(e.toString());
-    }
-  };
-
-  const deleteUserFood = async (foodName, year, day, month) => {
+    const deleteUserFood = async (foodName, year, day, month) => {
     const deleteConfirmation = window.confirm(
       `Do you want to remove ${foodName} from your meal plan?`,
     );
@@ -123,6 +76,10 @@ function CardUI() {
 
   const resetCalorieGoal = async (newGoal) => {
     var tok = storage.retrieveToken();
+    if(newGoal <= 0){
+      setCalorieMessage('Please set a goal greater than 0');
+      return;
+    }
     let obj = { jwtToken: tok, newGoal: newGoal };
     let js = JSON.stringify(obj);
     try {
@@ -133,10 +90,11 @@ function CardUI() {
       });
       let text = await response.text();
       let res = JSON.parse(text);
-      if (res.error === "worked") setMessage("Calorie Goal reset");
+      if (res.error === "worked") setCalorieMessage("Calorie Goal reset");
     } catch (e) {
-      setMessage(e.toString());
+      setCalorieMessage(e.toString());
     }
+    getCalorieGoal();
   };
 
   const handleDateChange = (date) => {
@@ -150,6 +108,30 @@ function CardUI() {
       setSelectedDate(new Date());
     }
   };
+
+  const getCalorieGoal = async event => {
+    var tok = storage.retrieveToken();
+    let obj = { jwtToken: tok };
+    console.log("Token: " + obj);
+    let js = JSON.stringify(obj);
+    try {
+      const response = await fetch(bp.buildPath("api/getCalorieGoal"), {
+        method: "POST",
+        body: js,
+        headers: { "Content-Type": "application/json" }
+      })
+
+      let text = await response.text();
+      let res = JSON.parse(text);
+      setCalorieGoal(res.calorieGoal);
+      console.log(calorieGoal);
+    }
+    catch (e) {
+      setCalorieGoal(e.toString());
+    }
+  };
+
+
 
   const getUserMealPlan = async () => {
     var tok = storage.retrieveToken();
@@ -170,6 +152,7 @@ function CardUI() {
       let text = await response.text();
       let res = JSON.parse(text);
       setMealPlan(res);
+      getCalorieGoal();
       console.log("mealPlan: ", mealPlan);
       console.log("length: ", mealPlan.nameResults.length);
     } catch (e) {
@@ -185,7 +168,7 @@ function CardUI() {
 
   return (
     <div id="cardUIDiv" style={{ width: '100%', textAlign: 'center' }}>
-      
+
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
@@ -201,6 +184,9 @@ function CardUI() {
       >
         Load Today's Meals
       </button>
+      <br/>
+      <span>{message}</span>
+      <br/>
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
@@ -225,7 +211,7 @@ function CardUI() {
         className="table"
         style={{ width: '100%', textAlign: 'center' }}
       >
-        <thead class="table-dark" style={{top: '0px', position: 'sticky'}}>
+        <thead class="table-dark" style={{ top: '0px', position: 'sticky' }}>
           <tr>
             <th>Food Name</th>
             <th>Calories</th>
@@ -264,15 +250,29 @@ function CardUI() {
         ) : (
           <p>Choose Meals from a Different Day, or Click Today's Meal Plan</p>
         )}
-        <tfoot class="table-secondary" style={{bottom: '0px', position: 'sticky'}}>
+        <tfoot class="table-secondary" style={{ bottom: '0px', position: 'sticky' }}>
           <tr>
             <th>Totals:</th>
             <th>{mealPlan.Calories}</th>
             <th>{mealPlan.Fats}g</th>
             <th>{mealPlan.Carbs}g</th>
             <th>{mealPlan.Protein}g</th>
-            <th>Servings</th>
-            <th> </th>
+            <th>Calorie Goal: {calorieGoal}</th>
+            <th> 
+              <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0" style={{ marginLeft: '20%', width: '50%'}}>
+                <Accordion.Header>Edit Calorie Goal</Accordion.Header>
+                <Accordion.Body>
+                  <span>{calorieMessage}</span>
+                  <br/>
+                  <input type="number" id="goalBox" style={{marginRight: '1px', width: '50%'}}placeholder={calorieGoal} required ref={(c) => (goal = c)} />
+                  <button type="button" id="editGoalButton" className="buttons"
+                    onClick={() => resetCalorieGoal(goal.value)} >
+                    Submit </button>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            </th>
           </tr>
         </tfoot>
       </table>

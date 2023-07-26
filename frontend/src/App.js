@@ -15,7 +15,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" index element={<LoginPage />} />
-      <Route path="/cards" index element={<CardPage />} />
+      <Route path="/meals" index element={<CardPage />} />
       <Route path="/register" index element={<RegisterPage />} />
       <Route path="/emailAuthorization" index element={<VerificationPage />} />
       <Route path="/passwordReset" index element={<PasswordPage />} />

@@ -264,7 +264,7 @@ function CardUI() {
         ) : (
           <p>Choose Meals from a Different Day, or Click Today's Meal Plan</p>
         )}
-        <tfoot class="table-secondary" style={{top: '0px', position: 'sticky'}}>
+        <tfoot class="table-secondary" style={{bottom: '0px', position: 'sticky'}}>
           <tr>
             <th>Totals:</th>
             <th>{mealPlan.Calories}</th>

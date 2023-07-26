@@ -9,7 +9,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, View } from "../components/Themed";
-import React from "react";
+import React, { useEffect } from "react";
 import { User } from "../API/APIModels";
 import { CalorieResetRequest } from "../API/api";
 
@@ -22,22 +22,38 @@ export default function SettingsPage() {
   const response = route.params;
 
   const UpdateSettings = async () => {
-    if (response.userMealPlan.Calories != parseInt(CalorieGoal)) {
+    let calorietotal = parseInt(CalorieGoal);
+    if (response.user.calorieGoal != calorietotal) {
       let calorieResults = await CalorieResetRequest(
         response.user.accessToken,
-        parseInt(CalorieGoal)
+        calorietotal
       );
       if (calorieResults.error === "worked") {
-        response.userMealPlan.Calories = parseInt(CalorieGoal);
-        alert("Updated calorie goal to " + parseInt(CalorieGoal));
-      }
+        response.userMealPlan.Calories = calorietotal;
+        alert("Updated calorie goal to " + calorietotal);
+      } else alert("error: " + calorieResults.error);
     }
   };
-
+  const GoToBigList = () => {
+    let user = response.user;
+    let BigList = response.BigList;
+    let userMealPlan = response.userMealPlan;
+    navigation.navigate("BigList", { user, BigList, userMealPlan });
+  };
   const handleLogout = () => {
     // Log out user
     navigation.navigate("Login");
   };
+  // Removes back arrow
+  useEffect(() => {
+    const hideBackButton = () => {
+      navigation.setOptions({
+        headerLeft: () => null,
+      });
+    };
+
+    hideBackButton();
+  }, []);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
@@ -54,9 +70,12 @@ export default function SettingsPage() {
         <Button
           title="Save Settings"
           onPress={UpdateSettings}
-          color={"green"}
+          color={"black"}
         />
       </View>
+      <TouchableOpacity style={styles.biglistbutton} onPress={GoToBigList}>
+        <Text style={styles.logoutButtonText}>All Foods</Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
@@ -86,7 +105,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     position: "absolute",
     top: 70,
-    color: "red",
+    color: "black",
   },
   separator: {
     marginVertical: 30,
@@ -146,7 +165,17 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: "red",
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  biglistbutton: {
+    position: "absolute",
+    bottom: 80,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",

@@ -244,7 +244,7 @@ function CardUI() {
               <td>{mealPlan.fatResults[index]}g</td>
               <td>{mealPlan.carbsResults[index]}g</td>
               <td>{mealPlan.proteinResults[index]}g</td>
-              <td>{mealPlan.numServings[index]}g</td>
+              <td>{mealPlan.numServings[index]}</td>
               <td class="table-dark">
                 <button
                   onClick={() =>

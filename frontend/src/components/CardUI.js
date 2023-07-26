@@ -225,7 +225,7 @@ function CardUI() {
         className="table"
         style={{ width: '100%', textAlign: 'center' }}
       >
-        <thead class="table-dark">
+        <thead class="table-dark" style={{top: '0px', position: 'sticky'}}>
           <tr>
             <th>Food Name</th>
             <th>Calories</th>
@@ -241,10 +241,10 @@ function CardUI() {
             <tr key={index}>
               <td>{foodName}</td>
               <td>{mealPlan.caloriesResults[index]}</td>
-              <td>{mealPlan.fatResults[index]}</td>
-              <td>{mealPlan.carbsResults[index]}</td>
-              <td>{mealPlan.proteinResults[index]}</td>
-              <td>{mealPlan.numServings[index]}</td>
+              <td>{mealPlan.fatResults[index]}g</td>
+              <td>{mealPlan.carbsResults[index]}g</td>
+              <td>{mealPlan.proteinResults[index]}g</td>
+              <td>{mealPlan.numServings[index]}g</td>
               <td class="table-dark">
                 <button
                   onClick={() =>
@@ -264,13 +264,13 @@ function CardUI() {
         ) : (
           <p>Choose Meals from a Different Day, or Click Today's Meal Plan</p>
         )}
-        <tfoot class="table-secondary">
+        <tfoot class="table-secondary" style={{top: '0px', position: 'sticky'}}>
           <tr>
             <th>Totals:</th>
             <th>{mealPlan.Calories}</th>
-            <th>{mealPlan.Fats}</th>
-            <th>{mealPlan.Carbs}</th>
-            <th>{mealPlan.Protein}</th>
+            <th>{mealPlan.Fats}g</th>
+            <th>{mealPlan.Carbs}g</th>
+            <th>{mealPlan.Protein}g</th>
             <th>Servings</th>
             <th> </th>
           </tr>

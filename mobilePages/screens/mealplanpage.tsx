@@ -118,40 +118,32 @@ export default function MealPlanPage() {
     <View style={styles.container}>
       <FlatList
         data={response.completedMealPlan}
+        maxToRenderPerBatch={30}
+        initialNumToRender={30}
+        style={{ height: 210 }}
         renderItem={renderItem}
         keyExtractor={(item) => item.FoodName}
         extraData={selectedId}
         ItemSeparatorComponent={myItemSeparator}
         ListEmptyComponent={myListEmpty}
-        ListHeaderComponent={() => (
-          <View style={styles.header}>
-            <Text style={styles.headerText}>
-              {response.user.Email}'s Meal Plan
-            </Text>
-          </View>
-        )}
       />
-      <View>
-        <Text>Calorie total: {response.calorieTotal}</Text>
+      <View style={styles.dataContainer}>
+        <Text style={styles.text}>Calorie total: {response.calorieTotal}</Text>
+        <Text style={styles.text}>Fat total: {response.userMealPlan.Fats}</Text>
+        <Text style={styles.text}>Protein total: {response.userMealPlan.Protein}</Text>
+        <Text style={styles.text}>Carbs total: {response.userMealPlan.Carbs}</Text>
       </View>
-      <View>
-        <Text>Fat total: {response.userMealPlan.Fats}</Text>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.allFoodsButton} onPress={navigateBigList}>
+          <Text style={styles.settingsButtonText}>All Foods</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={navigateSettings}
+        >
+          <Text style={styles.settingsButtonText}>Settings</Text>
+        </TouchableOpacity>
       </View>
-      <View>
-        <Text>Protein total: {response.userMealPlan.Protein}</Text>
-      </View>
-      <View>
-        <Text>Carbs total: {response.userMealPlan.Carbs}</Text>
-      </View>
-      <TouchableOpacity style={styles.settingsButton} onPress={navigateBigList}>
-        <Text style={styles.settingsButtonText}>All Foods</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.settingsButton}
-        onPress={navigateSettings}
-      >
-        <Text style={styles.settingsButtonText}>Settings</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -160,6 +152,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
+  },
+  buttonContainer: {
+    flex: 1,
+  },
+  dataContainer: {
+    flex: 1,
+    paddingTop: 20,
+  },
+  text: {
+    flex: 1,
+    color: "#000",
+    backgroundColor: "#fff",
+    textAlign: "left",
+    paddingLeft: 20,
+    borderRadius: 5,
+    fontSize: 16,
   },
   item: {
     padding: 20,
@@ -185,9 +193,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
+  allFoodsButton: {
+    position: "absolute",
+    bottom: 100,
+    left: 20,
+    right: 20,
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+  },
   settingsButton: {
     position: "absolute",
-    bottom: 20,
+    bottom: 30,
     left: 20,
     right: 20,
     backgroundColor: "black",

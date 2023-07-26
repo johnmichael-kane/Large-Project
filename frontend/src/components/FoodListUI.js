@@ -116,7 +116,7 @@ console.log("foods:", foods);
             <script defer src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
             <script defer src="script.js"></script>
             <table id="example" class="table" style={{width: '100%', textAlign: 'center'}}>
-        <thead class="table-dark">
+        <thead class="table-dark" style={{top: '0px', position: 'sticky'}} >
             <tr>
                 <th>Food Name</th>
                 <th>Calories</th>
@@ -132,9 +132,9 @@ console.log("foods:", foods);
                         <tr key={index}>
                             <td>{foodName}</td>
                             <td>{foods.caloriesResults[index]}</td>
-                            <td>{foods.proteinResults[index]}</td>
-                            <td>{foods.fatResults[index]}</td>
-                            <td>{foods.carbsResults[index]}</td>
+                            <td>{foods.proteinResults[index]}g</td>
+                            <td>{foods.fatResults[index]}g</td>
+                            <td>{foods.carbsResults[index]}g</td>
                             <td>{foods.servingResults[index]}</td>
                             <td class="table-dark"><input
                                type="number"

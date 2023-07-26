@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 
 export interface LoginResponse {
   Email: string;
+  calorieGoal: number;
   accessToken: string;
   error: string;
 }
@@ -42,6 +43,9 @@ export interface PasswordResetRequestResponse {
   error: string;
 }
 export interface CalorieResetRequestResponse {
+  error: string;
+}
+export interface EnterPasswordResetRequestResponse {
   error: string;
 }
 
@@ -227,7 +231,33 @@ export function PasswordResetRequest(
       });
   });
 }
-
+export function ResetPasswordAPI(
+  email: string,
+  newPassword: string,
+  code: string
+): Promise<EnterPasswordResetRequestResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<EnterPasswordResetRequestResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetPassword",
+        { email, newPassword, code }
+      )
+      .then((response: AxiosResponse<EnterPasswordResetRequestResponse>) => {
+        const data: EnterPasswordResetRequestResponse = response.data;
+        if (data.error != "email sent") {
+          console.log("Error:", data.error);
+          resolve(data);
+        } else {
+          console.log("Sent Successfully!");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in sending request: ", error);
+        reject(error);
+      });
+  });
+}
 // api call calorie goal reset
 
 export function CalorieResetRequest(

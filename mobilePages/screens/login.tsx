@@ -25,8 +25,8 @@ export default function TabOneScreen() {
   const [EmailAddress, setEmail] = React.useState("");
   const [Password, setPassword] = React.useState("");
   var BigList: Food[] = [];
-  var mealPlan: MealPlan;
-  var user = new User("", "");
+  let userMealPlan: MealPlan;
+  var user = new User("", "", 0);
   const handleLogin = () => {
     login(EmailAddress, Password)
       .then((loginResponse: LoginResponse) => {
@@ -45,7 +45,9 @@ export default function TabOneScreen() {
   const GetBigList = async (accessToken: string) => {
     //Get the entire list of meals through an API call, parse the information and store it into an array of class food
     const BigListResult = await getBigList(accessToken);
-    for (let i = 0; i < BigListResult.nameResults.length; i++) {
+    BigList = [new Food("", 0, 0, 0, 0, "1")];
+    //BigListResult.nameResults.length
+    for (let i = 0; i < 200; i++) {
       BigList.push(
         new Food(
           BigListResult.nameResults[i],
@@ -57,6 +59,7 @@ export default function TabOneScreen() {
         )
       );
     }
+    BigList.shift();
     GetMealPlan(EmailAddress, accessToken);
   };
 
@@ -68,7 +71,7 @@ export default function TabOneScreen() {
     let day = date.getDate();
     const MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
     if (MealPlanResult != null)
-      mealPlan = new MealPlan(
+      userMealPlan = new MealPlan(
         MealPlanResult.nameResults,
         MealPlanResult.caloriesResults,
         MealPlanResult.proteinResults,
@@ -87,10 +90,7 @@ export default function TabOneScreen() {
   };
 
   function ResetPassword() {
-    if (EmailAddress == null || EmailAddress === "") {
-      alert("Enter an email address to send the password request to.");
-    }
-    //Password reset stuff goes here, this might have to go to another page
+    navigation.navigate("RequestResetPassword");
   }
 
   async function PasswordResetRequestLogin(email: string) {
@@ -98,7 +98,7 @@ export default function TabOneScreen() {
   }
 
   const navigateBigList = () => {
-    navigation.navigate("BigList", { user, BigList });
+    navigation.navigate("BigList", { user, BigList, userMealPlan });
   };
 
   const navigateRegister = (bigList: Food[]) => {
@@ -129,10 +129,14 @@ export default function TabOneScreen() {
           <Button title="Login" onPress={handleLogin} color="black" />
         </TouchableHighlight>
         <TouchableHighlight>
-          <Button title="Reset Password" color="black"/>
+          <Button title="Reset Password" color="black" />
         </TouchableHighlight>
         <TouchableHighlight>
-          <Button title="Register Account" onPress={navigateRegister} color="black" />
+          <Button
+            title="Register Account"
+            onPress={navigateRegister}
+            color="black"
+          />
         </TouchableHighlight>
       </View>
     </View>

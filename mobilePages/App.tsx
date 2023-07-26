@@ -8,11 +8,10 @@ import TabTwoScreen from "./screens/register";
 import BigList from "./screens/biglist";
 import SettingsPage from "./screens/settings";
 import MealPlanPage from "./screens/mealplanpage";
-import RequestPasswordReset from "./screens/requestresetpassword"
-
 import { LogBox } from "react-native";
-// import RequestPasswordReset from "./screens/requestpasswordreset";
-//this turns off all warnings, only turn this on if necessary
+import RequestPasswordReset from "./screens/requestpasswordreset";
+import EnterResetPassword from "./screens/enterresetpassword";
+
 LogBox.ignoreAllLogs(true);
 const Stack = createStackNavigator();
 
@@ -30,9 +29,12 @@ export default function App() {
       >
         <Stack.Screen name="Login" component={TabOneScreen} />
         <Stack.Screen name="Register" component={TabTwoScreen} />
-        <Stack.Screen name="Big List" component={BigList} />
-        <Stack.Screen name="Meal Plan" component={MealPlanPage} />
-        <Stack.Screen name="RequestPasswordReset" component={RequestPasswordReset} />
+        <Stack.Screen name="BigList" component={BigList} />
+        <Stack.Screen name="MealPlanPage" component={MealPlanPage} />
+        <Stack.Screen
+          name="RequestPasswordReset"
+          component={RequestPasswordReset}
+        />
         <Stack.Screen name="Settings" component={SettingsPage} />
       </Stack.Navigator>
     </NavigationContainer>

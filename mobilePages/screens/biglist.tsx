@@ -148,7 +148,7 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
-    navigation.navigate("MealPlanPage", {
+    navigation.navigate("Meal Plan", {
       user,
       BigList,
       userMealPlan,
@@ -173,7 +173,7 @@ export default function BigList() {
         data={response.BigList}
         maxToRenderPerBatch={30}
         initialNumToRender={30}
-        style={{ height: "70%" }}
+        style={{ height: 250 }}
         renderItem={renderItem}
         keyExtractor={(item) => item.FoodName}
         extraData={selectedId}
@@ -185,18 +185,12 @@ export default function BigList() {
           </View>
         )}
       />
+      
       <TouchableOpacity
-        style={styles.settingsButton}
-        onPress={navigateMealPlan}
-      >
-        <Text style={styles.mealplanbuttonText}>Meal Plan</Text>
+        style={styles.mealplanbutton}
+        onPress={navigateMealPlan}>
+        <Text style={styles.buttonText}>Meal Plan</Text>
       </TouchableOpacity>
-      {/* <TouchableOpacity
-        style={styles.settingsButton}
-        onPress={navigateSettings}
-      >
-        <Text style={styles.settingsButtonText}>Settings</Text>
-      </TouchableOpacity> */}
     </View>
   );
 }
@@ -217,33 +211,20 @@ const styles = StyleSheet.create({
   data: {
     fontSize: 16,
   },
-  settingsButton: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: "green",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  settingsButtonText: {
+  
+  buttonText: {
     color: "white",
     fontSize: 16,
   },
   mealplanbutton: {
     position: "absolute",
-    bottom: 80,
-    left: 20,
-    right: 20,
+    bottom: 0,
+    left: 0,
+    right: 0,
     backgroundColor: "black",
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
-  },
-  mealplanbuttonText: {
-    color: "white",
-    fontSize: 16,
   },
   header: {
     flexDirection: "row",
@@ -256,12 +237,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
-  addButton: {
-    flex: 1,
-  },
-  addButtonText: {
-    fontSize: 18,
-    color: "green",
-    fontWeight: "bold",
-  },
+  
 });

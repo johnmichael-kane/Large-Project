@@ -98,7 +98,7 @@ export default function TabOneScreen() {
   }
 
   const navigateBigList = () => {
-    navigation.navigate("BigList", { user, BigList, userMealPlan });
+    navigation.navigate("Big List", { user, BigList, userMealPlan });
   };
 
   const navigateRegister = (bigList: Food[]) => {

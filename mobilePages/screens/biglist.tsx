@@ -22,8 +22,9 @@ export default function BigList() {
   const route = useRoute();
   const response = route.params;
   const [selectedId, setSelectedId] = useState<string>();
+  let calorieTotal = 0;
   let userMealPlan: MealPlan;
-
+  let completedMealPlan: Food[] = [];
   const UpdateMealPlan = (event: Food) => {
     let food: Food;
     food = new Food("", 0, 0, 0, 0, "");
@@ -48,13 +49,7 @@ export default function BigList() {
       response.user.accessToken
     );
     if (insertresponse.error === "added") {
-      alert(
-        "Successfully added " +
-          food.FoodName +
-          " to " +
-          response.user.email +
-          "'s meal plan."
-      );
+      alert("Successfully added " + food.FoodName + " to your meal plan");
     } else {
       alert("Error: " + insertresponse.error);
     }
@@ -129,11 +124,12 @@ export default function BigList() {
       );
   };
   const navigateMealPlan = () => {
-    let completedMealPlan: Food[] = [];
+    completedMealPlan = [];
     updateUserMealPlan();
     let foodNameResults = response.userMealPlan.nameResults;
     let foodnumber = foodNameResults.length;
     for (let i = 0; i < foodnumber; i++) {
+      calorieTotal += response.userMealPlan.calorieResults[i];
       completedMealPlan.push(
         new Food(
           response.userMealPlan.nameResults[i],
@@ -148,11 +144,12 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
-    navigation.navigate("Meal Plan", {
+    navigation.navigate("MealPlanPage", {
       user,
       BigList,
       userMealPlan,
       completedMealPlan,
+      calorieTotal
     });
   };
 
@@ -183,10 +180,14 @@ export default function BigList() {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.mealplanbutton}
-          onPress={navigateMealPlan}>
+          onPress={navigateMealPlan}
+        >
           <Text style={styles.buttonText}>Meal Plan</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingsButton} onPress={navigateSettings}>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={navigateSettings}
+        >
           <Text style={styles.buttonText}>Settings</Text>
         </TouchableOpacity>
       </View>
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
   buttonContainer: {
-    flex: 1
+    flex: 1,
   },
   item: {
     padding: 20,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   data: {
     fontSize: 16,
   },
-  
+
   buttonText: {
     color: "white",
     fontSize: 16,
@@ -249,5 +250,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
-  
 });

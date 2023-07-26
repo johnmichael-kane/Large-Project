@@ -30,10 +30,10 @@ function PageTitle()
             <div class="collapse navbar-collapse" id="navmenu">
               <ul class ="navbar-nav ms-auto">
                 <li class="nav-item">
-                  <a href="#" class="nav-link">Meal Plans</a>
+                  <a href="/meals" class="nav-link">Meal Plan</a>
                 </li>
                 <li class="nav-item">
-                  <a href="#" class="nav-link">Add Food</a>
+                  <a href="/foods" class="nav-link">Add Food</a>
                 </li>
                 <button type="button" id="logoutButton" class="buttons" 
                 onClick={doLogout}> Log Out </button>

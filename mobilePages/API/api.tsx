@@ -14,7 +14,6 @@ export interface BigListResponse {
   servingResults: string[];
   error: string;
   accessToken: string;
-
 }
 export interface UserMealPlanResponse {
   nameResults: string[];
@@ -42,7 +41,7 @@ export interface PasswordResetRequestResponse {
   code: string;
   error: string;
 }
-export interface CalorieResetRequestResponse{
+export interface CalorieResetRequestResponse {
   error: string;
 }
 
@@ -77,7 +76,7 @@ export function getBigList(accessToken: string): Promise<BigListResponse> {
     axios
       .post<BigListResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getFood",
-        { jwtToken : accessToken }
+        { jwtToken: accessToken }
       )
       .then((response: AxiosResponse<BigListResponse>) => {
         const data: BigListResponse = response.data;
@@ -106,7 +105,7 @@ export function GetUserMealPlan(
     axios
       .post<UserMealPlanResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getUserMealPlan",
-        {year: year, month: month, day: day, jwtToken : accessToken }
+        { year: year, month: month, day: day, jwtToken: accessToken }
       )
       .then((response: AxiosResponse<UserMealPlanResponse>) => {
         const data: UserMealPlanResponse = response.data;
@@ -126,14 +125,29 @@ export function GetUserMealPlan(
 }
 // api call that adds a selected food item to the user's meal plan
 export function AddUserFood(
-  email: string,
+  foodName: string,
+  calories: number,
+  fats: number,
+  carbohydrates: number,
+  protein: number,
+  servingSize: string,
+  numServings: number,
   accessToken: string
 ): Promise<AddUserFoodResponse> {
   return new Promise((resolve, reject) => {
     axios
       .post<AddUserFoodResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/addUserFood",
-        { email, accessToken }
+        {
+          foodName: foodName,
+          calories: calories,
+          fats: fats,
+          carbohydrates: carbohydrates,
+          protein: protein,
+          servingSize: servingSize,
+          numServings: numServings,
+          jwtToken: accessToken,
+        }
       )
       .then((response: AxiosResponse<AddUserFoodResponse>) => {
         const data: AddUserFoodResponse = response.data;
@@ -153,14 +167,23 @@ export function AddUserFood(
 }
 // api call that removes a selected food item from the user's meal plan
 export function RemoveUserFood(
-  email: string,
-  accessToken: string
+  foodName: string,
+  accessToken: string,
+  year: number,
+  day: number,
+  month: number
 ): Promise<DeleteUserFoodResponse> {
   return new Promise((resolve, reject) => {
     axios
       .post<DeleteUserFoodResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/deleteUserFood",
-        { email, accessToken }
+        {
+          foodName: foodName,
+          jwtToken: accessToken,
+          year: year,
+          day: day,
+          month: month,
+        }
       )
       .then((response: AxiosResponse<DeleteUserFoodResponse>) => {
         const data: DeleteUserFoodResponse = response.data;
@@ -190,16 +213,16 @@ export function PasswordResetRequest(
       )
       .then((response: AxiosResponse<PasswordResetRequestResponse>) => {
         const data: PasswordResetRequestResponse = response.data;
-        if (data.error === "addUserFoodError") {
-          console.log("Adding Food Error:", data.error);
+        if (data.error != "email sent") {
+          console.log("Error:", data.error);
           resolve(data);
         } else {
-          console.log("Added Successfully!");
+          console.log("Sent Successfully!");
           resolve(data);
         }
       })
       .catch((error: any) => {
-        console.error("Error in adding food: ", error);
+        console.error("Error in sending request: ", error);
         reject(error);
       });
   });
@@ -208,14 +231,14 @@ export function PasswordResetRequest(
 // api call calorie goal reset
 
 export function CalorieResetRequest(
-  accessToken : string,
+  accessToken: string,
   newGoal: number
 ): Promise<CalorieResetRequestResponse> {
   return new Promise((resolve, reject) => {
     axios
       .post<CalorieResetRequestResponse>(
         "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/resetCalorieGoal",
-        { jwtToken : accessToken, newGoal : newGoal}
+        { jwtToken: accessToken, newGoal: newGoal }
       )
       .then((response: AxiosResponse<CalorieResetRequestResponse>) => {
         const data: CalorieResetRequestResponse = response.data;

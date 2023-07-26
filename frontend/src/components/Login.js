@@ -47,7 +47,7 @@ function Login() {
 
 
           setMessage('');
-          window.location.href = '/cards';
+          window.location.href = '/meals';
         }
       }
       catch (e) {

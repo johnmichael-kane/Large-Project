@@ -119,7 +119,7 @@ export default function TabOneScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password"
-          secureTextEntry
+          secureTextEntry={true}
           onChangeText={setPassword}
         />
       </View>

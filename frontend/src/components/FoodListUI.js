@@ -112,7 +112,7 @@ function FoodListUI() {
         onChange={handleSearchChange}
       />
       <button type="button" className="buttons" onClick={getFood}>
-        Load all foods
+        Load matching foods
       </button>
       <span id="foodAddResult">{message}</span>
 

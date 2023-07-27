@@ -56,7 +56,6 @@ export default function TabTwoScreen() {
         <TextInput
           style={styles.input}
           placeholder="Email:"
-          autoComplete="Email"
           onChangeText={onEmailChange}
         ></TextInput>
       </View>
@@ -65,7 +64,7 @@ export default function TabTwoScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password"
-          autoComplete="password"
+          secureTextEntry={true}
           onChangeText={onPasswordChange}
         ></TextInput>
       </View>
@@ -74,7 +73,7 @@ export default function TabTwoScreen() {
         <TextInput
           style={styles.input}
           placeholder="Confirm Password"
-          autoComplete="password"
+          secureTextEntry={true}
           onChangeText={onConfirmPasswordChange}
         ></TextInput>
       </View>

@@ -52,7 +52,8 @@ function PasswordReset()
         <input 
             type="password" 
             id="password1" 
-            placeholder="Password" 
+            placeholder="Password"
+            style = {{marginLeft: '5%'}} 
             value = {password1}
             onChange={(c) => firstPassword(c.target.value)}
          />
@@ -60,7 +61,8 @@ function PasswordReset()
         <input 
             type="password" 
             id="password2" 
-            placeholder="Confirm Password"  
+            placeholder="Confirm Password" 
+            style = {{marginLeft: '5%'}}  
             value = {password2}
             onChange={(c) => secondPassword(c.target.value)}
         />

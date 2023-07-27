@@ -8,14 +8,14 @@ const sendEmail = async (email, link) => {
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'nutritionapp7@gmail.com',
-      pass: 'afzttirvjllddhre'
+      user: 'macrotracker7@gmail.com',
+      pass: 'czbhgnaegyjelzpd'
     }
   });
   
 
   var mailOptions = {
-    from: 'nutritionapp7@gmail.com',
+    from: 'macrotracker7@gmail.com',
     to: email,
     subject: 'Email Verification',
     text: 'This is your email verification link: ' + link,

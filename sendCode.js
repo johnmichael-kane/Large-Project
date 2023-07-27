@@ -8,13 +8,13 @@ const sendCode = async (email, verify, code) => {
   let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'nutritionapp7@gmail.com',
-      pass: 'afzttirvjllddhre'
+      user: 'macrotracker7@gmail.com',
+      pass: 'czbhgnaegyjelzpd'
     }
   });
 
   var mailOptions = {
-    from: 'nutritionapp7@gmail.com',
+    from: 'macrotracker7@gmail.com',
     to: email,
     subject: verify,
     text: 'This is your code for ' + verify + ': ' + code

@@ -35,7 +35,7 @@ export interface AddUserFoodResponse {
   error: string;
 }
 export interface DeleteUserFoodResponse {
-  accessToken: string;
+  jwtToken: string;
   error: string;
 }
 export interface PasswordResetRequestResponse {
@@ -52,6 +52,10 @@ export interface EmailVerificationRequestResponse {
   error: string;
 }
 export interface RegisterResponse {
+  error: string;
+}
+export interface GetUserCalorieGoalResponse {
+  calorieGoal: number,
   error: string;
 }
 export function login(email: string, password: string): Promise<LoginResponse> {
@@ -342,6 +346,32 @@ export function Register(
       })
       .catch((error: any) => {
         console.error("Error in User Registration: ", error);
+        reject(error);
+      });
+  });
+}
+//api call to get user's calorie goal
+export function GetUserCalorieGoal(
+  jwtToken: string
+): Promise<GetUserCalorieGoalResponse> {
+  return new Promise((resolve, reject) => {
+    axios
+      .post<GetUserCalorieGoalResponse>(
+        "https://group7-largeproject-fcbd9bb42321.herokuapp.com/api/getCalorieGoal",
+        { jwtToken }
+      )
+      .then((response: AxiosResponse<GetUserCalorieGoalResponse>) => {
+        const data: GetUserCalorieGoalResponse = response.data;
+        if (!(data.error === "success")) {
+          console.log("Couldn't get calorie goal: ", data.error);
+          resolve(data);
+        } else {
+          console.log("Got calorie goal");
+          resolve(data);
+        }
+      })
+      .catch((error: any) => {
+        console.error("Error in getting calorie goal: ", error);
         reject(error);
       });
   });

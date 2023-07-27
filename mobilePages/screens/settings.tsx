@@ -30,8 +30,7 @@ export default function SettingsPage() {
       );
       if (calorieResults.error === "worked") {
         response.user.calorieGoal = calorietotal;
-        alert("Updated calorie goal to " + calorietotal);
-      } else alert("error: " + calorieResults.error);
+      } 
     }
   };
   const GoToBigList = () => {
@@ -61,8 +60,7 @@ export default function SettingsPage() {
         <Text style={styles.calorielabel}>Calorie Goal:</Text>
         <TextInput
           style={styles.calorieinput}
-          placeholder={CalorieGoal.toString()}
-          autoComplete="username"
+          placeholder={"Enter Calorie Goal"}
           onChangeText={onCalorieGoalChange}
         />
       </View>

@@ -4,7 +4,7 @@ import {
   Button,
   TextInput,
   Dimensions,
-  TouchableOpacity,
+  TouchableHighlight,
 } from "react-native";
 
 import axios, { AxiosResponse } from "axios";
@@ -14,6 +14,7 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   getBigList,
+  GetUserCalorieGoal,
   GetUserMealPlan,
   login,
   LoginResponse,
@@ -60,6 +61,8 @@ export default function TabOneScreen() {
       );
     }
     BigList.shift();
+    let calorieResponse = await GetUserCalorieGoal(user.accessToken);
+    user.calorieGoal = calorieResponse.calorieGoal;
     GetMealPlan(EmailAddress, accessToken);
   };
 
@@ -90,24 +93,19 @@ export default function TabOneScreen() {
   };
 
   function ResetPassword() {
-    navigation.navigate("RequestResetPassword");
-  }
-
-  async function PasswordResetRequestLogin(email: string) {
-    const PasswordResetRequestResult = await PasswordResetRequest(email);
+    navigation.navigate("RequestPasswordReset");
   }
 
   const navigateBigList = () => {
-    navigation.navigate("Big List", { user, BigList, userMealPlan });
+    navigation.navigate("BigList", { user, BigList, userMealPlan });
   };
 
-  const navigateRegister = (bigList: Food[]) => {
+  const navigateRegister = () => {
     navigation.navigate("Register");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Macrotracker</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -125,16 +123,26 @@ export default function TabOneScreen() {
           onChangeText={setPassword}
         />
       </View>
-      <TouchableOpacity style ={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>LOGIN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style ={styles.resetButton} onPress={ResetPassword}>
-        <Text style={styles.buttonText}>RESET PASSWORD</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style ={styles.registerButton} onPress={navigateRegister}>
-        <Text style={styles.buttonText}>REGISTER ACCOUNT</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableHighlight>
+          <Button title="Login" onPress={handleLogin} color="black" />
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <Button
+            title="Reset Password"
+            onPress={ResetPassword}
+            color="black"
+          />
+        </TouchableHighlight>
+        <TouchableHighlight>
+          <Button
+            title="Register Account"
+            onPress={navigateRegister}
+            color="black"
+          />
+        </TouchableHighlight>
       </View>
+    </View>
   );
 }
 
@@ -148,7 +156,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "Black",
+    color: "red",
     marginBottom: 30,
   },
   inputContainer: {
@@ -177,38 +185,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     fontSize: 16,
   },
-  registerButton: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  resetButton: {
-    position: "absolute",
-    bottom: 80,
-    left: 20,
-    right: 20,
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  loginButton: {
-    position: "absolute",
-    bottom: 140,
-    left: 20,
-    right: 20,
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "white",
-    fontsize: 16
+  buttonContainer: {
+    flex: 0.6,
+    flexDirection: "column",
+    width: "80%",
+    justifyContent: "space-evenly",
   },
 });

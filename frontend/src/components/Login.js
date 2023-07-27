@@ -34,7 +34,7 @@ function Login() {
 
         var res = JSON.parse(await response.text());
         console.log(res);
-        if (res.id <= 0 || res.error === 'loginFailure'|) {
+        if (res.id <= 0 || res.error === 'loginFailure') {
           setMessage('Email/Password combination incorrect');
         }
         else {

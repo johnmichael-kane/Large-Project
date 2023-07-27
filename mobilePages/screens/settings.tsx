@@ -29,7 +29,7 @@ export default function SettingsPage() {
         calorietotal
       );
       if (calorieResults.error === "worked") {
-        response.userMealPlan.Calories = calorietotal;
+        response.user.calorieGoal = calorietotal;
         alert("Updated calorie goal to " + calorietotal);
       } else alert("error: " + calorieResults.error);
     }

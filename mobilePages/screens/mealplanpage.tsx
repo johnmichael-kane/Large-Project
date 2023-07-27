@@ -48,19 +48,9 @@ export default function MealPlanPage() {
       day,
       month
     );
-    removedJWT = removedresult.jwtToken.accessToken;
-    navigateMealPlan();
-  };
-  const updateUserMealPlan = async () => {
-    const date = new Date();
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
+    response.user.accessToken = removedresult.jwtToken.accessToken;
     let accessToken = response.user.accessToken;
     let MealPlanResult = await GetUserMealPlan(year, month, day, accessToken);
-    if (removedJWT != "") {
-      MealPlanResult = await GetUserMealPlan(year, month, day, removedJWT);
-    }
     if (MealPlanResult != null)
       response.userMealPlan = new MealPlan(
         MealPlanResult.nameResults,
@@ -74,10 +64,7 @@ export default function MealPlanPage() {
         MealPlanResult.Protein,
         MealPlanResult.Carbs
       );
-  };
-  const navigateMealPlan = () => {
     completedMealPlan = [];
-    updateUserMealPlan();
     let foodNameResults = response.userMealPlan.nameResults;
     let foodnumber = foodNameResults.length;
     for (let i = 0; i < foodnumber; i++) {
@@ -185,6 +172,9 @@ export default function MealPlanPage() {
         ListEmptyComponent={myListEmpty}
       />
       <View style={styles.dataContainer}>
+        <Text style={styles.text}>
+          Calorie Goal: {response.user.calorieGoal}
+        </Text>
         <Text style={styles.text}>Calorie total: {response.calorieTotal}</Text>
         <Text style={styles.text}>Fat total: {response.userMealPlan.Fats}</Text>
         <Text style={styles.text}>

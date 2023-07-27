@@ -1,11 +1,11 @@
 export class User {
   Email: string;
-  Password: string;
-  CalorieGoal: number;
-  constructor(Email: string, Password: string, CalorieGoal: number) {
+  accessToken: string;
+  calorieGoal: number;
+  constructor(Email: string, accessToken: string, calorieGoal: number) {
     this.Email = Email;
-    this.Password = Password;
-    this.CalorieGoal = CalorieGoal;
+    this.calorieGoal = calorieGoal;
+    this.accessToken = accessToken;
   }
 }
 export class Food {
@@ -21,7 +21,7 @@ export class Food {
     protein: number,
     fats: number,
     carbs: number,
-    ServingSize: string,
+    ServingSize: string
   ) {
     this.FoodName = foodName;
     this.Calories = calories;
@@ -29,7 +29,7 @@ export class Food {
     this.Fats = fats;
     this.Carbs = carbs;
     this.ServingSize = ServingSize;
-    }
+  }
 }
 
 export class Meal {
@@ -42,7 +42,7 @@ export class Meal {
   ServingSize: number;
   date: string;
   constructor(
-    email : string,
+    email: string,
     foodName: string,
     calories: number,
     protein: number,

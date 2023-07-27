@@ -49,12 +49,7 @@ export default function BigList() {
       1,
       response.user.accessToken
     );
-    if (insertresponse.error === "added") {
-      alert("Successfully added " + food.FoodName + " to your meal plan");
-      setAddedAccessToken(insertresponse.jwtToken.accessToken);
-    } else {
-      alert("Error: " + insertresponse.error);
-    }
+    response.user.accessToken = insertresponse.jwtToken.accessToken;
   };
   type ItemProps = {
     item: Food;
@@ -102,7 +97,6 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
-    let Password = response.Password;
     navigation.navigate("Settings", { user, BigList, userMealPlan });
   };
   const updateUserMealPlan = async () => {
@@ -133,10 +127,7 @@ export default function BigList() {
         MealPlanResult.Protein,
         MealPlanResult.Carbs
       );
-  };
-  const navigateMealPlan = () => {
     completedMealPlan = [];
-    updateUserMealPlan();
     let foodNameResults = response.userMealPlan.nameResults;
     let foodnumber = foodNameResults.length;
     for (let i = 0; i < foodnumber; i++) {
@@ -155,7 +146,6 @@ export default function BigList() {
     let user = response.user;
     let BigList = response.BigList;
     userMealPlan = response.userMealPlan;
-    let Password = response.Password;
     navigation.navigate("MealPlanPage", {
       user,
       BigList,
@@ -163,6 +153,10 @@ export default function BigList() {
       completedMealPlan,
       calorieTotal,
     });
+  };
+
+  const navigateMealPlan = () => {
+    updateUserMealPlan();
   };
 
   // Removes back arrow

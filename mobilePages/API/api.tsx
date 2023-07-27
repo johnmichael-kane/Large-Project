@@ -55,7 +55,7 @@ export interface RegisterResponse {
   error: string;
 }
 export interface GetUserCalorieGoalResponse {
-  calorieGoal: number,
+  calorieGoal: number;
   error: string;
 }
 export function login(email: string, password: string): Promise<LoginResponse> {

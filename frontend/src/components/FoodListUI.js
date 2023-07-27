@@ -8,6 +8,7 @@ function FoodListUI() {
   var FoodName, Calories, Fats, Protein, Carbs, ServingSize, NumServings;
   const [message, setMessage] = useState('');
   const [collapse, setCollapse] = useState(0);
+  const [customAddMessage, setCustomAddMessage] = useState('');
   const [foods, setFoods] = useState({
     nameResults: [],
     caloriesResults: [],
@@ -66,11 +67,20 @@ function FoodListUI() {
     }
   };
 
-  const addUserFood = async (foodName, calories, protein, fat, carbs, servingSize, numServings) => {
-    if(foodName == '' || calories == ''|| protein == ''||fat == '' || carbs == '' || servingSize ==''){
-      setMessage("Please fill out all fields");
+  const customAddUserFood = async event =>{
+    if(FoodName.value == '' || Calories.value == ''|| Protein.value == ''||FontFaceSetLoadEvent.value == '' || Carbs.value == '' || ServingSize.value ==''){
+      setCustomAddMessage("Please fill out all fields");
       return;
     }
+    if (NumServings.value <= 0) {
+      setCustomAddMessage("Serving size must be greater than zero.");
+      return;
+    }
+    setCustomAddMessage('');
+    addUserFood(FoodName.value, Calories.value, Protein.value, Fats.value, Carbs.value, ServingSize.value, NumServings.value);
+  };
+
+  const addUserFood = async (foodName, calories, protein, fat, carbs, servingSize, numServings) => {
     if (numServings <= 0) {
       setMessage("Serving size must be greater than zero.");
       return;
@@ -166,15 +176,17 @@ function FoodListUI() {
           <Accordion.Body>
             <span id="accordiontext">All units in grams where applicable</span>
             <br></br>
-            <input type="text" id="foodName" placeholder="Food Name" required ref={(c) => (FoodName = c)} />
-            <input type="number" id="calories" placeholder="Calories" required ref={(c) => (Calories = c)} />
-            <input type="number" id="fats" placeholder="Fats" required ref={(c) => (Fats = c)} />
-            <input type="number" id="carbohydrates" placeholder="Carbs" required ref={(c) => (Carbs = c)} />
-            <input type="number" id="protein" placeholder="Protein" required ref={(c) => (Protein = c)} />
-            <input type="text" id="servingSize" placeholder="Serving Size" required ref={(c) => (ServingSize = c)} />
-            <input type="number" id="numServings" placeholder="Servings" required ref={(c) => (NumServings = c)} />
+            <span id="warningText">{customAddMessage}</span>
+            <br></br>
+            <input type="text" id="foodName" placeholder="Food Name"  ref={(c) => (FoodName = c)} />
+            <input type="number" id="calories" placeholder="Calories"  ref={(c) => (Calories = c)} />
+            <input type="number" id="fats" placeholder="Fats"  ref={(c) => (Fats = c)} />
+            <input type="number" id="carbohydrates" placeholder="Carbs"  ref={(c) => (Carbs = c)} />
+            <input type="number" id="protein" placeholder="Protein"  ref={(c) => (Protein = c)} />
+            <input type="text" id="servingSize" placeholder="Serving Size"  ref={(c) => (ServingSize = c)} />
+            <input type="number" id="numServings" placeholder="Servings" ref={(c) => (NumServings = c)} />
             <button type="button" id="addFoodButton" className="buttons"
-             onClick={() => addUserFood(FoodName.value, Calories.value, Protein.value, Fats.value, Carbs.value, ServingSize.value, NumServings.value)} > 
+             onClick={() => customAddUserFood()} > 
              Add Food </button>
           </Accordion.Body>
         </Accordion.Item>

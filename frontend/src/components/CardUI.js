@@ -260,7 +260,7 @@ function CardUI() {
             <th>Calorie Goal: {calorieGoal}</th>
             <th> 
               <Accordion defaultActiveKey="1">
-              <Accordion.Item eventKey="0" style={{ marginLeft: '20%', width: '50%'}}>
+              <Accordion.Item eventKey="0" style={{ marginLeft: '20%', width: '60%'}}>
                 <Accordion.Header>Edit Calorie Goal</Accordion.Header>
                 <Accordion.Body>
                   <span>{calorieMessage}</span>
